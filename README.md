@@ -35,4 +35,4 @@ To convert the wealth of classical MIDI files present today into a fun and educa
 | *** | returning player | To have different features and different levels | Not feel bored replaying the game |
 
 ## Program Flow
-\Program Flow.svg
+\ Program Flow.svg
