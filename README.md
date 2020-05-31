@@ -7,7 +7,7 @@ A classical music game that is played directly from a computer keyboard.
 ## Motivation
 To increase engagement with classical music works through the medium of a classical music rhythm game. Instead of passive listening, players can "tap along" to the melodies on their keyboard.\
 \
-*J.S. Bach, the super-musician time travels across history and is met with the surprise of seeing music modernise over the eras. He is keen on "keeping up with the time", and he wishes to learn all of music through this great adventure!*
+*J.S. Bach, the super-musician, time travels across history and is met with the surprise of seeing music modernise over the eras. He is keen on "keeping up with the time", and he wishes to learn all of music through this great adventure!*
 
 ## Aim
 To convert the wealth of classical [MIDI files](https://en.scratch-wiki.info/wiki/MIDI_Notes) present today into a fun and educational game that people can interact with using Python 3.
