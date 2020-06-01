@@ -40,7 +40,7 @@ Applying `mido.MidiFile(filename)`, we are able to parse the MIDI message bytes 
 From here, we are able to derive the changes in note **pitch** and **duration**, in order to construct the visual map of the melody spread out among the lanes.
 
 ### Orbs Generator
-The **melody orbs** will flow down the lanes in a **non-random** logical fashion that will emphasise on the following:\
+The **melody orbs** will flow down the lanes in a **non-random** logical fashion that will emphasise on the following:
 1. Consecutive notes should not cluster on one single lane.
 2. Notes that are close in pitch should appear close visually, that clearly indicate *a sense of direction* or *recurring patterns*.
 3. If the lane pattern (musical structure) is highly repetitive, <insert bonus feature here>
