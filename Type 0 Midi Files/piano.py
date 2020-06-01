@@ -49,7 +49,7 @@ def draw_notes(group= notes):
             exit()
 
 
-file_name= "twinkle-twinkle.midi"
+file_name= "beethoven_furelise.mid"
 
 pygame.mixer.music.load(file_name)
 pygame.mixer.music.play()
