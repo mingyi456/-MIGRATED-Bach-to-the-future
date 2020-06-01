@@ -23,8 +23,8 @@ To convert the wealth of classical [MIDI files](https://en.scratch-wiki.info/wik
 | 5 | Pausing and Resuming | To prevent untimely interruptions from causing players to lose progress and possibly to accommodate music tracks that are too long to realistically play in a single short session (about 10 minutes) |
 | 6 | Saving | Provision of multiple user profiles |
 | 7 | Tutorial/Practice Mode | To orientate new players around the game |
-| 8 | Options Page | To toggle relevant settings related to the game, even to rebind the keys for different keyboard layouts/ controllers. |
-| 9 | Possible option to upload own MIDI files | To improve replayability for those who played all available stages |
+| 8 | Options Page | To toggle relevant settings related to the game, or even to rebind the keys for different keyboard layouts/ controllers. |
+| 9 | Possible option to upload own MIDI files | To improve replayability for those who played all available stages and want to experience more tracks that are not available pre-packaged (e.g. tracks that the user may own the rights to but is not otherwise freely available) |
 
 ## Implementation
 #### Modules used: Mido, Pygame, concurrent.futures, time
@@ -56,11 +56,11 @@ If there are better ways to handle lag and ensure synchrony, please let us know!
 
 ## User Stories
 
-| Priority | As a ... | I want to ... | So that I can |
+| Priority | As a ... | I want ... | So that I can ... |
 |:--|:--|:--|:--|
 | *** | new player | To face an appropriate level of difficulty | Feel drawn into the game and play the game more |
 | *** | returning player | To have different features and different levels | Not feel bored replaying the game |
-| * | experienced player/ tinkerer | To be able to input my own MIDI files into the game to play | Play a wider range of possible music tracks |
+| * | experienced player/ tinkerer | To be able to input my own MIDI files into the game to play | Have a wider range of available music tracks |
 
 ## Program Flow
 <img alt="Program Flow" src="./Program Flow.svg">
