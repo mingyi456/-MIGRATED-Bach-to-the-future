@@ -29,7 +29,7 @@ To convert the wealth of classical [MIDI files](https://en.scratch-wiki.info/wik
 ## Implementation
 #### Modules used: Mido, Pygame, concurrent.futures, time
 ### Extracting the melody information
-Applying `mido.MidiFile(filename)`, we are able to parse the MIDI message bytes into messages of the following form:\
+Applying `mido.MidiFile(filename)`, we are able to parse the MIDI message bytes into messages of the following form:
 
 > **note_on** channel=0 **note**=43 velocity=64 **time**=0\
 > note_on channel=0 note=50 velocity=69 time=0.1875\
@@ -41,9 +41,9 @@ From here, we are able to derive the changes in note **pitch** and **duration**,
 
 ### Orbs Generator
 The **melody orbs** will flow down the lanes in a **non-random** logical fashion that will emphasise on the following:\
-1. Consecutive notes should not cluster on one single lane.\
-2. Notes that are close in pitch should appear close visually, that clearly indicate *a sense of direction* or *recurring patterns*.\
-3. If the lane pattern (musical structure) is highly repetitive, <insert bonus feature here>\
+1. Consecutive notes should not cluster on one single lane.
+2. Notes that are close in pitch should appear close visually, that clearly indicate *a sense of direction* or *recurring patterns*.
+3. If the lane pattern (musical structure) is highly repetitive, <insert bonus feature here>
 4. Some notes can give you **extra features** when you click on it (for especially difficult scenarios), to reward you with **score multipliers**, for example.
 
 We aim to design an algorithm that is as robust as possible that would work with most cases of MIDI files, so as to realise *Feature 9*.
