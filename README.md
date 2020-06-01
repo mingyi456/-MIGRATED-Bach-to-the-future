@@ -65,7 +65,7 @@ If there are better ways to handle lag and ensure synchrony, please let us know!
 ## Program Flow
 <img width="838" alt="programflow" src="https://user-images.githubusercontent.com/65040076/83293191-fe27e480-a21d-11ea-8e67-398cc8cc2b75.png">
 
-![](D:\NUS Mods and Info\Orbital 2020\Bach-to-the-future\Program Flow.svg)
+![](./Program Flow.svg)
 
 ## [Project Log](https://docs.google.com/spreadsheets/d/1cvhibKC6C2piTqb6wom9Ge8BIiDPPLDGw0afi3QZ9Ro/edit?usp=sharing)
 
