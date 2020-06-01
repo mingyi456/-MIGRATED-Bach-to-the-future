@@ -63,10 +63,7 @@ If there are better ways to handle lag and ensure synchrony, please let us know!
 | * | experienced player/ tinkerer | To be able to input my own MIDI files into the game to play | Play a wider range of possible music tracks |
 
 ## Program Flow
-<img width="838" alt="programflow" src="https://user-images.githubusercontent.com/65040076/83293191-fe27e480-a21d-11ea-8e67-398cc8cc2b75.png">
-
-![Alt text](./Program Flow.svg)
-<img src="./Program Flow.svg">
+<img alt="Program Flow" src="./Program Flow.svg">
 
 
 
