@@ -48,6 +48,12 @@ The **melody orbs** will flow down the lanes in a **non-random** logical fashion
 
 We aim to design an algorithm that is as robust as possible that would work with most cases of MIDI files, so as to realise *Feature 9*.
 
+![gif1](https://user-images.githubusercontent.com/65040076/83422957-dffbf780-a45c-11ea-861f-d47424d4a67f.gif)\
+Visualisation of the notes in song with short notes (Bach Cello Suite)
+
+![gif2](https://user-images.githubusercontent.com/65040076/83423001-f1dd9a80-a45c-11ea-91e2-10b8168884fb.gif)\
+Visualisation of the notes in song with longer notes (Twinkle Twinkle Little Star)
+
 ### Synchronising audio, visual and keystrokes
 ***------NOT ENTIRELY SURE AS OF NOW------***\
 \
