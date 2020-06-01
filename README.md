@@ -22,9 +22,9 @@ To convert the wealth of classical [MIDI files](https://en.scratch-wiki.info/wik
 | 4 | Achievements | To encourage players to strive for excellence or even seek out easter eggs. |
 | 5 | Pausing and Resuming | To prevent untimely interruptions from causing players to lose progress and possibly to accommodate music tracks that are too long to realistically play in a single short session (about 10 minutes) |
 | 6 | Saving | Provision of multiple user profiles |
-| 7 | Tutorial/Practice Mode | To orientate new players around the game | 
-| 8 | Options Page | To toggle relevant settings related to the game |
-| 9 | Possible option to upload ur own MIDI creations | User-created content |
+| 7 | Tutorial/Practice Mode | To orientate new players around the game |
+| 8 | Options Page | To toggle relevant settings related to the game, even to rebind the keys for different keyboard layouts/ controllers. |
+| 9 | Possible option to upload own MIDI files | To improve replayability for those who played all available stages |
 
 ## Implementation
 #### Modules used: Mido, Pygame, concurrent.futures, time
@@ -60,10 +60,12 @@ If there are better ways to handle lag and ensure synchrony, please let us know!
 |:--|:--|:--|:--|
 | *** | new player | To face an appropriate level of difficulty | Feel drawn into the game and play the game more |
 | *** | returning player | To have different features and different levels | Not feel bored replaying the game |
+| * | experienced player/ tinkerer | To be able to input my own MIDI files into the game to play | Play a wider range of possible music tracks |
 
 ## Program Flow
 <img width="838" alt="programflow" src="https://user-images.githubusercontent.com/65040076/83293191-fe27e480-a21d-11ea-8e67-398cc8cc2b75.png">
 
+![](D:\NUS Mods and Info\Orbital 2020\Bach-to-the-future\Program Flow.svg)
 
 ## [Project Log](https://docs.google.com/spreadsheets/d/1cvhibKC6C2piTqb6wom9Ge8BIiDPPLDGw0afi3QZ9Ro/edit?usp=sharing)
 
@@ -74,3 +76,4 @@ If there are better ways to handle lag and ensure synchrony, please let us know!
     <td align="center"><img src="https://avatars.githubusercontent.com/mingyi456" width="100px;" alt=""/><br /><sub><b>Chen Mingyi</b></sub><br /></td>
   </tr>
 <table>
+
