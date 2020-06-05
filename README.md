@@ -27,7 +27,7 @@ To convert the wealth of classical [MIDI files](https://en.scratch-wiki.info/wik
 | 9 | Possible option to upload own MIDI files | To improve replayability for those who played all available stages and want to experience more tracks that are not available pre-packaged (e.g. tracks that the user may own the rights to but is not otherwise freely available) |
 
 ## Implementation
-#### Modules used: Mido, Pygame, concurrent.futures, time
+#### Modules used: Mido, Pygame, concurrent.futures, time and pickle
 ### Extracting the melody information
 Applying `mido.MidiFile(filename)`, we are able to parse the MIDI message bytes into messages of the following form:
 
