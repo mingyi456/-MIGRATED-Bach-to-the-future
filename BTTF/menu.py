@@ -1,4 +1,4 @@
-from pygame, os, sys
+import pygame, os, sys
 from pygame.locals import *
 from statemanager import *
 from bitmapfont import *
