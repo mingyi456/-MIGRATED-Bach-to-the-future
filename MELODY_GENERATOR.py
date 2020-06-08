@@ -2,7 +2,7 @@ import mido
 import time, concurrent.futures
 from vlc import MediaPlayer
 
-filename = 'sarabande.midi'
+filename = 'bach_minuet.midi'
 
 mid = mido.MidiFile(filename)
 
@@ -34,10 +34,10 @@ def notesFilter(mid):
     abs_time = 0
     for msg in filter1:
         abs_time += msg.time
-        msg.time = abs_time
+        msg.time = abs_time  # write over
     filter2 = list(filter(lambda x: not x.is_meta, filter1))  # remove meta_messages
 
-    note_on = list(filter(lambda x: x.type == 'note_on', filter2))
+    note_on = list(filter(lambda x: x.type == 'note_on' and x.velocity > 0, filter2))
     note_off = list(filter(lambda x: x.type == 'note_off' or x.velocity == 0, filter2))
     zipped = []
     for i in note_on:
@@ -54,7 +54,7 @@ def notesFilter(mid):
         note = _[0].note
         result.append(Note(start_time, end_time, note))
 
-    #Filter out the MELODY (TOP NOTE)
+    # Filter out the MELODY (TOP NOTE)
     melody = {}
     for note in result:
         if note.start_time not in melody:
