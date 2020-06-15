@@ -1,4 +1,5 @@
 import pygame
+import pygame.fastevent
 from time import sleep
 from time import time as tk_time
 from sys import exit
@@ -7,15 +8,18 @@ import rgb
 from os import listdir
 
 pygame.init()
+pygame.fastevent.init()
 font= pygame.font.SysFont('Comic Sans MS', 30)
 SIZE= WIDTH, HEIGHT= 800,600
-FPS= 30
+FPS= 120
 screen= pygame.display.set_mode(SIZE)
 pygame.display.set_caption("Prototype 1")
 f_t= 1/float(FPS)
 
 files= listdir(".\\tracks")
 print(files)
+
+clock= pygame.time.Clock()
 
 
 def chk_exit(events):
@@ -32,6 +36,15 @@ def chk_slp(st, gt):
 		sleep(del_t)
 		return c_t, 0, gt + f_t
 
+def chk_slp2(st):
+	del_t= f_t - clock.tick(FPS)
+	if del_t > 0:
+		print(f"Lag : {-del_t}s")
+		return tk_time() - st, del_t
+
+	else:
+		return tk_time() - st, 0
+
 
 def StartGame(file_name):
 	notes= note_parser.parse(file_name)
@@ -43,12 +56,14 @@ def StartGame(file_name):
 	pygame.mixer.music.play()
 	
 	while True:
-		events= pygame.event.get()
+		events= pygame.fastevent.get()
 		chk_exit(events)
 		screen.fill((255, 255, 255))
 		draw_notes(notes, gt)
 		pygame.display.flip()
-		st, lag, gt= chk_slp(st, gt)
+		# st, lag, gt= chk_slp(st, gt)
+		gt, lag= chk_slp2(st)
+
 
 def EndGame():
 	end_buttons= []
@@ -60,7 +75,7 @@ def EndGame():
 	pygame.mixer.music.stop()
 
 	while True:
-		events= pygame.event.get()
+		events= pygame.fastevent.get()
 
 		chk_exit(events)
 
@@ -160,7 +175,7 @@ def MainMenu(st= tk_time(), lag= 0, gt= 0):
 	button( (375, 450), (50, 50), rgb.BLACK, name= "Choose Level")
 	button( (375, 150), (50, 50), rgb.BLACK, name= "Quit")
 	while True:
-		events= pygame.event.get()
+		events= pygame.fastevent.get()
 
 		chk_exit(events)
 
@@ -188,7 +203,7 @@ def SelectStage(st= tk_time(), lag= 0, gt= 0):
 		button( (375, i*100 + 150), (50, 50), rgb.BLACK, name= file, group= buttons_stages)
 
 	while True:
-		events= pygame.event.get()
+		events= pygame.fastevent.get()
 
 		chk_exit(events)
 
