@@ -2,8 +2,8 @@ import pygame, os, sys
 from pygame.locals import *
 
 # Our imports
-from statemanager import *
-from interstitial import *
+from statemanager import Game
+from interstitial import InterstitialState
 from menu import MainMenuState
 from BTTFgame import PlayGameState
 

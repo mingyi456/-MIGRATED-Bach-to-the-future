@@ -29,6 +29,9 @@ class GameState:
         '''
         pass
 
+    def draw(self, surface):
+        pass
+
 class Game:
     def __init__(self, gameName, width, height):
         pygame.init()
