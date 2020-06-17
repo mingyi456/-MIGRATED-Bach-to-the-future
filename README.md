@@ -1,3 +1,20 @@
+#### Current Objectives:
+- [x] Single melody-line filter
+- [ ] Double melody-line filter
+- [ ] Minimising visual lags
+- [ ] Framework for registering and identifying correct keystrokes from the wrong ones
+	- Refer to keytest.py for current implementation of `pygame.event.get()`, using `event.type == KEYDOWN` and `event.type == KEYUP` for **simultaneous keystroke registration**
+	- For identification of correct and wrong or invalid keystrokes, there are multiple methods to realise this feature:
+		- Through careful logging of the keystroke time since the game has begun, matching the keystroke time with the time attributes of the orbs.
+			- PROBLEM: Visual lags may lead to inaccurate perceptions and thus inconsistent assessment of keystrokes since all time attributes are preset to the orbs.
+			- Possible SOLUTIONS: Quantify and compensate for the lag? Completely eliminate lag?
+		- Using CONDITIONAL collision detection.
+			- PROBLEM: May be processor heavy and thus worsen lag
+			- Possible SOLUTIONS: Optimisation.
+- [ ] Storyline cut scenes, educational elements, Achievements
+- [ ] Visual sprites. Pixel Art Creation.
+
+---
 #orbital2020 #LastMinuteWonders
 # Bach to the Future
 A classical music game that is played directly from a computer keyboard.
@@ -72,7 +89,6 @@ If there are better ways to handle lag and ensure synchrony, please let us know!
 <img alt="Program Flow" src="./Tech Demo and Resources/Program Flow.svg">
 
 
-
 ## [Project Log](https://docs.google.com/spreadsheets/d/1cvhibKC6C2piTqb6wom9Ge8BIiDPPLDGw0afi3QZ9Ro/edit?usp=sharing)
 
 ## Authors
@@ -82,4 +98,3 @@ If there are better ways to handle lag and ensure synchrony, please let us know!
     <td align="center"><img src="https://avatars.githubusercontent.com/mingyi456" width="100px;" alt=""/><br /><sub><b>Chen Mingyi</b></sub><br /></td>
   </tr>
 <table>
-
