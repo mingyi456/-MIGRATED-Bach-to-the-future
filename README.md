@@ -1,6 +1,7 @@
 #### Current Objectives:
 - [x] Single melody-line filter
-- [ ] Double melody-line filter
+- [ ] Double or higher-level melody-line filter
+	- Must ensure there are no overlapping occurring within one lane.
 - [ ] Minimising visual lags
 - [ ] Framework for registering and identifying correct keystrokes from the wrong ones
 	- Refer to keytest.py for current implementation of `pygame.event.get()`, using `event.type == KEYDOWN` and `event.type == KEYUP` for **simultaneous keystroke registration**
