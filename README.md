@@ -1,6 +1,22 @@
+#### Screens to integrate to FSM:
+- [ ] Song Select, High Score for each song
+- [ ] Player Data
+	- Score
+	- Lives Left
+	- Combo
+	- Progress Bar
+- [ ] Storyline cut scenes, educational elements, Achievements
+- [ ] Options
+	- Keymap
+	- ?Screensize
+	- Volume Control
+	- ?Upload Midi
+	- Switch/Add Profiles
+
 #### Current Objectives:
+- [ ] Finalising List of Songs
 - [x] Single melody-line filter
-- [ ] Double or higher-level melody-line filter
+- [x] Double or higher-level melody-line filter
 	- Must ensure there are no overlapping occurring within one lane.
 - [ ] Minimising visual lags
 - [ ] Framework for registering and identifying correct keystrokes from the wrong ones
@@ -12,7 +28,10 @@
 		- Using CONDITIONAL collision detection.
 			- PROBLEM: May be processor heavy and thus worsen lag
 			- Possible SOLUTIONS: Optimisation.
-- [ ] Storyline cut scenes, educational elements, Achievements
+- [ ] Reliable MIDI Audio Handling that matches the visuals
+	- Play
+	- Pause
+	- Tempo Control (KIV)
 - [ ] Visual sprites. Pixel Art Creation.
 
 ---

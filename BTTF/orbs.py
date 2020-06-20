@@ -25,11 +25,11 @@ class OrbsController:
         self.positions = [i*35 for i in range(self.lanes)]
 
         #generating orbs
-        reference_note = beat_map[0][1].note
+        reference_note = beat_map2[0][1].note
         lane = 0
 
         y = 0
-        for beat in beat_map:
+        for beat in beat_map2:
             # (relativeTime, Note object)
             diff = beat[1].note - reference_note
             lane = (lane + diff) % self.lanes
@@ -44,14 +44,12 @@ class OrbsController:
 
 
 
-    def update(self, gameTime):
-        self.currentframecount -= gameTime
-        if self.currentframecount < 0:
-            self.currentframecount += self.framecount
-            for i in self.orbs:
-                i.y += 2
-                if i.y > 650:
-                    self.orbs.remove(i)
+    def update(self, gameTime):  # There is inherent lag due to choppy refresh rate
+        self.currentframecount += self.framecount
+        for i in self.orbs:
+            i.y += 1.6
+            if i.y > 650:
+                self.orbs.remove(i)
 
 class OrbView:
     def __init__(self, OrbsController, imgpath):
@@ -72,7 +70,7 @@ pygame.display.set_caption('Test')
 
 black = pygame.Color(0, 0, 0)
 
-orbsController = OrbsController(800, 10, 20)
+orbsController = OrbsController(800, 4, 20)
 orbView = OrbView(orbsController, 'longrectangle.png')
 
 player.play()
@@ -88,5 +86,5 @@ while True:
     orbView.render(mainSurface)
     orbsController.update(fpsClock.get_time())
     pygame.display.update()
-    fpsClock.tick(60)
+    fpsClock.tick_busy_loop(60)
     # always keep refresh frequency below fps

@@ -2,7 +2,7 @@ import mido
 import time, concurrent.futures
 import pygame
 
-filename = '/Users/chence08/PycharmProjects/work/BTTF/twinkle-twinkle-little-star.midi'
+filename = '/Users/chence08/PycharmProjects/orbital/Twinkle Twinkle Little Star MIDI/Jesu-Joy-Of-Man-Desiring.midi'
 
 mid = mido.MidiFile(filename)
 
@@ -13,6 +13,8 @@ TO CONVERT (ANY) MIDI FILES INTO THE FOLLOWING FORM
 2. ONLY FILTER OUT TOP NOTES (FOR NOW)
 3. EVERY NOTE MUST HAVE BEGINNING AND END.
 4. COMPILE IT INTO A LIST
+5. BEGIN BY IMPLEMENTING A ONE-KEY PLAYABLE MAP
+6. SCALE UPWARDS ACCORDING TO LANE NUMBERS
 '''
 
 
@@ -71,13 +73,14 @@ def notesFilter(mid):
         note = _[0].note
         result.append(Note(start_time, end_time, note))
 
-    # Filter out the MELODY (TOP NOTE)
+    # Filter out the TOP NOTE of every unique start_time
     melody = {}
     for note in result:
         if note.start_time not in melody:
             melody[note.start_time] = note
         elif note.note > melody[note.start_time].note:
             melody[note.start_time] = note
+
     return list(melody.items())
 
 time_map = notesFilter(mid)
@@ -85,6 +88,36 @@ time_map = notesFilter(mid)
 #     print(i)
 # print(mid.length)
 # print(len(time_map))
+
+##########################
+# FOR ONE KEY MODE
+def melodyStreamline(lst):
+    melody = []
+    leftover = []
+    cut_off = 0
+    for start_time, note in lst:
+        if start_time >= cut_off:
+            melody.append(note)
+            cut_off = note.end_time
+        else:
+            leftover.append(note)
+    return melody, leftover
+
+melody = melodyStreamline(time_map)[0]
+leftover = melodyStreamline(time_map)[1]
+print(len(melody), len(leftover))
+
+def relativeTime2(lst):
+    result = [(lst[0].start_time, lst[0])]
+    for i in range(1, len(lst)):
+        rel_time = lst[i].start_time - lst[i-1].start_time
+        result.append((rel_time, lst[i]))
+    return result
+
+beat_map2 = relativeTime2(melody)
+
+###########################
+
 
 def relativeTime(lst):
     result = [(lst[0][0], lst[0][1])]
@@ -95,15 +128,22 @@ def relativeTime(lst):
 
 beat_map = relativeTime(time_map)
 # for i in beat_map:
-#     print(i)
+#     print(i[1].note)
 # print(len(beat_map))
 
+NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+NOTES_IN_OCTAVE = len(NOTES)
+def number_to_note(number: int) -> tuple:
+    assert number >= 0 and number <= 127, "number should be between 0 and 127"
+    octave = number // NOTES_IN_OCTAVE - 1
+    note = NOTES[number % NOTES_IN_OCTAVE]
+
+    return note, octave
+
 def play(lst):
-    beat = 0
     for i in lst:
-        beat += 1
         time.sleep(i[0])
-        print(beat)
+        print(number_to_note(i[1].note))
     time.sleep(5)
 
 
@@ -112,9 +152,9 @@ player = pygame.mixer.music
 player.load(filename)
 
 
-# if __name__ == '__main__':
-#     player.play()
-#     play(beat_map)
+if __name__ == '__main__':
+    player.play()
+    play(beat_map2)
 
 
 # Suddenly not working so well...
