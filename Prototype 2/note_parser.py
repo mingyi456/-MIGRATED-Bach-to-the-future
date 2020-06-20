@@ -2,7 +2,7 @@ import mido
 import time, concurrent.futures
 from vlc import MediaPlayer
 
-filename = 'bach_minuet.midi'
+filename = '.\\tracks\\bach_minuet.midi'
 
 mid = mido.MidiFile(filename)
 

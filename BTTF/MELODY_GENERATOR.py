@@ -2,7 +2,7 @@ import mido
 import time, concurrent.futures
 import pygame
 
-filename = '/Users/chence08/PycharmProjects/orbital/Twinkle Twinkle Little Star MIDI/Jesu-Joy-Of-Man-Desiring.midi'
+filename = '..\\Prototype 2\\tracks\\beethoven_furelise.mid'
 
 mid = mido.MidiFile(filename)
 

@@ -8,9 +8,9 @@ KIV: Consider using the JSON file format and using the included JSON parser in t
 
 from os.path import sep
 
-SIZE= 800, 600
+SIZE= WIDTH, HEIGHT= 800, 600
 
-FPS= 60
+FPS= 30
 
 NUM_LANES= 4
 
