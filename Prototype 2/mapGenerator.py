@@ -97,6 +97,7 @@ def beatmapGenerator(filename: str, onekey: bool = False):
 
     return relativeTime(melodyNotes)
 
+
 def playBeatmap(lst):
     for i in lst:
         time.sleep(i[0])

@@ -219,18 +219,51 @@ class AchievementsState(BaseState):
 		for line in self.text:
 			self.fsm.screen.blit(line[0], line[1])
 		
+class OrbModel:
+    def __init__(self, x, y, duration, color=None):
+        self.length = duration * 50  # pixels
+        self.width = 100
 
-	
+        self.x = x
+        self.y = y
+        self.color = color
+
 class PlayGameState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
 		self.button_manager.add_button("Back", (50, 50), (50, 50), ret= "Back", key= "backspace")
 		self.button_manager.add_keystroke("Pause", 'p')
 		self.isPaused= False
+		self.beatmap = None
+		self.orbs = []
+		self.image = pygame.image.load('longrectangle.png')
 	
 	def enter(self, args):
 		file= args["file_name"]
 		print(f"File name = {file}")
+		self.beatmap = beatmapGenerator('./tracks/' + file)
+		lanes = 4
+		positions = [i * 35 for i in range(5, lanes+5)]
+
+		# generating orbs
+		reference_note = self.beatmap[0][1].note
+		lane = 0
+
+		y = 0
+		for beat in self.beatmap:
+			# (relativeTime, Note object)
+			diff = beat[1].note - reference_note
+			lane = (lane + diff) % lanes
+			x = positions[lane]
+			y -= beat[0] * 100
+			duration = beat[1].duration
+			orb = OrbModel(x, y, duration)
+			self.orbs.append(orb)
+			reference_note = beat[1].note
+
+		pygame.mixer.music.load('./tracks/' + file)
+		pygame.mixer.music.play()
+
 		
 	def update(self, game_time, lag):
 		events= pygame.event.get()
@@ -249,12 +282,20 @@ class PlayGameState(BaseState):
 		elif action == "Pause":
 			print("Pause!")
 			self.isPaused= True
+
+		for i in self.orbs:
+			i.y += 3.5 * (self.fsm.f_t + lag) / self.fsm.f_t
+			if i.y > 650:
+				self.orbs.remove(i)
 		
 	
 
 	def draw(self):
 		self.fsm.screen.fill(rgb.WHITE)
 		self.button_manager.draw_buttons(self.fsm.screen)
+		for i in self.orbs:
+			self.fsm.screen.blit(self.image, (i.x, i.y), (0, 0, 30, i.length))
+
 		
 
 		

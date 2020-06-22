@@ -1,6 +1,6 @@
 import pygame, os, sys
 from pygame.locals import *
-from MELODY_GENERATOR import *
+from mapGenerator import *
 
 
 
@@ -25,11 +25,11 @@ class OrbsController:
         self.positions = [i*35 for i in range(self.lanes)]
 
         #generating orbs
-        reference_note = beat_map2[0][1].note
+        reference_note = beatmap[0][1].note
         lane = 0
 
         y = 0
-        for beat in beat_map2:
+        for beat in beatmap:
             # (relativeTime, Note object)
             diff = beat[1].note - reference_note
             lane = (lane + diff) % self.lanes
@@ -44,7 +44,7 @@ class OrbsController:
 
 
 
-    def update(self, gameTime):  # There is inherent lag due to choppy refresh rate
+    def update(self):  # There is inherent lag due to choppy refresh rate
         self.currentframecount += self.framecount
         for i in self.orbs:
             i.y += 1.6
@@ -63,28 +63,28 @@ class OrbView:
 
 
 
-pygame.init()
-fpsClock = pygame.time.Clock()
-mainSurface = pygame.display.set_mode((800, 600))
-pygame.display.set_caption('Test')
-
-black = pygame.Color(0, 0, 0)
-
-orbsController = OrbsController(800, 4, 20)
-orbView = OrbView(orbsController, 'longrectangle.png')
-
-player.play()
-
-while True:
-    mainSurface.fill(black)
-
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-
-    orbView.render(mainSurface)
-    orbsController.update(fpsClock.get_time())
-    pygame.display.update()
-    fpsClock.tick_busy_loop(60)
-    # always keep refresh frequency below fps
+# pygame.init()
+# fpsClock = pygame.time.Clock()
+# mainSurface = pygame.display.set_mode((800, 600))
+# pygame.display.set_caption('Test')
+#
+# black = pygame.Color(0, 0, 0)
+#
+# orbsController = OrbsController(800, 4, 20)
+# orbView = OrbView(orbsController, 'longrectangle.png')
+#
+# player.play()
+#
+# while True:
+#     mainSurface.fill(black)
+#
+#     for event in pygame.event.get():
+#         if event.type == QUIT:
+#             pygame.quit()
+#             sys.exit()
+#
+#     orbView.render(mainSurface)
+#     orbsController.update(fpsClock.get_time())
+#     pygame.display.update()
+#     fpsClock.tick_busy_loop(60)
+#     # always keep refresh frequency below fps
