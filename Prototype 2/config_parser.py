@@ -20,6 +20,15 @@ def ch_config(key, new_val):
 	file.close()
 	reload(config)
 
+def reset_config():
+	backup_file= open("config.py", 'r')
+	backup_file_str= backup_file.read()
+	backup_file.close()
+	target= open("config.py", 'w')
+	target.write(backup_file_str)
+	target.close()
+	reload(config)
+
 if __name__ == "__main__":
 	configs= dir(config)
 	print(configs)

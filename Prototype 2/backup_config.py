@@ -8,9 +8,9 @@ KIV: Consider using the JSON file format and using the included JSON parser in t
 
 from os.path import sep
 
-SIZE= WIDTH, HEIGHT= 800, 600
+SIZE= 800, 600
 
-FPS= 30
+FPS= 60
 
 NUM_LANES= 4
 
@@ -33,25 +33,3 @@ if __name__ == "__main__":
         print("Configuration passed")
     except:
         print("Something failed!")
-
-# Backup config
-
-'''
-from os.path import sep
-SIZE= WIDTH, HEIGHT= 800, 600
-FPS= 30
-NUM_LANES= 4
-WINDOW_TITLE= "Prototype 2"
-DEF_FONT= "Comic Sans MS"
-DEF_FONT_SIZE= 30
-TRACKS_DIR= f".{sep}tracks"
-if __name__ == "__main__":
-    try:
-        from os import listdir
-        listdir(TRACKS_DIR)
-        from pygame import font
-        font.init()
-        font.SysFont(DEF_FONT, DEF_FONT_SIZE)
-    except:
-        print("Failed!")
-'''

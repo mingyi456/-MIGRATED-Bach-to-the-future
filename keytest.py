@@ -7,6 +7,7 @@ fpsClock = pygame.time.Clock()
 #surface = pygame.display.set_mode((640, 480))
 time_elapsed = 0
 time = str(datetime.timedelta(seconds=time_elapsed))
+pygame.display.set_mode((600, 400))
 
 while True:
     keys = pygame.key.get_pressed()
