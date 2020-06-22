@@ -29,7 +29,7 @@ def number_to_note(number: int) -> tuple:
 def beatmapGenerator(filename: str, onekey: bool = False):
     """
 
-    :return list of (relative_time, Note)
+    :return: list of (relative_time, Note)
     :param filename: path to the MIDI file
     :param onekey: to allow the game to be playable with one finger only, i.e. no time overlap between notes
     """
@@ -45,8 +45,8 @@ def beatmapGenerator(filename: str, onekey: bool = False):
     filter1 = list(filter(lambda x: x.type == 'note_on' or x.type == 'note_off', mid))
 
     # 3. Split the list into on and off, before pairing the notes
-    note_on = list(filter(lambda x: x.type == 'note_on' and x.velocity > 0, filter1))
-    note_off = list(filter(lambda x: x.velocity == 0 or x.type == 'note_off', filter1))
+    note_on = list(filter(lambda x: x.velocity > 0, filter1))
+    note_off = list(filter(lambda x: x.velocity == 0, filter1))
     note_pairs = []
     for i in note_on:
         for j in note_off:

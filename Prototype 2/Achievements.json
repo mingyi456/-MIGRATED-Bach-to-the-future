@@ -1,0 +1,27 @@
+[
+  {
+    "name" : "Ressurection",
+    "description" : "Successfully complete your first piece!",
+    "achieved" : false
+  },
+  {
+    "name" : "Der Kappelmeister",
+    "description" : "Finish the Baroque Era",
+    "achieved" : false
+  },
+  {
+    "name" : "Enlightened",
+    "description" : "Finish the Classical Era",
+    "achieved" : false
+  },
+  {
+    "name" : "Let me spill my heart!",
+    "description" : "Finish the Romantic Era",
+    "achieved" : false
+  },
+  {
+    "name" : "Modern Times",
+    "description" : "Finish the 20th Century",
+    "achieved" : false
+  }
+]
