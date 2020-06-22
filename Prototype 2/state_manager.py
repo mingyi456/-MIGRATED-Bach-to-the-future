@@ -7,6 +7,7 @@ import time
 from buttons import Button_Manager
 from mapGenerator import beatmapGenerator
 from config_parser import reset_config
+from readJSON import list_of_strings as data
 
 
 class State_Manager():
@@ -61,7 +62,8 @@ class MainMenuState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
 		self.button_manager.add_button("Start (Space)", (50, 50), (50, 50), ret= "Start", key= "space")
-		self.button_manager.add_button("Options", (50, 150), (50, 50))		
+		self.button_manager.add_button("Options", (50, 150), (50, 50))
+		self.button_manager.add_button("Achievements", (50, 250), (50, 50))
 		self.button_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT -100), (50, 50), ret= "Exit", key= "escape")
 		
 	def update(self, game_time, lag):
@@ -79,6 +81,9 @@ class MainMenuState(BaseState):
 		
 		elif action == "Options":
 			self.fsm.ch_state(SettingsState(self.fsm))
+		
+		elif action == "Achievements":
+			self.fsm.ch_state(AchievementsState(self.fsm))
 				
 	def draw(self):
 		self.fsm.screen.fill(rgb.WHITE)
@@ -188,9 +193,33 @@ class ChSettingState(BaseState):
 		self.fsm.screen.blit(self.val_text[0], self.val_text[1])
 
 
-class AchivementsState(BaseState):
+class AchievementsState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
+		self.button_manager.add_button("Back", (50, 50), (50, 50))
+		print(data)
+		self.font= pygame.font.SysFont('Comic Sans MS', 24)
+		self.text= []
+		for i, line in enumerate(data):
+		
+			self.text.append((self.font.render(line, 1, rgb.BLACK), (200, i*50+50, 50, 50)))
+		
+	def update(self, game_time, lag):
+		events= pygame.event.get()
+		for event in events:
+			if event.type == pygame.QUIT:
+				self.fsm.ch_state(ExitState(self.fsm))
+		action= self.button_manager.chk_buttons(events)
+		if action == "Back":
+			self.fsm.ch_state(MainMenuState(self.fsm))
+	
+	def draw(self):
+		self.fsm.screen.fill(rgb.WHITE)
+		self.button_manager.draw_buttons(self.fsm.screen)
+		for line in self.text:
+			self.fsm.screen.blit(line[0], line[1])
+		
+
 	
 class PlayGameState(BaseState):
 	def __init__(self, fsm):
@@ -221,8 +250,7 @@ class PlayGameState(BaseState):
 			print("Pause!")
 			self.isPaused= True
 		
-
-		
+	
 
 	def draw(self):
 		self.fsm.screen.fill(rgb.WHITE)
