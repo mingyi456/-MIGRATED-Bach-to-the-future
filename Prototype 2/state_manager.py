@@ -7,7 +7,7 @@ import time
 from buttons import Button_Manager
 from mapGenerator import beatmapGenerator
 from config_parser import reset_config
-from readJSON import list_of_strings as data
+from readJSON import data
 
 
 class State_Manager():
@@ -198,11 +198,16 @@ class AchievementsState(BaseState):
 		super().__init__(fsm)
 		self.button_manager.add_button("Back", (50, 50), (50, 50))
 		print(data)
-		self.font= pygame.font.SysFont('Comic Sans MS', 24)
+		self.name_font= pygame.font.SysFont('Comic Sans MS', 24)
+		self.des_font= pygame.font.SysFont('Comic Sans MS', 18)
 		self.text= []
-		for i, line in enumerate(data):
-		
-			self.text.append((self.font.render(line, 1, rgb.BLACK), (200, i*50+50, 50, 50)))
+		for i, achievement in enumerate(data):
+			if achievement["achieved"]:
+				font_col= rgb.GREEN
+			else:
+				font_col= rgb.RED
+			self.text.append((self.name_font.render(achievement["name"], 1, font_col), (200, i*80+50, 50, 50)))
+			self.text.append((self.des_font.render(achievement["description"], 1, font_col), (200, i*80+85, 50, 50)))
 		
 	def update(self, game_time, lag):
 		events= pygame.event.get()
