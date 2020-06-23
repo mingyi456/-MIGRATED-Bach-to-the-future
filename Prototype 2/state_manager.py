@@ -206,8 +206,13 @@ class AchievementsState(BaseState):
 				font_col= rgb.GREEN
 			else:
 				font_col= rgb.RED
+<<<<<<< HEAD
 			self.text.append((self.name_font.render(achievement["name"], 1, font_col), (200, i*80+50, 50, 50)))
 			self.text.append((self.des_font.render(achievement["description"], 1, font_col), (200, i*80+85, 50, 50)))
+=======
+			self.text.append((self.font.render(achievement["name"], 1, font_col), (200, i*80+50, 50, 50)))
+			self.text.append((self.font.render(achievement["description"], 1, font_col), (200, i*80+80, 50, 50)))
+>>>>>>> 76c69106e1364cadf84aae6e1636d184dbacb80a
 		
 	def update(self, game_time, lag):
 		events= pygame.event.get()
