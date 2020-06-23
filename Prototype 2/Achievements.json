@@ -1,27 +1,22 @@
 [
   {
-    "name" : "Ressurection",
-    "description" : "Successfully complete your first piece!",
-    "achieved" : true
+    "name" : "Resurrection",
+    "description" : "Successfully complete your first piece!"
   },
   {
-    "name" : "Der Kappelmeister",
-    "description" : "Finish the Baroque Era",
-    "achieved" : false
+    "name" : "Der Kapellmeister",
+    "description" : "Finish the Baroque Era"
   },
   {
     "name" : "Enlightened",
-    "description" : "Finish the Classical Era",
-    "achieved" : false
+    "description" : "Finish the Classical Era"
   },
   {
     "name" : "Let me spill my heart!",
-    "description" : "Finish the Romantic Era",
-    "achieved" : false
+    "description" : "Finish the Romantic Era"
   },
   {
     "name" : "Modern Times",
-    "description" : "Finish the 20th Century",
-    "achieved" : false
+    "description" : "Finish the 20th Century"
   }
 ]
