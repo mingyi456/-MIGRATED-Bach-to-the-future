@@ -25,7 +25,7 @@ CONSIDER USING OTHER LIBRARIES TO HANDLE THE PLAYING.
 Notes: there exists a module midi2audio that can be used to synthesis and play midi. KIV.
 '''
 
-pygame.mixer.music.load('music.mid')
+pygame.mixer.music.load('Fate Symphony.wav')
 song = pygame.mixer.music
 song.play(-1)
 

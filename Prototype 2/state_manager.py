@@ -12,7 +12,7 @@ from time import sleep
 
 
 class State_Manager():
-	def __init__(self, TITLE= config.WINDOW_TITLE,SIZE= config.SIZE, FPS= config.FPS, TRACKS_DIR= config.TRACKS_DIR):
+	def __init__(self, TITLE= config.WINDOW_TITLE,SIZE= config.SIZE, FPS= config.FPS, TRACKS_DIR= config.TRACKS_DIR, WAV_DIR= config.WAV_DIR):
 		self.curr_state= None
 		pygame.init()
 		pygame.display.set_caption(TITLE)
@@ -24,6 +24,7 @@ class State_Manager():
 		self.time= 0
 		self.lag= 0
 		self.TRACKS_DIR= TRACKS_DIR
+		self.WAV_DIR= WAV_DIR
 
 	def update(self):
 		self.curr_state.update(self.time, self.lag)
@@ -250,7 +251,8 @@ class PlayGameState(BaseState):
 	def enter(self, args):
 		self.file= args["file_name"]
 		print(f"File name = {self.file}")
-		file_path= f".{config.sep}tracks{config.sep}{self.file}"
+		file_path= f"{self.fsm.TRACKS_DIR}{self.file}"
+		self.wav_path= f"{self.fsm.WAV_DIR}{self.file}".replace("midi", "wav").replace("mid", "wav")
 		self.beatmap = beatmapGenerator(file_path)
 		lanes = 4
 		positions = [i * 35 for i in range(5, lanes+5)]
@@ -271,7 +273,7 @@ class PlayGameState(BaseState):
 			self.orbs.append(orb)
 			reference_note = beat[1].note
 
-		pygame.mixer.music.load(file_path)
+		pygame.mixer.music.load(self.wav_path)
 		pygame.mixer.music.play()
 
 		
@@ -290,8 +292,13 @@ class PlayGameState(BaseState):
 				self.fsm.ch_state(MainMenuState(self.fsm))
 			
 			elif action == "Pause":
-				self.isPlaying= not self.isPlaying
-			
+				if self.isPlaying:
+					self.isPlaying= False
+					pygame.mixer.music.pause()
+				else:
+					self.isPlaying= True
+					pygame.mixer.music.unpause()
+	
 			elif action == "Sleep":
 				sleep(5)
 		
