@@ -34,15 +34,15 @@ class KeyStroke:
 		if ret is None:
 			self.ret= name
 		else:
-			self.ret= name
+			self.ret= ret	
 
-class Button_Manager:
+class ActionManager:
 	def __init__(self):
 		self.buttons= []
 		self.scroll_buttons= []
 		self.keystrokes= []
 	
-	def add_button(self, name, pos, size, ret=None, key= None, colour= rgb.GREY,\
+	def add_button(self, name, pos, size, ret=None, key= None, colour= rgb.GREY, \
 				font= pygame.font.SysFont(config.DEF_FONT, config.DEF_FONT_SIZE), \
 					font_colour= rgb.BLACK, hl_colour= rgb.YELLOW, sel_colour= rgb.GREEN, \
 						canScroll= False):
@@ -50,51 +50,60 @@ class Button_Manager:
 			self.scroll_buttons.append(Button(name, ret, pos, size, key, colour, font, font_colour, hl_colour, sel_colour))
 		else:
 			self.buttons.append(Button(name, ret, pos, size, key, colour, font, font_colour, hl_colour, sel_colour))
+		
+		if key != None:
+			self.keystrokes.append(KeyStroke(name, key, ret))
 	
 	def add_keystroke(self, name, key, ret= None):
 		self.keystrokes.append(KeyStroke(name, key, ret))
 	
-	def chk_buttons(self, events):
+	def chk_actions(self, events):
 		curr_pos= pygame.mouse.get_pos()
+		actions= []
+		
 		for event in events:
+			
+			if event.type== pygame.QUIT:
+				actions.append("Exit")
 	
 			if event.type == pygame.MOUSEBUTTONDOWN:
 	
 				if event.button == 1:
 	
-					for button in self.buttons:
+					for button in self.buttons + self.scroll_buttons:
 	
 						if isWithin(curr_pos, button.rect):
 							button.colour= button.sel_colour
 	
 							print(f"Button \"{button.name}\" clicked, return value : \"{button.ret}\"")
-							return button.ret
+							actions.append(button.ret)
 	
 					print(f"No buttons clicked! Cursor position : {curr_pos}")
-					return
 				
 				elif event.button == 4:
 					print("Mouse Button 4 : Scroll up")
+					
+					for button in self.scroll_buttons:
+						button.rect[1] -= 5
 				
 				elif event.button == 5:
 					print("Mouse Button 5 : Scroll down")
+					
+					for button in self.scroll_buttons:
+						button.rect[1] += 5
 	
 			elif event.type == pygame.MOUSEBUTTONUP:
 	
 				for button in self.buttons:
 					button.colour= button.def_colour
 	
-				return
-			
+
 			elif event.type == pygame.KEYDOWN:
-				for button in self.buttons:
-					if pygame.key.name(event.key) == button.key:
-						print(f"Button \"{button.name}\" keystroke {button.key} pressed, return value : \"{button.ret}\"")
-						return button.ret
+						
 				for keystroke in self.keystrokes:
 					if pygame.key.name(event.key) == keystroke.key:
 						print(f"Keystroke \"{keystroke.name}\" key \"{keystroke.key}\" pressed, return value : \"{keystroke.ret}\"")
-						return keystroke.ret
+						actions.append(keystroke.ret)
 				
 		
 		for button in self.buttons:
@@ -102,6 +111,8 @@ class Button_Manager:
 				button.colour= rgb.GREY
 			else:
 				button.colour= button.def_colour
+		
+		return actions
 		
 	def draw_buttons(self, screen):
 		for button in self.buttons:
@@ -111,4 +122,68 @@ class Button_Manager:
 	
 			pygame.draw.rect(screen, button.colour, button.rect)
 			screen.blit(text, button.rect)
+			
+		for button in self.scroll_buttons:
+			text= button.font.render(button.name, 1, button.font_colour)
+			text_len= text.get_width()
+			button.rect[2]= max( ( text_len, button.rect[2]))
+	
+			pygame.draw.rect(screen, button.colour, button.rect)
+			screen.blit(text, button.rect)
 
+
+class TextLine:
+	def __init__(self, text, font, pos, size= (50, 50), font_colour= rgb.BLACK):
+		self.content= font.render(text, True, font_colour)
+		width= max(size[0], self.content.get_width())
+		height= max(size[1], self.content.get_height())
+		self.rect= [pos[0], pos[1], width, height]
+
+		
+class TextBox:
+	def __init__(self, text, font, pos, size= (400, 50), font_colour= rgb.BLACK):
+		words= text.split(' ')
+		contents= []
+		for word in words:
+			word_img= font.render(''.join([word, ' ']), True, font_colour)
+			contents.append(word_img)
+			
+		
+		self.lines= []
+		vert_offset= 0	
+		
+		while len(contents) > 0:
+
+			line_width= contents[0].get_width()
+	
+			max_height= contents[0].get_height()		
+			
+			line= [(contents[0], [pos[0], pos[1] + vert_offset, line_width, max_height])]
+	
+			contents.remove(contents[0])
+			
+			while line_width <= size[0] and len(contents) > 0:
+				
+				curr_width= contents[0].get_width()
+				
+				curr_height= contents[0].get_height()
+				
+				line.append( (contents[0], [pos[0] + line_width, pos[1] + vert_offset, curr_width, curr_height] ))
+				
+				line_width += curr_width
+				
+				max_height= max(max_height, curr_height)
+				
+				contents.remove(contents[0])
+	
+			self.lines.append(line)
+			vert_offset += max_height
+	
+	def draw(self, screen):
+		
+		for line in self.lines:
+			for word in line:
+				screen.blit(word[0], word[1])
+		
+		
+	
