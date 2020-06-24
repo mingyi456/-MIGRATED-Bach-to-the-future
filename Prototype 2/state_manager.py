@@ -272,8 +272,9 @@ class PlayGameState(BaseState):
 			orb = OrbModel(x, y, duration)
 			self.orbs.append(orb)
 			reference_note = beat[1].note
-		chdir(f"{self.fsm.TRACKS_DIR}")
-		self.player = vlc.MediaPlayer(self.file.replace("midi", "wav").replace("mid", "wav"))
+		#chdir(f"{self.fsm.TRACKS_DIR}")
+		#self.player = vlc.MediaPlayer(self.file.replace("midi", "wav").replace("mid", "wav"))
+		self.player= vlc.MediaPlayer(self.wav_path)
 		self.player.play()
 
 		#pygame.mixer.music.load(self.wav_path)
