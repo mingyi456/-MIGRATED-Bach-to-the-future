@@ -2,14 +2,14 @@ from sys import exit
 import pygame
 import config
 import rgb
-from os import listdir
+from os import listdir, chdir
 import time
 from buttons import ActionManager, TextBox
 from mapGenerator import beatmapGenerator
 from config_parser import reset_config
 from readJSON import data
 from time import sleep
-
+import vlc
 
 class State_Manager():
 	def __init__(self, TITLE= config.WINDOW_TITLE,SIZE= config.SIZE, FPS= config.FPS, TRACKS_DIR= config.TRACKS_DIR, WAV_DIR= config.WAV_DIR):
@@ -272,9 +272,12 @@ class PlayGameState(BaseState):
 			orb = OrbModel(x, y, duration)
 			self.orbs.append(orb)
 			reference_note = beat[1].note
+		chdir(f"{self.fsm.TRACKS_DIR}")
+		self.player = vlc.MediaPlayer(self.file.replace("midi", "wav").replace("mid", "wav"))
+		self.player.play()
 
-		pygame.mixer.music.load(self.wav_path)
-		pygame.mixer.music.play()
+		#pygame.mixer.music.load(self.wav_path)
+		#pygame.mixer.music.play()
 
 		
 	def update(self, game_time, lag):
@@ -294,10 +297,12 @@ class PlayGameState(BaseState):
 			elif action == "Pause":
 				if self.isPlaying:
 					self.isPlaying= False
-					pygame.mixer.music.pause()
+					#pygame.mixer.music.pause()
+					self.player.pause()
 				else:
 					self.isPlaying= True
-					pygame.mixer.music.unpause()
+					self.player.pause()
+					#pygame.mixer.music.unpause()
 	
 			elif action == "Sleep":
 				sleep(5)
