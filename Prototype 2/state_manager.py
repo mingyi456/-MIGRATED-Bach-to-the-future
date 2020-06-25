@@ -13,6 +13,13 @@ import vlc
 
 class State_Manager():
 	def __init__(self, TITLE= config.WINDOW_TITLE,SIZE= config.SIZE, FPS= config.FPS, TRACKS_DIR= config.TRACKS_DIR, WAV_DIR= config.WAV_DIR):
+		
+		self.WAV_DIR= WAV_DIR
+		self.wav_files= {}
+		for i in listdir(self.WAV_DIR):
+			self.wav_files[i[:-4]]= vlc.MediaPlayer(f"{self.WAV_DIR}{i}")
+		print(self.wav_files)
+
 		self.curr_state= None
 		pygame.display.init()
 		pygame.font.init()
@@ -25,14 +32,8 @@ class State_Manager():
 		self.f_t= 1/FPS
 		self.time= 0
 		self.lag= 0
+		self.g_t= 0
 		self.TRACKS_DIR= TRACKS_DIR
-		self.WAV_DIR= WAV_DIR
-
-# =============================================================================
-# 		self.wav_files= []
-# 		for i in listdir(self.WAV_DIR):
-# 			self.wav_files.append(vlc.MediaPlayer(i))
-# =============================================================================
 
 	def update(self):
 		self.curr_state.update(self.time, self.lag)
@@ -285,15 +286,14 @@ class PlayGameState(BaseState):
 		font= pygame.font.SysFont('Comic Sans MS', 30)
 		TextLine("Loading...", font, (200, 200)).draw(self.fsm.screen)
 		
-		self.player= vlc.MediaPlayer(self.wav_path)
+		# self.player= vlc.MediaPlayer(self.wav_path)
+		self.wav_file= self.file.rsplit('.', 1)[0]
+		self.player= self.fsm.wav_files[self.wav_file]
 		self.player.play()
-		while not self.player.is_playing():
-			sleep(self.fsm.f_t)
 
-# =============================================================================
-# 		pygame.mixer.music.load(self.wav_path)
-# 		pygame.mixer.music.play()
-# =============================================================================
+		while not self.player.is_playing():
+ 			pygame.time.delay(2)
+
 
 		
 	def update(self, game_time, lag):
@@ -310,18 +310,6 @@ class PlayGameState(BaseState):
 			elif action == "Pause":
 				self.isPlaying= not self.isPlaying
 				self.player.pause()
-
-# =============================================================================
-# 				if self.isPlaying:
-# 					self.isPlaying= False
-# 					pygame.mixer.music.pause()
-# 					self.player.pause()
-# 				else:
-# 					self.isPlaying= True
-# 					self.player.pause()
-# 					pygame.mixer.music.unpause()
-# =============================================================================
-	
 		
 		if self.isPlaying:
 			for i in self.orbs:
@@ -335,6 +323,7 @@ class PlayGameState(BaseState):
 	
 	def exit(self):
 		pygame.mixer.music.stop()
+		self.player.stop()
 		
 
 	def draw(self):
