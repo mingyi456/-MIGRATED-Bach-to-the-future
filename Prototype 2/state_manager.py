@@ -5,10 +5,9 @@ import rgb
 from os import listdir
 import time
 from buttons import ActionManager, TextBox, TextLine
-from mapGenerator import beatmapGenerator
+import csv
 from config_parser import reset_config
 from readJSON import data
-from time import sleep
 import vlc
 import string
 
@@ -242,8 +241,7 @@ class AchievementsState(BaseState):
 		
 class OrbModel:
     def __init__(self, x, y, duration, color=None):
-        self.length = duration * 50  # pixels
-        self.width = 100
+        self.length = duration * 500  # pixels
 
         self.x = x
         self.y = y
@@ -267,25 +265,28 @@ class PlayGameState(BaseState):
 		self.file= args["file_name"]
 		print(f"File name = {self.file}")
 		file_path= f"{self.fsm.TRACKS_DIR}{self.file}"
-		self.beatmap = beatmapGenerator(file_path)
-		lanes = 4
+		with open(file_path, 'r') as file:
+			reader = csv.reader(file)
+			header = next(reader)
+			self.beatmap = [row for row in reader]
+		lanes = 8
 		positions = [i * 35 for i in range(5, lanes+5)]
 
 		# generating orbs
-		reference_note = self.beatmap[0][1].note
+		reference_note = int(self.beatmap[0][1])
 		lane = 0
 
-		y = 0
 		for beat in self.beatmap:
-			# (relativeTime, Note object)
-			diff = beat[1].note - reference_note
+			diff = int(beat[1]) - reference_note
 			lane = (lane + diff) % lanes
 			x = positions[lane]
-			y -= beat[0] * 100
-			duration = beat[1].duration
+			
+			duration = float(beat[2])
+			y = -float(beat[4]) * 500
 			orb = OrbModel(x, y, duration)
 			self.orbs.append(orb)
-			reference_note = beat[1].note
+			reference_note = int(beat[1])
+			
 
 		wav_file= self.file.rsplit('.', 1)[0]
 		self.player= self.fsm.wav_files[wav_file]
@@ -309,7 +310,7 @@ class PlayGameState(BaseState):
 		
 		if self.isPlaying and self.player.is_playing():
 			for i in self.orbs:
-				i.y += 3.5 * (self.fsm.f_t + lag) / self.fsm.f_t
+				i.y += 16.5
 				if i.y > 650:
 					self.orbs.remove(i)
 		
@@ -317,7 +318,7 @@ class PlayGameState(BaseState):
 			print("Completed!")
 			self.fsm.ch_state(GameOverState(self.fsm), {"file_name" : self.file})
 		
-		print(game_time)
+		# print(game_time)
 	
 	def exit(self):
 		pygame.mixer.music.stop()
@@ -326,7 +327,7 @@ class PlayGameState(BaseState):
 	def draw(self):
 		super().draw()
 		for i in self.orbs:
-			self.fsm.screen.blit(self.image, (round(i.x), round(i.y)), (0, 0, 30, round(i.length)))
+			self.fsm.screen.blit(self.image, (i.x, i.y), (0, 0, 30, i.length))
 
 class GameOverState(BaseState):
 	def __init__(self, fsm):

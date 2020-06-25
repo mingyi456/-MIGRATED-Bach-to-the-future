@@ -20,7 +20,7 @@ DEF_FONT= "Comic Sans MS"
 
 DEF_FONT_SIZE= 30
 
-TRACKS_DIR= f".{sep}tracks{sep}"
+TRACKS_DIR= f".{sep}beatmaps{sep}"
 
 WAV_DIR= f".{sep}wav_files{sep}"
 
