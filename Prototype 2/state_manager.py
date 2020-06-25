@@ -2,9 +2,9 @@ from sys import exit
 import pygame
 import config
 import rgb
-from os import listdir, chdir
+from os import listdir
 import time
-from buttons import ActionManager, TextBox
+from buttons import ActionManager, TextBox, TextLine
 from mapGenerator import beatmapGenerator
 from config_parser import reset_config
 from readJSON import data
@@ -14,7 +14,9 @@ import vlc
 class State_Manager():
 	def __init__(self, TITLE= config.WINDOW_TITLE,SIZE= config.SIZE, FPS= config.FPS, TRACKS_DIR= config.TRACKS_DIR, WAV_DIR= config.WAV_DIR):
 		self.curr_state= None
-		pygame.init()
+		pygame.display.init()
+		pygame.font.init()
+
 		pygame.display.set_caption(TITLE)
 		self.fps_clock = pygame.time.Clock()
 		self.screen = pygame.display.set_mode(SIZE)
@@ -25,6 +27,12 @@ class State_Manager():
 		self.lag= 0
 		self.TRACKS_DIR= TRACKS_DIR
 		self.WAV_DIR= WAV_DIR
+
+# =============================================================================
+# 		self.wav_files= []
+# 		for i in listdir(self.WAV_DIR):
+# 			self.wav_files.append(vlc.MediaPlayer(i))
+# =============================================================================
 
 	def update(self):
 		self.curr_state.update(self.time, self.lag)
@@ -54,6 +62,7 @@ class BaseState:
 	def enter(self, args):
 		print("Entering base state")
 	def exit(self):
+		self.fsm.screen.fill(rgb.WHITE)
 		print("Exiting base state")
 	def update(self, game_time, lag):
 		print("Updating base state")
@@ -242,13 +251,13 @@ class PlayGameState(BaseState):
 		super().__init__(fsm)
 		self.action_manager.add_button("Back", (50, 50), (50, 50), ret= "Back", key= "backspace")
 		self.action_manager.add_keystroke("Pause", 'p')
-		self.action_manager.add_keystroke("Sleep", 's')
 		self.isPlaying= True
 		self.beatmap = None
 		self.orbs = []
 		self.image = pygame.image.load('longrectangle.png')
 	
 	def enter(self, args):
+		self.fsm.screen.fill(rgb.WHITE)
 		self.file= args["file_name"]
 		print(f"File name = {self.file}")
 		file_path= f"{self.fsm.TRACKS_DIR}{self.file}"
@@ -272,20 +281,23 @@ class PlayGameState(BaseState):
 			orb = OrbModel(x, y, duration)
 			self.orbs.append(orb)
 			reference_note = beat[1].note
-		#chdir(f"{self.fsm.TRACKS_DIR}")
-		#self.player = vlc.MediaPlayer(self.file.replace("midi", "wav").replace("mid", "wav"))
+		
+		font= pygame.font.SysFont('Comic Sans MS', 30)
+		TextLine("Loading...", font, (200, 200)).draw(self.fsm.screen)
+		
 		self.player= vlc.MediaPlayer(self.wav_path)
 		self.player.play()
+		while not self.player.is_playing():
+			sleep(self.fsm.f_t)
 
-		#pygame.mixer.music.load(self.wav_path)
-		#pygame.mixer.music.play()
+# =============================================================================
+# 		pygame.mixer.music.load(self.wav_path)
+# 		pygame.mixer.music.play()
+# =============================================================================
 
 		
 	def update(self, game_time, lag):
-		events= pygame.event.get()
-
-				
-		actions= self.action_manager.chk_actions(events)
+		actions= self.action_manager.chk_actions(pygame.event.get())
 		
 		for action in actions:
 		
@@ -296,17 +308,20 @@ class PlayGameState(BaseState):
 				self.fsm.ch_state(MainMenuState(self.fsm))
 			
 			elif action == "Pause":
-				if self.isPlaying:
-					self.isPlaying= False
-					#pygame.mixer.music.pause()
-					self.player.pause()
-				else:
-					self.isPlaying= True
-					self.player.pause()
-					#pygame.mixer.music.unpause()
+				self.isPlaying= not self.isPlaying
+				self.player.pause()
+
+# =============================================================================
+# 				if self.isPlaying:
+# 					self.isPlaying= False
+# 					pygame.mixer.music.pause()
+# 					self.player.pause()
+# 				else:
+# 					self.isPlaying= True
+# 					self.player.pause()
+# 					pygame.mixer.music.unpause()
+# =============================================================================
 	
-			elif action == "Sleep":
-				sleep(5)
 		
 		if self.isPlaying:
 			for i in self.orbs:
@@ -325,7 +340,7 @@ class PlayGameState(BaseState):
 	def draw(self):
 		super().draw()
 		for i in self.orbs:
-			self.fsm.screen.blit(self.image, (i.x, i.y), (0, 0, 30, i.length))
+			self.fsm.screen.blit(self.image, (round(i.x), round(i.y)), (0, 0, 30, round(i.length)))
 
 class GameOverState(BaseState):
 	def __init__(self, fsm):
@@ -338,7 +353,6 @@ class GameOverState(BaseState):
 	def enter(self, args):
 		self.args= args
 		
-	
 	def update(self, game_time, lag):
 		events= pygame.event.get()
 
@@ -369,7 +383,9 @@ class ExitState(BaseState):
 		pygame.quit()
 		exit()
 
-if __name__ == "__main__":	
+
+if __name__ == "__main__":
+
 	fsm= State_Manager()
 	fsm.curr_state= MainMenuState(fsm)
 	while True:

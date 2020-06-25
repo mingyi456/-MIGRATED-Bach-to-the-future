@@ -138,6 +138,9 @@ class TextLine:
 		width= max(size[0], self.content.get_width())
 		height= max(size[1], self.content.get_height())
 		self.rect= [pos[0], pos[1], width, height]
+	
+	def draw(self, screen):
+		screen.blit(self.content, self.rect)
 
 		
 class TextBox:
