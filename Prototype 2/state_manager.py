@@ -368,6 +368,9 @@ class EditTextState(BaseState):
 		self.action_manager.add_keystroke("backspace", "backspace")
 		self.action_manager.add_keystroke("space", "space")
 		self.action_manager.add_keystroke("enter", "return")
+		self.action_manager.add_keystroke("caps lock", "caps lock")
+		self.action_manager.add_keystroke("shift", "left shift")
+		self.action_manager.add_keystroke("shift", "right shift")
 		
 		for i in self.alphabet:
 			self.action_manager.add_keystroke(i, i)
@@ -380,6 +383,8 @@ class EditTextState(BaseState):
 		self.confirmed_text= TextBox("", self.font, self.text_pos, self.text_size)
 		self.string= ""
 		self.confirmed_str= ""
+		self.isUppercase= False
+		self.isCaps_lock= False
 		
 	def update(self, game_time, lag):
 		actions= self.action_manager.chk_actions(pygame.event.get())
@@ -400,13 +405,23 @@ class EditTextState(BaseState):
 				self.confirmed_str= self.string
 				self.confirmed_text= TextBox(self.confirmed_str, self.font, (200, 100), self.text_size)
 			
+			elif action == "shift":
+				self.isUppercase= not self.isCaps_lock
+			
+			elif action == "caps lock":
+				self.isCaps_lock= not self.isCaps_lock
+			
 			elif action in self.alphabet:
-				self.string += action
+				if self.isUppercase:
+					self.string += action.upper()
+				else:
+					self.string += action
+
+		self.isUppercase= self.isCaps_lock
 
 		self.text= TextBox(self.string, self.font, self.text_pos, self.text_size)		
 			
-				
-	
+
 	def draw(self):
 		super().draw()
 		self.title.draw(self.fsm.screen)
