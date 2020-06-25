@@ -17,9 +17,7 @@ class State_Manager():
 		self.WAV_DIR= WAV_DIR
 		self.wav_files= {}
 		for i in listdir(self.WAV_DIR):
-			self.wav_files[i[:-4]]= vlc.MediaPlayer(f"{self.WAV_DIR}{i}")
-		print(self.wav_files)
-
+			self.wav_files[i.rsplit('.',1)[0]]= vlc.MediaPlayer(f"{self.WAV_DIR}{i}")
 		self.curr_state= None
 		pygame.display.init()
 		pygame.font.init()
@@ -36,10 +34,11 @@ class State_Manager():
 		self.TRACKS_DIR= TRACKS_DIR
 
 	def update(self):
-		self.curr_state.update(self.time, self.lag)
+		self.curr_state.update(self.g_t, self.lag)
 		self.curr_state.draw()
 		pygame.display.update()
 		self.time, self.lag= self.chk_slp(time.time())
+		self.g_t += self.time
 
 	def ch_state(self, new_state, args= {}):
 		self.curr_state.exit()
@@ -47,6 +46,7 @@ class State_Manager():
 		self.curr_state= None
 		self.curr_state= new_state
 		self.curr_state.enter(args)
+		self.g_t= 0
 
 	def chk_slp(self, st):
 		del_t= self.fps_clock.tick_busy_loop(self.FPS)/1000 -self.f_t
@@ -81,9 +81,7 @@ class MainMenuState(BaseState):
 		
 		self.font= pygame.font.SysFont('Comic Sans MS', 36)
 		
-		self.text_box= TextBox("Welcome to the Bach to the future game! This is still a work in progress for now. Blah blah blah blah", self.font, (200, 100), (400, 500))
-		
-		# self.text_box= TextBox("Welcome and hello", self.font, (300, 50), (20, 500))
+		self.text_line= TextLine("Welcome and hello!", self.font, (300, 50))
 	def update(self, game_time, lag):
 		events= pygame.event.get()
 
@@ -104,7 +102,7 @@ class MainMenuState(BaseState):
 				
 	def draw(self):
 		super().draw()
-		self.text_box.draw(self.fsm.screen)
+		self.text_line.draw(self.fsm.screen)
 
 class SelectTrackState(BaseState):
 	def __init__(self, fsm):
@@ -144,7 +142,6 @@ class SettingsState(BaseState):
 		self.action_manager.add_button("defaults", (50, 200), (50, 50), ret= "Restore defaults")
 		self.font= pygame.font.SysFont('Comic Sans MS', 24)
 
-	
 	def enter(self, args):
 		self.settings= dir(config)[:7]
 		self.text= []
@@ -262,7 +259,6 @@ class PlayGameState(BaseState):
 		self.file= args["file_name"]
 		print(f"File name = {self.file}")
 		file_path= f"{self.fsm.TRACKS_DIR}{self.file}"
-		self.wav_path= f"{self.fsm.WAV_DIR}{self.file}".replace("midi", "wav").replace("mid", "wav")
 		self.beatmap = beatmapGenerator(file_path)
 		lanes = 4
 		positions = [i * 35 for i in range(5, lanes+5)]
@@ -284,16 +280,10 @@ class PlayGameState(BaseState):
 			reference_note = beat[1].note
 		
 		font= pygame.font.SysFont('Comic Sans MS', 30)
-		TextLine("Loading...", font, (200, 200)).draw(self.fsm.screen)
-		
-		# self.player= vlc.MediaPlayer(self.wav_path)
-		self.wav_file= self.file.rsplit('.', 1)[0]
-		self.player= self.fsm.wav_files[self.wav_file]
+
+		wav_file= self.file.rsplit('.', 1)[0]
+		self.player= self.fsm.wav_files[wav_file]
 		self.player.play()
-
-		while not self.player.is_playing():
- 			pygame.time.delay(2)
-
 
 		
 	def update(self, game_time, lag):
@@ -311,7 +301,7 @@ class PlayGameState(BaseState):
 				self.isPlaying= not self.isPlaying
 				self.player.pause()
 		
-		if self.isPlaying:
+		if self.isPlaying and self.player.is_playing():
 			for i in self.orbs:
 				i.y += 3.5 * (self.fsm.f_t + lag) / self.fsm.f_t
 				if i.y > 650:
@@ -320,11 +310,12 @@ class PlayGameState(BaseState):
 		if len(self.orbs) <= 0:
 			print("Completed!")
 			self.fsm.ch_state(GameOverState(self.fsm), {"file_name" : self.file})
+		
+		print(game_time)
 	
 	def exit(self):
 		pygame.mixer.music.stop()
 		self.player.stop()
-		
 
 	def draw(self):
 		super().draw()
