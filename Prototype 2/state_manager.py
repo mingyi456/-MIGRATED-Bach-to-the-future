@@ -364,7 +364,7 @@ class EditTextState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
 		self.action_manager.add_button("Back", (50, 50), (50, 50))
-		self.alphabet= list(string.ascii_lowercase)
+		self.alphabet= list(string.printable)
 		self.action_manager.add_keystroke("backspace", "backspace")
 		self.action_manager.add_keystroke("space", "space")
 		self.action_manager.add_keystroke("enter", "return")
