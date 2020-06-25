@@ -10,6 +10,7 @@ from config_parser import reset_config
 from readJSON import data
 from time import sleep
 import vlc
+import string
 
 class State_Manager():
 	def __init__(self, TITLE= config.WINDOW_TITLE,SIZE= config.SIZE, FPS= config.FPS, TRACKS_DIR= config.TRACKS_DIR, WAV_DIR= config.WAV_DIR):
@@ -77,6 +78,7 @@ class MainMenuState(BaseState):
 		self.action_manager.add_button("Start (Space)", (50, 50), (50, 50), ret= "Start", key= "space")
 		self.action_manager.add_button("Options", (50, 150), (50, 50))
 		self.action_manager.add_button("Achievements", (50, 250), (50, 50))
+		self.action_manager.add_button("Editor", (50, 350), (50, 50))
 		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT -100), (50, 50), ret= "Exit", key= "escape")
 		
 		self.font= pygame.font.SysFont('Comic Sans MS', 36)
@@ -99,6 +101,9 @@ class MainMenuState(BaseState):
 			
 			elif action == "Achievements":
 				self.fsm.ch_state(AchievementsState(self.fsm))
+			
+			elif action == "Editor":
+				self.fsm.ch_state(EditTextState(self.fsm))
 				
 	def draw(self):
 		super().draw()
@@ -256,6 +261,9 @@ class PlayGameState(BaseState):
 	
 	def enter(self, args):
 		self.fsm.screen.fill(rgb.WHITE)
+		font= pygame.font.SysFont('Comic Sans MS', 30)
+		TextLine("Loading...", font, (300, 100)).draw(self.fsm.screen)
+		
 		self.file= args["file_name"]
 		print(f"File name = {self.file}")
 		file_path= f"{self.fsm.TRACKS_DIR}{self.file}"
@@ -278,8 +286,6 @@ class PlayGameState(BaseState):
 			orb = OrbModel(x, y, duration)
 			self.orbs.append(orb)
 			reference_note = beat[1].note
-		
-		font= pygame.font.SysFont('Comic Sans MS', 30)
 
 		wav_file= self.file.rsplit('.', 1)[0]
 		self.player= self.fsm.wav_files[wav_file]
@@ -353,6 +359,53 @@ class GameOverState(BaseState):
 			
 	def draw(self):
 		super().draw()
+		
+class EditTextState(BaseState):
+	def __init__(self, fsm):
+		super().__init__(fsm)
+		self.action_manager.add_button("Back", (50, 50), (50, 50))
+		self.alphabet= list(string.ascii_lowercase)
+		self.action_manager.add_keystroke("backspace", "backspace")
+		self.action_manager.add_keystroke("space", "space")
+		
+		for i in self.alphabet:
+			self.action_manager.add_keystroke(i, i)
+		
+		self.font= pygame.font.SysFont('Comic Sans MS', 30)
+		self.title= TextLine("Input text", self.font, (300, 50))
+		self.text_pos= (200, 150)
+		self.text_size= (400, 400)
+		self.text= TextBox("", self.font, self.text_pos, self.text_size)
+		self.string= ""
+		
+	def update(self, game_time, lag):
+		actions= self.action_manager.chk_actions(pygame.event.get())
+		for action in actions:
+			if action == "Exit":
+				self.fsm.ch_state(ExitState(self.fsm))
+			
+			elif action == "Back":
+				self.fsm.ch_state(MainMenuState(self.fsm))
+			
+			elif action == "backspace":
+				self.string= self.string[:-1]
+			
+			elif action == "space":
+				self.string += ' '
+			
+			elif action in self.alphabet:
+				self.string += action
+
+		self.text= TextBox(self.string, self.font, self.text_pos, self.text_size)		
+			
+				
+	
+	def draw(self):
+		super().draw()
+		self.title.draw(self.fsm.screen)
+		self.text.draw(self.fsm.screen)
+				
+				
 
 class ExitState(BaseState):
 	def __init__(self, fsm):
