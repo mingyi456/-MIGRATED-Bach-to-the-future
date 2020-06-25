@@ -367,16 +367,19 @@ class EditTextState(BaseState):
 		self.alphabet= list(string.ascii_lowercase)
 		self.action_manager.add_keystroke("backspace", "backspace")
 		self.action_manager.add_keystroke("space", "space")
+		self.action_manager.add_keystroke("enter", "return")
 		
 		for i in self.alphabet:
 			self.action_manager.add_keystroke(i, i)
 		
 		self.font= pygame.font.SysFont('Comic Sans MS', 30)
-		self.title= TextLine("Input text", self.font, (300, 50))
-		self.text_pos= (200, 150)
+		self.title= TextLine("Text entered:", self.font, (300, 50))
+		self.text_pos= (200, 250)
 		self.text_size= (400, 400)
 		self.text= TextBox("", self.font, self.text_pos, self.text_size)
+		self.confirmed_text= TextBox("", self.font, self.text_pos, self.text_size)
 		self.string= ""
+		self.confirmed_str= ""
 		
 	def update(self, game_time, lag):
 		actions= self.action_manager.chk_actions(pygame.event.get())
@@ -393,6 +396,10 @@ class EditTextState(BaseState):
 			elif action == "space":
 				self.string += ' '
 			
+			elif action == "enter":
+				self.confirmed_str= self.string
+				self.confirmed_text= TextBox(self.confirmed_str, self.font, (200, 100), self.text_size)
+			
 			elif action in self.alphabet:
 				self.string += action
 
@@ -404,7 +411,7 @@ class EditTextState(BaseState):
 		super().draw()
 		self.title.draw(self.fsm.screen)
 		self.text.draw(self.fsm.screen)
-				
+		self.confirmed_text.draw(self.fsm.screen)
 				
 
 class ExitState(BaseState):
