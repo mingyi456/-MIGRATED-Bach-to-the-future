@@ -103,6 +103,7 @@ class MainMenuState(BaseState):
 			
 			elif action == "Editor":
 				self.fsm.ch_state(EditTextState(self.fsm))
+			
 				
 	def draw(self):
 		super().draw()
@@ -256,7 +257,17 @@ class PlayGameState(BaseState):
 		self.beatmap = None
 		self.orbs = []
 		self.image = pygame.image.load('longrectangle.png')
-	
+		
+		self.action_manager.add_sp_keystroke('a', 'a')
+		self.action_manager.add_sp_keystroke('s', 's')
+		self.action_manager.add_sp_keystroke('d', 'd')
+		self.action_manager.add_sp_keystroke('f', 'f')
+		
+		self.score= 0
+		self.score_font= pygame.font.SysFont('Comic Sans MS', 36)
+		self.score_line= TextLine(str(self.score), self.score_font, (750, 50))
+
+
 	def enter(self, args):
 		self.fsm.screen.fill(rgb.WHITE)
 		font= pygame.font.SysFont('Comic Sans MS', 30)
@@ -306,6 +317,34 @@ class PlayGameState(BaseState):
 			elif action == "Pause":
 				self.isPlaying= not self.isPlaying
 				self.player.pause()
+			
+			elif action == "a (down)":
+				print("SCORE!!!")
+				self.score += 1
+				self.score_line= TextLine(str(self.score), self.score_font, (750, 50))
+				pass
+			
+			elif action == "a (up)":
+				print("SCORE!!!")
+				pass
+			
+			elif action == "s (down)":
+				pass
+			
+			elif action == "s (up)":
+				pass
+			
+			elif action == "d (down)":
+				pass
+			
+			elif action == "d (up)":
+				pass
+			
+			elif action == "f (down)":
+				pass
+			
+			elif action == "f (up)":
+				pass
 		
 		if self.isPlaying and self.player.is_playing():
 			for i in self.orbs:
@@ -317,7 +356,7 @@ class PlayGameState(BaseState):
 			print("Completed!")
 			self.fsm.ch_state(GameOverState(self.fsm), {"file_name" : self.file})
 		
-		# print(game_time)
+		print(game_time)
 	
 	def exit(self):
 		pygame.mixer.music.stop()
@@ -325,6 +364,7 @@ class PlayGameState(BaseState):
 
 	def draw(self):
 		super().draw()
+		self.score_line.draw(self.fsm.screen)
 		for i in self.orbs:
 			self.fsm.screen.blit(self.image, (round(i.x), round(i.y)), (0, 0, 30, round(i.length)))
 

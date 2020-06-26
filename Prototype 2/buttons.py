@@ -36,11 +36,16 @@ class KeyStroke:
 		else:
 			self.ret= ret	
 
+class SpKeyStroke(KeyStroke):
+	def __init__(self, name, key, ret):
+		super().__init__(name, key, ret)
+
 class ActionManager:
 	def __init__(self):
 		self.buttons= []
 		self.scroll_buttons= []
 		self.keystrokes= []
+		self.sp_keystrokes= []
 	
 	def add_button(self, name, pos, size, ret=None, key= None, colour= rgb.GREY, \
 				font= pygame.font.SysFont(config.DEF_FONT, config.DEF_FONT_SIZE), \
@@ -56,6 +61,9 @@ class ActionManager:
 	
 	def add_keystroke(self, name, key, ret= None):
 		self.keystrokes.append(KeyStroke(name, key, ret))
+	
+	def add_sp_keystroke(self, name, key, ret= None):
+		self.sp_keystrokes.append(SpKeyStroke(name, key, ret))
 	
 	def chk_actions(self, events):
 		curr_pos= pygame.mouse.get_pos()
@@ -104,6 +112,21 @@ class ActionManager:
 					if pygame.key.name(event.key) == keystroke.key:
 						print(f"Keystroke \"{keystroke.name}\" key \"{keystroke.key}\" pressed, return value : \"{keystroke.ret}\"")
 						actions.append(keystroke.ret)
+
+				for keystroke in self.sp_keystrokes:
+					if pygame.key.name(event.key) == keystroke.key:
+						print(f"Special Keystroke \"{keystroke.name}\" key \"{keystroke.key}\" pressed, return value : \"{keystroke.ret}\" (down)")
+						actions.append(f"{keystroke.ret} (down)")
+				
+			
+			elif event.type == pygame.KEYUP:
+				
+				for keystroke in self.sp_keystrokes:
+					if pygame.key.name(event.key) == keystroke.key:
+						print(f"Special Keystroke \"{keystroke.name}\" key \"{keystroke.key}\" depressed, return value : \"{keystroke.ret}\" (up)")
+						actions.append(f"{keystroke.ret} (up)")					
+				
+					
 				
 		
 		for button in self.buttons:
