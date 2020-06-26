@@ -292,7 +292,6 @@ class PlayGameState(BaseState):
 		self.player= self.fsm.wav_files[wav_file]
 		self.player.play()
 
-		
 	def update(self, game_time, lag):
 		actions= self.action_manager.chk_actions(pygame.event.get())
 		
@@ -310,7 +309,7 @@ class PlayGameState(BaseState):
 		
 		if self.isPlaying and self.player.is_playing():
 			for i in self.orbs:
-				i.y += 16.5
+				i.y += 16.5 * (self.fsm.f_t + lag) / self.fsm.f_t
 				if i.y > 650:
 					self.orbs.remove(i)
 		
@@ -327,7 +326,7 @@ class PlayGameState(BaseState):
 	def draw(self):
 		super().draw()
 		for i in self.orbs:
-			self.fsm.screen.blit(self.image, (i.x, i.y), (0, 0, 30, i.length))
+			self.fsm.screen.blit(self.image, (round(i.x), round(i.y)), (0, 0, 30, round(i.length)))
 
 class GameOverState(BaseState):
 	def __init__(self, fsm):

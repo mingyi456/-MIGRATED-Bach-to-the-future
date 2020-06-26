@@ -84,13 +84,13 @@ class ActionManager:
 					print("Mouse Button 4 : Scroll up")
 					
 					for button in self.scroll_buttons:
-						button.rect[1] += 5
+						button.rect[1] += 15
 				
 				elif event.button == 5:
 					print("Mouse Button 5 : Scroll down")
 					
 					for button in self.scroll_buttons:
-						button.rect[1] -= 5
+						button.rect[1] -= 15
 	
 			elif event.type == pygame.MOUSEBUTTONUP:
 	
