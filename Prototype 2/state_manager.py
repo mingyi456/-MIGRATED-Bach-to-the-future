@@ -346,7 +346,7 @@ class PlayGameState(BaseState):
 			elif action == "f (up)":
 				pass
 		
-		if self.isPlaying and self.player.is_playing():
+		if self.isPlaying or self.player.is_playing():
 			for i in self.orbs:
 				i.y += 16.5 * (self.fsm.f_t + lag) / self.fsm.f_t
 				if i.y > 650:
@@ -354,7 +354,7 @@ class PlayGameState(BaseState):
 		
 		if len(self.orbs) <= 0:
 			print("Completed!")
-			self.fsm.ch_state(GameOverState(self.fsm), {"file_name" : self.file})
+			self.fsm.ch_state(GameOverState(self.fsm), {"file_name" : self.file, "score" : self.score})
 		
 		print(game_time)
 	
@@ -375,9 +375,14 @@ class GameOverState(BaseState):
 		self.action_manager.add_button("Back to Main Menu", (500, 400), (50, 50), ret= "Main Menu")
 		self.action_manager.add_button("Back to Start", (300, 400), (50, 50), ret= "Start")
 		self.action_manager.add_keystroke("Exit", "escape")
+
 	
 	def enter(self, args):
 		self.args= args
+		
+		self.score= args["score"]
+		self.score_font= pygame.font.SysFont('Comic Sans MS', 36)
+		self.score_line= TextLine(f"Score : {self.score}", self.score_font, (350, 100))
 		
 	def update(self, game_time, lag):
 		events= pygame.event.get()
@@ -399,6 +404,7 @@ class GameOverState(BaseState):
 			
 	def draw(self):
 		super().draw()
+		self.score_line.draw(self.fsm.screen)
 		
 class EditTextState(BaseState):
 	def __init__(self, fsm):
