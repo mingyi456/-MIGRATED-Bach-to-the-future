@@ -255,7 +255,7 @@ class PlayGameState(BaseState):
 		self.isPlaying= True
 		self.beatmap = None
 		self.orbs = []
-		self.image = pygame.image.load('longrectangle.png')
+		self.image = pygame.image.load('longrectangle.png').convert()
 	
 	def enter(self, args):
 		self.fsm.screen.fill(rgb.WHITE)
