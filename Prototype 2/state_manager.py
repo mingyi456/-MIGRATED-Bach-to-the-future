@@ -272,17 +272,6 @@ class PlayGameState(BaseState):
 		self.orbs = []
 		self.image = pygame.image.load('longrectangle.png').convert()
 		
-		self.laneLock = {1:True, 2:True, 3:True, 4:True}
-		self.lane1 = pygame.image.load('red.png').convert()
-		self.lane2 = pygame.image.load('green.png').convert()
-		self.lane3 = pygame.image.load('yellow.png').convert()
-		self.lane4 = pygame.image.load('purple.png').convert()
-		
-		self.action_manager.add_sp_keystroke('f', 'f')
-		self.action_manager.add_sp_keystroke('g', 'g')
-		self.action_manager.add_sp_keystroke('h', 'h')
-		self.action_manager.add_sp_keystroke('j', 'j')
-		
 		self.score = 0
 		self.score_font = pygame.font.SysFont('Comic Sans MS', 36)
 		self.score_line = TextLine(str(self.score), self.score_font, (750, 50))
@@ -302,6 +291,25 @@ class PlayGameState(BaseState):
 		lanes = 4
 		self.positions = [i * 35 for i in range(5, lanes + 5)]
 		
+		############################################################################
+		
+		self.laneLock = {1: False, 2: False, 3: False, 4: False}
+		self.lane1 = pygame.image.load('red.png').convert()
+		self.lane2 = pygame.image.load('green.png').convert()
+		self.lane3 = pygame.image.load('yellow.png').convert()
+		self.lane4 = pygame.image.load('purple.png').convert()
+		self.laneIcons = [[(self.lane1, (self.positions[0], 490)), False], \
+		                  [(self.lane2, (self.positions[1], 490)), False], \
+		                  [(self.lane3, (self.positions[2], 490)), False], \
+		                  [(self.lane4, (self.positions[3], 490)), False]]
+		
+		self.action_manager.add_sp_keystroke('f', 'f')
+		self.action_manager.add_sp_keystroke('g', 'g')
+		self.action_manager.add_sp_keystroke('h', 'h')
+		self.action_manager.add_sp_keystroke('j', 'j')
+		
+		############################################################################
+		
 		# generating orbs
 		reference_note = int(self.beatmap[0][1])
 		lane = 1
@@ -313,7 +321,7 @@ class PlayGameState(BaseState):
 			
 			end_time = float(beat[4])
 			duration = float(beat[2])
-			y = -end_time * 500
+			y = -end_time * 500 + 500
 			start_time = float(beat[3])
 			orb = OrbModel(x, y, duration, lane, start_time, end_time)
 			self.orbs.append(orb)
@@ -339,29 +347,28 @@ class PlayGameState(BaseState):
 				self.player.pause()
 			
 			if action == "f (down)":
-				self.fsm.screen.blit(self.lane1, (35, 500))
+				self.laneIcons[0][1] = True
 			
 			if action == "f (up)":
-				print("SCORE!!!")
-				pass
+				self.laneIcons[0][1] = False
 			
 			if action == "g (down)":
-				self.fsm.screen.blit(self.lane2, (self.positions[1], 500))
+				self.laneIcons[1][1] = True
 			
 			if action == "g (up)":
-				pass
+				self.laneIcons[1][1] = False
 			
 			if action == "h (down)":
-				self.fsm.screen.blit(self.lane3, (self.positions[2], 500))
+				self.laneIcons[2][1] = True
 			
 			if action == "h (up)":
-				pass
+				self.laneIcons[2][1] = False
 			
 			if action == "j (down)":
-				self.fsm.screen.blit(self.lane4, (self.positions[3], 500))
+				self.laneIcons[3][1] = True
 			
 			if action == "j (up)":
-				pass
+				self.laneIcons[3][1] = False
 		
 		if self.isPlaying or self.player.is_playing():
 			for i in self.orbs:
@@ -382,6 +389,12 @@ class PlayGameState(BaseState):
 	def draw(self):
 		super().draw()
 		self.score_line.draw(self.fsm.screen)
+		pygame.draw.line(self.fsm.screen, rgb.GREY, (0,500), (800,500), 5)
+		
+		for args, boolean in self.laneIcons:
+			if boolean:
+				self.fsm.screen.blit(*args)
+		
 		for i in self.orbs:
 			self.fsm.screen.blit(self.image, (round(i.x), round(i.y)), (0, 0, 30, round(i.length)))
 
