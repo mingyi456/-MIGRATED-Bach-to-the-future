@@ -115,7 +115,8 @@ class ActionManager:
 
 				for keystroke in self.sp_keystrokes:
 					if pygame.key.name(event.key) == keystroke.key:
-						print(f"Special Keystroke \"{keystroke.name}\" key \"{keystroke.key}\" pressed, return value : \"{keystroke.ret}\" (down)")
+						pass
+						# print(f"Special Keystroke \"{keystroke.name}\" key \"{keystroke.key}\" pressed, return value : \"{keystroke.ret}\" (down)")
 						actions.append(f"{keystroke.ret} (down)")
 				
 			
@@ -123,8 +124,9 @@ class ActionManager:
 				
 				for keystroke in self.sp_keystrokes:
 					if pygame.key.name(event.key) == keystroke.key:
-						print(f"Special Keystroke \"{keystroke.name}\" key \"{keystroke.key}\" depressed, return value : \"{keystroke.ret}\" (up)")
-						actions.append(f"{keystroke.ret} (up)")					
+						pass
+						# print(f"Special Keystroke \"{keystroke.name}\" key \"{keystroke.key}\" depressed, return value : \"{keystroke.ret}\" (up)")
+						actions.append(f"{keystroke.ret} (up)")
 				
 					
 				

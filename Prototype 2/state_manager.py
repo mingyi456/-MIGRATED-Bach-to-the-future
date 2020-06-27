@@ -260,6 +260,9 @@ class OrbModel:
 		self.lane = lane
 		self.start_time = start_time
 		self.end_time = end_time
+	
+	def getTail(self):
+		return self.y + self.length
 
 
 class PlayGameState(BaseState):
@@ -275,6 +278,8 @@ class PlayGameState(BaseState):
 		self.score = 0
 		self.score_font = pygame.font.SysFont('Comic Sans MS', 36)
 		self.score_line = TextLine(str(self.score), self.score_font, (750, 50))
+		
+		pygame.key.set_repeat(10)
 	
 	def enter(self, args):
 		self.fsm.screen.fill(rgb.WHITE)
@@ -289,7 +294,7 @@ class PlayGameState(BaseState):
 			header = next(reader)
 			self.beatmap = [row for row in reader]
 		lanes = 4
-		self.positions = [i * 35 for i in range(5, lanes + 5)]
+		self.positions = [i * 100 for i in range(1, lanes + 1)]
 		
 		############################################################################
 		
@@ -312,7 +317,7 @@ class PlayGameState(BaseState):
 		
 		# generating orbs
 		reference_note = int(self.beatmap[0][1])
-		lane = 1
+		lane = 0
 		
 		for beat in self.beatmap:
 			diff = int(beat[1]) - reference_note
@@ -334,6 +339,9 @@ class PlayGameState(BaseState):
 	def update(self, game_time, lag):
 		actions = self.action_manager.chk_actions(pygame.event.get())
 		
+		orbsONSCREEN = [orb for orb in self.orbs if orb.getTail() > 0]
+		# print(len(orbsONSCREEN))
+		
 		for action in actions:
 			
 			if action == "Exit":
@@ -347,10 +355,17 @@ class PlayGameState(BaseState):
 				self.player.pause()
 			
 			if action == "f (down)":
-				
+				for orb in orbsONSCREEN:
+					if abs(orb.getTail() - 500) < 10 and orb.lane == 0:
+						self.score += 1
 				self.laneIcons[0][1] = True
 			
 			if action == "f (up)":
+				for orb in orbsONSCREEN:
+					if orb.lane == 0:
+						penalty = round(max(orb.y - 500, 0))
+						self.score -= penalty
+						print(penalty)
 				self.laneIcons[0][1] = False
 			
 			if action == "g (down)":
@@ -381,11 +396,12 @@ class PlayGameState(BaseState):
 			print("Completed!")
 			self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": self.score})
 		
+		self.score_line = TextLine(str(self.score), self.score_font, (550, 50))
 		# print(game_time)
 	
 	def exit(self):
-		pygame.mixer.music.stop()
 		self.player.stop()
+		pygame.key.set_repeat(0)
 	
 	def draw(self):
 		super().draw()

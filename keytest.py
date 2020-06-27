@@ -16,9 +16,9 @@ while True:
             pygame.quit()
             sys.exit()
         if event.type == KEYDOWN:
-            print(event.scancode, event.key, time)
+            print(event.scancode, event.key, time, pygame.key.name(event.key))
         if event.type == KEYUP:
-            print(event.scancode, event.key, time)
+            print(event.scancode, event.key, time, pygame.key.name(event.key))
 
     time_elapsed += fpsClock.get_time()
     time = str(datetime.timedelta(milliseconds=time_elapsed))
