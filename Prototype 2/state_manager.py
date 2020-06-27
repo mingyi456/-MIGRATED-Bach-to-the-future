@@ -253,7 +253,7 @@ class AchievementsState(BaseState):
 
 class OrbModel:
 	def __init__(self, x, y, duration, lane, start_time, end_time):
-		self.length = duration * 500  # pixels
+		self.length = duration * 450  # pixels
 		
 		self.x = x
 		self.y = y
@@ -321,7 +321,7 @@ class PlayGameState(BaseState):
 			
 			end_time = float(beat[4])
 			duration = float(beat[2])
-			y = -end_time * 500 + 500
+			y = -end_time * 450 + 500
 			start_time = float(beat[3])
 			orb = OrbModel(x, y, duration, lane, start_time, end_time)
 			self.orbs.append(orb)
@@ -347,6 +347,7 @@ class PlayGameState(BaseState):
 				self.player.pause()
 			
 			if action == "f (down)":
+				
 				self.laneIcons[0][1] = True
 			
 			if action == "f (up)":
@@ -372,7 +373,7 @@ class PlayGameState(BaseState):
 		
 		if self.isPlaying or self.player.is_playing():
 			for i in self.orbs:
-				i.y += 16.5 * (self.fsm.f_t + lag) / self.fsm.f_t
+				i.y += 15 * (self.fsm.f_t + lag) / self.fsm.f_t
 				if i.y > 650:
 					self.orbs.remove(i)
 		
@@ -391,13 +392,12 @@ class PlayGameState(BaseState):
 		self.score_line.draw(self.fsm.screen)
 		pygame.draw.line(self.fsm.screen, rgb.GREY, (0,500), (800,500), 5)
 		
+		for i in self.orbs:
+			self.fsm.screen.blit(self.image, (round(i.x), round(i.y)), (0, 0, 30, round(i.length * 0.9)))
+			
 		for args, boolean in self.laneIcons:
 			if boolean:
 				self.fsm.screen.blit(*args)
-		
-		for i in self.orbs:
-			self.fsm.screen.blit(self.image, (round(i.x), round(i.y)), (0, 0, 30, round(i.length)))
-
 
 class GameOverState(BaseState):
 	def __init__(self, fsm):
