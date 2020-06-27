@@ -107,22 +107,22 @@ def beatmapGenerator(filename: str, selected_tracks=(), onekey: bool = False):
 	return relativeTime(melodyNotes)
 
 
-# filename = '/Users/chence08/PycharmProjects/Bach-to-the-future/Prototype 2/tracks/Blue Danube Waltz.midi'
-# mid = mido.MidiFile(filename)
-# trackAnalysis(filename)
-# beatmap = beatmapGenerator(filename, ('Clarinet I in C', ''))
+filename = '/Users/chence08/PycharmProjects/Bach-to-the-future/Prototype 2/tracks/Mary Had A Little Lamb.midi'
+mid = mido.MidiFile(filename)
+trackAnalysis(filename)
+beatmap = beatmapGenerator(filename, (), True)
 
 
-# with open('./beatmaps/Blue Danube Waltz.csv', 'w', newline='') as file:
-# 	writer = csv.writer(file)
-# 	writer.writerow(['Relative Time', 'Note', 'Duration', 'Start Time', 'End Time'])
-# 	for a, b in beatmap:
-# 		zero = a
-# 		one = b.note
-# 		two = b.duration
-# 		three = b.start_time
-# 		four = b.end_time
-# 		writer.writerow([zero, one, two, three, four])
+with open('beatmaps/Mary Had A Little Lamb.csv', 'w', newline='') as file:
+	writer = csv.writer(file)
+	writer.writerow(['Relative Time', 'Note', 'Duration', 'Start Time', 'End Time'])
+	for a, b in beatmap:
+		zero = a
+		one = b.note
+		two = b.duration
+		three = b.start_time
+		four = b.end_time
+		writer.writerow([zero, one, two, three, four])
 
 
 NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
