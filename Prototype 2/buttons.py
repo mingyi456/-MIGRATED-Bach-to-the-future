@@ -1,7 +1,7 @@
 
 import rgb
 import pygame
-import config
+
 pygame.init()
 
 def isWithin(point, rect):
@@ -48,7 +48,7 @@ class ActionManager:
 		self.sp_keystrokes= []
 	
 	def add_button(self, name, pos, size, ret=None, key= None, colour= rgb.GREY, \
-				font= pygame.font.SysFont(config.DEF_FONT, config.DEF_FONT_SIZE), \
+				font= pygame.font.SysFont("Comic Sans MS", 30), \
 					font_colour= rgb.BLACK, hl_colour= rgb.YELLOW, sel_colour= rgb.GREEN, \
 						canScroll= False):
 		if canScroll:

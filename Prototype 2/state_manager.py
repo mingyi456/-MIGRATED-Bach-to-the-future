@@ -87,7 +87,6 @@ class MainMenuState(BaseState):
 		self.action_manager.add_button("Start (Space)", (50, 50), (50, 50), ret="Start", key="space")
 		self.action_manager.add_button("Options", (50, 150), (50, 50))
 		self.action_manager.add_button("Achievements", (50, 250), (50, 50))
-		self.action_manager.add_button("Editor", (50, 350), (50, 50))
 		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 50), ret="Exit", key="escape")
 		
 		self.font = pygame.font.SysFont('Comic Sans MS', 36)
@@ -112,8 +111,6 @@ class MainMenuState(BaseState):
 			elif action == "Achievements":
 				self.fsm.ch_state(AchievementsState(self.fsm))
 			
-			elif action == "Editor":
-				self.fsm.ch_state(EditTextState(self.fsm))
 	
 	def draw(self):
 		super().draw()
@@ -326,6 +323,7 @@ class OrbModel:
 class PlayGameState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
+		pygame.key.set_repeat(33)
 		self.action_manager.add_button("Back", (700, 50), (50, 50), ret="Back", key="backspace")
 		self.action_manager.add_keystroke("Pause", 'p')
 		self.isPlaying = True
@@ -337,7 +335,7 @@ class PlayGameState(BaseState):
 		self.score_font = pygame.font.SysFont('Comic Sans MS', 36)
 		self.score_line = TextLine(str(self.score), self.score_font, (750, 50))
 		
-		pygame.key.set_repeat(33)
+		self.orb_spd= 450
 		
 		self.countdown = 30 * 5
 	
@@ -479,8 +477,8 @@ class PlayGameState(BaseState):
 		
 		if self.isPlaying:  # pause handling
 			for i in self.orbs:
-				i.y += 15 * (self.fsm.f_t + lag) / self.fsm.f_t
-				if i.y > 600:
+				i.y += self.orb_spd * (self.fsm.f_t + lag)
+				if i.y > self.fsm.HEIGHT:
 					self.orbs.remove(i)
 		
 		if len(self.orbs) == 0:
@@ -561,73 +559,6 @@ class GameOverState(BaseState):
 		if self.isHighScore:
 			self.high_score_text.draw(self.fsm.screen)
 
-
-class EditTextState(BaseState):
-	def __init__(self, fsm):
-		super().__init__(fsm)
-		self.action_manager.add_button("Back", (50, 50), (50, 50))
-		self.alphabet = list(string.printable)
-		self.action_manager.add_keystroke("backspace", "backspace")
-		self.action_manager.add_keystroke("space", "space")
-		self.action_manager.add_keystroke("enter", "return")
-		self.action_manager.add_keystroke("caps lock", "caps lock")
-		self.action_manager.add_keystroke("shift", "left shift")
-		self.action_manager.add_keystroke("shift", "right shift")
-		
-		for i in self.alphabet:
-			self.action_manager.add_keystroke(i, i)
-		
-		self.font = pygame.font.SysFont('Comic Sans MS', 30)
-		self.title = TextLine("Text entered:", self.font, (300, 50))
-		self.text_pos = (200, 250)
-		self.text_size = (400, 400)
-		self.text = TextBox("", self.font, self.text_pos, self.text_size)
-		self.confirmed_text = TextBox("", self.font, self.text_pos, self.text_size)
-		self.string = ""
-		self.confirmed_str = ""
-		self.isUppercase = False
-		self.isCaps_lock = False
-	
-	def update(self, game_time, lag):
-		actions = self.action_manager.chk_actions(pygame.event.get())
-		for action in actions:
-			if action == "Exit":
-				self.fsm.ch_state(ExitState(self.fsm))
-			
-			elif action == "Back":
-				self.fsm.ch_state(MainMenuState(self.fsm))
-			
-			elif action == "backspace":
-				self.string = self.string[:-1]
-			
-			elif action == "space":
-				self.string += ' '
-			
-			elif action == "enter":
-				self.confirmed_str = self.string
-				self.confirmed_text = TextBox(self.confirmed_str, self.font, (200, 100), self.text_size)
-			
-			elif action == "shift":
-				self.isUppercase = not self.isCaps_lock
-			
-			elif action == "caps lock":
-				self.isCaps_lock = not self.isCaps_lock
-			
-			elif action in self.alphabet:
-				if self.isUppercase:
-					self.string += action.upper()
-				else:
-					self.string += action
-		
-		self.isUppercase = self.isCaps_lock
-		
-		self.text = TextBox(self.string, self.font, self.text_pos, self.text_size)
-	
-	def draw(self):
-		super().draw()
-		self.title.draw(self.fsm.screen)
-		self.text.draw(self.fsm.screen)
-		self.confirmed_text.draw(self.fsm.screen)
 
 
 class ExitState(BaseState):
