@@ -123,7 +123,7 @@ class SelectTrackState(BaseState):
 		super().__init__(fsm)
 		self.tracks = listdir(self.fsm.TRACKS_DIR)
 		for i, file in enumerate(self.tracks):
-			self.action_manager.add_button(file.rsplit('.',1)[0], (375, i * 100 + 50), (50, 50), canScroll=True)
+			self.action_manager.add_button(file.rsplit('.',1)[0], (375, i * 100 + 50), (50, 50), canScroll=True, ret=file)
 		
 		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 50), ret="Exit", key="escape")
 		self.action_manager.add_button("Back (Backspace)", (50, 50), (50, 50), ret="Back", key="backspace")
@@ -263,12 +263,14 @@ class OrbModel:
 	
 	def getTail(self):
 		return self.y + self.length
+	
+	
 
 
 class PlayGameState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.action_manager.add_button("Back", (50, 50), (50, 50), ret="Back", key="backspace")
+		self.action_manager.add_button("Back", (700, 50), (50, 50), ret="Back", key="backspace")
 		self.action_manager.add_keystroke("Pause", 'p')
 		self.isPlaying = True
 		self.beatmap = None
@@ -279,7 +281,9 @@ class PlayGameState(BaseState):
 		self.score_font = pygame.font.SysFont('Comic Sans MS', 36)
 		self.score_line = TextLine(str(self.score), self.score_font, (750, 50))
 		
-		pygame.key.set_repeat(1)
+		pygame.key.set_repeat(33)
+		
+		self.countdown = 30 * 5
 	
 	def enter(self, args):
 		self.fsm.screen.fill(rgb.WHITE)
@@ -353,6 +357,10 @@ class PlayGameState(BaseState):
 			elif action == "Pause":
 				self.isPlaying = not self.isPlaying
 				self.player.pause()
+				if pygame.key.get_repeat() == 0:
+					pygame.key.set_repeat(33)
+				else:
+					pygame.key.set_repeat(0)
 			
 			if action == "f (down)":
 				for orb in orbsONSCREEN:
@@ -363,7 +371,7 @@ class PlayGameState(BaseState):
 			if action == "f (up)":
 				for orb in orbsONSCREEN:
 					if orb.lane == 0:
-						penalty = round(max(orb.y - 500, 0))
+						penalty = round(0.1*max(orb.y - 500, 0))
 						self.score -= penalty
 						print(penalty)
 				self.laneIcons[0][1] = False
@@ -378,7 +386,7 @@ class PlayGameState(BaseState):
 			if action == "g (up)":
 				for orb in orbsONSCREEN:
 					if orb.lane == 1:
-						penalty = round(max(orb.y - 500, 0))
+						penalty = round(0.1*max(orb.y - 500, 0))
 						self.score -= penalty
 						print(penalty)				
 				self.laneIcons[1][1] = False
@@ -392,7 +400,7 @@ class PlayGameState(BaseState):
 			if action == "h (up)":
 				for orb in orbsONSCREEN:
 					if orb.lane == 2:
-						penalty = round(max(orb.y - 500, 0))
+						penalty = round(0.1*max(orb.y - 500, 0))
 						self.score -= penalty
 						print(penalty)
 				self.laneIcons[2][1] = False
@@ -406,20 +414,22 @@ class PlayGameState(BaseState):
 			if action == "j (up)":
 				for orb in orbsONSCREEN:
 					if orb.lane == 3:
-						penalty = round(max(orb.y - 500, 0))
+						penalty = round(0.1*max(orb.y - 500, 0))
 						self.score -= penalty
 						print(penalty)
 				self.laneIcons[3][1] = False
 		
-		if self.isPlaying or self.player.is_playing():
+		if self.isPlaying:  # pause handling
 			for i in self.orbs:
 				i.y += 15 * (self.fsm.f_t + lag) / self.fsm.f_t
-				if i.y > 650:
+				if i.y > 600:
 					self.orbs.remove(i)
 		
-		if len(self.orbs) <= 0:
-			print("Completed!")
-			self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": self.score})
+		if len(self.orbs) == 0:
+			self.countdown -= 1
+			if self.countdown <= 0:
+				print("Completed!")
+				self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": self.score})
 		
 		self.score_line = TextLine(str(self.score), self.score_font, (550, 50))
 		# print(game_time)
@@ -434,7 +444,7 @@ class PlayGameState(BaseState):
 		pygame.draw.line(self.fsm.screen, rgb.GREY, (0,500), (800,500), 5)
 		
 		for i in self.orbs:
-			self.fsm.screen.blit(self.image, (round(i.x), round(i.y)), (0, 0, 30, round(i.length * 0.9)))
+			self.fsm.screen.blit(self.image, (round(i.x), round(i.y + i.length * 0.1)), (0, 0, 30, round(i.length * 0.9)))
 			
 		for args, boolean in self.laneIcons:
 			if boolean:
