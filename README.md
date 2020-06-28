@@ -1,120 +1,94 @@
-#### Screens to integrate to FSM:
-- [ ] Song Select, High Score for each song
-- [ ] Player Data
-	- Score
-	- Lives Left
-	- Combo
-	- Progress Bar
-- [ ] Storyline cut scenes, educational elements, Achievements
-- [ ] Options
-	- Keymap
-	- ?Screensize
-	- Volume Control
-	- ?Upload Midi
-	- Switch/Add Profiles
+#orbital2020 #LastMinuteWonders #MILESTONE2
 
-#### Current Objectives:
-- [ ] Finalising List of Songs
-- [x] Single melody-line filter
-- [x] Double or higher-level melody-line filter
-	- Must ensure there are no overlapping occurring within one lane.
-- [ ] Minimising visual lags
-- [ ] Framework for registering and identifying correct keystrokes from the wrong ones
-	- Refer to keytest.py for current implementation of `pygame.event.get()`, using `event.type == KEYDOWN` and `event.type == KEYUP` for **simultaneous keystroke registration**
-	- For identification of correct and wrong or invalid keystrokes, there are multiple methods to realise this feature:
-		- Through careful logging of the keystroke time since the game has begun, matching the keystroke time with the time attributes of the orbs.
-			- PROBLEM: Visual lags may lead to inaccurate perceptions and thus inconsistent assessment of keystrokes since all time attributes are preset to the orbs.
-			- Possible SOLUTIONS: Quantify and compensate for the lag? Completely eliminate lag?
-		- Using CONDITIONAL collision detection.
-			- PROBLEM: May be processor heavy and thus worsen lag
-			- Possible SOLUTIONS: Optimisation.
-- [ ] Reliable MIDI Audio Handling that matches the visuals
-	- Play
-	- Pause
-	- Tempo Control (KIV)
-- [ ] Visual sprites. Pixel Art Creation.
-
----
-#orbital2020 #LastMinuteWonders
 # Bach to the Future
-A classical music game that is played directly from a computer keyboard.
+
+A music rhythm game that is played directly from the computer keyboard.
 
 #### Proposed Level of Achievement: Apollo 11
 
 ## Motivation
-To increase engagement with classical music works through the medium of a classical music rhythm game. Instead of passive listening, players can "tap along" to the melodies on their keyboard.\
-\
-*J.S. Bach, the super-musician, time travels across history and is met with the surprise of seeing music modernise over the eras. He is keen on "keeping up with the time", and he wishes to learn all of music through this great adventure!*
 
-## Aim
-To convert the wealth of classical [MIDI files](https://en.scratch-wiki.info/wiki/MIDI_Notes) present today into a fun and educational game that people can interact with using Python 3.
+Tap Tap Revenge was one of the original hits in music rhythm gaming, the premise of this arcade game was simple. There were orbs that flowed down from the top of the screen to give time for the player to anticipate the beats in the music. When the orbs reach the "line of action", the players were supposed to tap and hold the orb, the goal was to hit the orb **on time** and **hold on** to continue earning points. The "beatmaps" of Tap Tap Revenge were normally manually programmed by a human who would then share their map on the platform for others to play.
+
+Our team has set out to automate this process of beatmap generation using an algorithm that works over MIDI files. We know that the classical music genre is one that is highly structured, which would be ideal for the application of our low-level algorithm. Coincidentally, it is also a highly neglected genre with a wealth of interesting information, we thought we would take this chance to make a classical-music-themed Tap Tap Revenge to fill in this gap.
+
+#### If you are interested to try out our prototype, please ensure:
+
+1. Python 3.6 or above
+2. Dependencies installed in virtualenv: pygame, time, csv, json
+3. Download the Prototype 2 folder and **run state_manager.py**
 
 ## Features
 
-| No | Feature | Function |
-|:--|:--|:--|
-| 1 | User Interface (UI) | The entire premise of the game. Synchronising audio, visual elements with keystroke registration. Along with the ability to toggle between screens: Menu, Settings, View Achievements, Highscore and more.|
-| 2 | Difficulty Levels | To ensure the game is entertaining and progressive for all players of all skill levels. |
-| 3 | Scoring System | A meaningful way to quantify the player's performance that rewards combo streaks and accuracy. |
-| 4 | Achievements | To encourage players to strive for excellence or even seek out easter eggs. |
-| 5 | Pausing and Resuming | To prevent untimely interruptions from causing players to lose progress and possibly to accommodate music tracks that are too long to realistically play in a single short session (about 10 minutes) |
-| 6 | Saving | Provision of multiple user profiles |
-| 7 | Tutorial/Practice Mode | To orientate new players around the game |
-| 8 | Options Page | To toggle relevant settings related to the game, or even to rebind the keys for different keyboard layouts/ controllers. |
-| 9 | Possible option to upload own MIDI files | To improve replayability for those who played all available stages and want to experience more tracks that are not available pre-packaged (e.g. tracks that the user may own the rights to but is not otherwise freely available) |
+| S/N  | Feature                       | Function                                                     | Achieved |
+| ---- | ----------------------------- | ------------------------------------------------------------ | -------- |
+| 1    | Toggling between screens      | Main Menu, Achievements, Song Selection, Settings, Entering game.<br />Framework for more screens in the future. | ✅        |
+| 2    | Game Engine                   | 1. Visual and audio synchronisation<br />2. Score updating<br />3. Pausing and Resuming | ✅        |
+| 3    | User Profiles                 | Multiple game profiles can be created and deleted if required. | ✅        |
+| 4    | Saving game progress          | Keeping track of achievements and highscores for every profile. | ✅        |
+| 5    | Settings update               | Changing and preserving settings changes.<br />Factory reset of settings or entire game. | ✅        |
+| 6    | Varied difficulties           | Songs have been curated to offer different difficulties for a progressive experience | ✅*       |
+| 7    | Storyline                     | An engaging visual novel campaign style that leads you into different songs | ❌        |
+| 8    | Visual Refinement             | Implementation of a coherent pixel art theme to all parts of the game to make it look better. | ❌        |
+| 9    | Uploading your own MIDI Files | Proof of concept of a general purpose beatmap generator      | ❌        |
+
+✅* - not very well done
 
 ## Implementation
-#### Modules used: Mido, Pygame, concurrent.futures, time and pickle
-### Extracting the melody information
-Applying `mido.MidiFile(filename)`, we are able to parse the MIDI message bytes into messages of the following form:
 
-> **note_on** channel=0 **note**=43 velocity=64 **time**=0\
-> note_on channel=0 note=50 velocity=69 time=0.1875\
-> **note_off** channel=0 note=43 velocity=0 time=0.003125\
-> note_on channel=0 note=59 velocity=88 time=0.184375\
-> note_off channel=0 note=50 velocity=0 time=0.003125\
+### Beatmap Generation
 
-From here, we are able to derive the changes in note **pitch** and **duration**, in order to construct the visual map of the melody spread out among the lanes.
+Using the [mido](https://mido.readthedocs.io/en/latest/) module, we parse a MIDI file into useful attributes like:
 
-### Orbs Generator
-The **melody orbs** will flow down the lanes in a **non-random** logical fashion that will emphasise on the following:
-1. Consecutive notes should not cluster on one single lane.
-2. Notes that are close in pitch should appear close visually, that clearly indicate *a sense of direction* or *recurring patterns*.
-3. If the lane pattern (musical structure) is highly repetitive, <insert bonus feature here>
-4. Some notes can give you **extra features** when you click on it (for especially difficult scenarios), to reward you with **score multipliers**, for example.
+```python
+import mido
+mid = mido.MidiFile('Pavane.midi')
 
-We aim to design an algorithm that is as robust as possible that would work with most cases of MIDI files, so as to realise *Feature 9*.
+for track in mid.tracks:  # TRACKS
+  print(track)
 
-<img alt="Bach Cello Suite visualisation" src="./Tech Demo and Resources/Bach Cello Suite visualisation.gif">
-Visualisation of the notes in song with short notes (Bach Cello Suite)
+for msg in mid.tracks[1]:  # MESSAGES IN 'Flute' TRACK
+  print(msg)
+```
+**Tracks**
 
-<img alt="Twinkle Twinkle Little Star visualisation" src="./Tech Demo and Resources/Twinkle Twinkle Little Star visualisation.gif">
-Visualisation of the notes in song with longer notes (Twinkle Twinkle Little Star)
+```python
+<midi track 'Pavane' 24 messages>
+<midi track 'Flute' 516 messages>
+<midi track 'Oboe' 340 messages>
+<midi track 'Clarinet in Bb' 404 messages>
+<midi track 'Bassoon' 216 messages>
+```
 
-### Synchronising audio, visual and keystrokes
-***------NOT ENTIRELY SURE AS OF NOW------***\
-\
-We are currently looking at using the `concurrent.futures.ProcessPoolExecutor()` to execute the different functionalities in parallel.\
-If there are better ways to handle lag and ensure synchrony, please let us know!
+**Note Data**
 
-## User Stories
+```python
+program_change channel=0 program=73 time=0
+control_change channel=0 control=121 value=0 time=0
+control_change channel=0 control=64 value=0 time=0
+control_change channel=0 control=91 value=52 time=0
+control_change channel=0 control=10 value=70 time=0
+control_change channel=0 control=7 value=95 time=0
+<meta message track_name name='Flute' time=0>
+note_on channel=0 note=74 velocity=42 time=3840  # in ticks
+note_on channel=0 note=76 velocity=42 time=1680
+note_off channel=0 note=74 velocity=0 time=30
+note_off channel=0 note=76 velocity=0 time=195
+note_on channel=0 note=77 velocity=50 time=15
+note_on channel=0 note=79 velocity=53 time=1680
+```
 
-| Priority | As a ... | I want ... | So that I can ... |
-|:--|:--|:--|:--|
-| *** | new player | To face an appropriate level of difficulty | Feel drawn into the game and play the game more |
-| *** | returning player | To have different features and different levels | Not feel bored replaying the game |
-| * | experienced player/ tinkerer | To be able to input my own MIDI files into the game to play | Have a wider range of available music tracks |
+Here, in order to resolve time=3840 (ticks) in to seconds, a formula is applied. This song has a tempo of 750000 and a ticks_per_beat of 960
 
-## Program Flow
-<img alt="Program Flow" src="./Tech Demo and Resources/Program Flow.svg">
+$$
+\frac{750000}{10^6} \times \frac{3840}{960} = 3\text{ seconds}
+$$
 
+This 3 seconds refer to the **relative time** from the the previous message before the `note_on` happens. Note that we also have obtained the note **pitch** of 74.
+
+We then pass these data through our algorithm and generate our desired map into a static csv format for fast retrieval for the Game Engine.
+
+## 
 
 ## [Project Log](https://docs.google.com/spreadsheets/d/1cvhibKC6C2piTqb6wom9Ge8BIiDPPLDGw0afi3QZ9Ro/edit?usp=sharing)
 
-## Authors
-<table>
-  <tr>
-    <td align="center"><img src="https://avatars.githubusercontent.com/chence08" width="100px;" alt=""/><br /><sub><b>Chen YiJia</b></sub><br /></td>
-    <td align="center"><img src="https://avatars.githubusercontent.com/mingyi456" width="100px;" alt=""/><br /><sub><b>Chen Mingyi</b></sub><br /></td>
-  </tr>
-<table>
