@@ -1,22 +1,25 @@
 from sys import exit
 import pygame
-import config
+
 import rgb
-from os import listdir
+from os import listdir, sep
 import time
 from buttons import ActionManager, TextBox, TextLine
 import csv
-from config_parser import reset_config
+
 from readJSON import data
 import vlc
 import string
+from data_parser import get_config, ch_config, get_user_data, update_user_data
+
+
+config= get_config()
 
 
 class State_Manager():
-	def __init__(self, TITLE=config.WINDOW_TITLE, SIZE=config.SIZE, FPS=config.FPS, TRACKS_DIR=config.TRACKS_DIR,
-	             WAV_DIR=config.WAV_DIR):
+	def __init__(self, TITLE="Prototype 2", SIZE=(config["Screen Width"], config["Screen Height"]), FPS=int(config["FPS"]), TRACKS_DIR=config["Track Directory"], WAV_DIR=config["WAV_DIR"]):
 		
-		self.WAV_DIR = WAV_DIR
+		self.WAV_DIR = WAV_DIR.replace("{sep}", sep)
 		self.wav_files = {}
 		for i in listdir(self.WAV_DIR):
 			self.wav_files[i.rsplit('.', 1)[0]] = vlc.MediaPlayer(f"{self.WAV_DIR}{i}")
@@ -33,7 +36,7 @@ class State_Manager():
 		self.time = 0
 		self.lag = 0
 		self.g_t = 0
-		self.TRACKS_DIR = TRACKS_DIR
+		self.TRACKS_DIR = TRACKS_DIR.replace("{sep}", sep)
 	
 	def update(self):
 		self.curr_state.update(self.g_t, self.lag)
@@ -77,7 +80,6 @@ class BaseState:
 	def draw(self):
 		self.fsm.screen.fill(rgb.WHITE)
 		self.action_manager.draw_buttons(self.fsm.screen)
-
 
 class MainMenuState(BaseState):
 	def __init__(self, fsm):
@@ -158,11 +160,11 @@ class SettingsState(BaseState):
 		self.font = pygame.font.SysFont('Comic Sans MS', 24)
 	
 	def enter(self, args):
-		self.settings = dir(config)[:7]
+		self.settings = config
 		self.text = []
 		
-		for i, setting in enumerate(self.settings):
-			val = eval(f"config.{setting}")
+		for i, setting in enumerate(config):
+			val = config[setting]
 			self.text.append((self.font.render(f"{setting} : {val}", 1, rgb.BLACK), (300, i * 50 + 25, 10, 10)))
 			self.action_manager.add_button("Change", (200, i * 50 + 25), (30, 40), ret=setting, font=self.font)
 	
@@ -178,10 +180,10 @@ class SettingsState(BaseState):
 			elif action == "Back":
 				self.fsm.ch_state(MainMenuState(self.fsm))
 			elif action in self.settings:
-				self.fsm.ch_state(ChSettingState(self.fsm), {"setting": action, "value": eval(f"config.{action}")})
+				self.fsm.ch_state(ChSettingState(self.fsm), {"setting": action, "value": config[action]})
 			
 			elif action == "Restore defaults":
-				reset_config()
+				
 				self.fsm.__init__()
 				self.fsm.curr_state = MainMenuState(self.fsm)
 				self.fsm.ch_state(SettingsState(self.fsm))
@@ -200,10 +202,30 @@ class ChSettingState(BaseState):
 		self.action_manager.add_button("Back", (50, 50), (50, 50))
 	
 	def enter(self, args):
+		self.args= args
 		self.setting = args["setting"]
 		self.setting_text = self.font.render(self.setting, 1, rgb.BLACK), (250, 50, 50, 50)
 		self.val = args["value"]
 		self.val_text = self.font.render(f"Current value : {self.val}", 1, rgb.BLACK), (250, 100, 50, 50)
+		
+		self.new_val= ""
+		self.confirmed_val = ""
+		self.text_input= TextLine(self.new_val, self.font, (200, 300))
+		self.confirmed_input= TextLine(self.confirmed_val, self.font, (200, 400))
+
+		self.alphabet = list(string.printable)
+		self.action_manager.add_keystroke("backspace", "backspace")
+		self.action_manager.add_keystroke("space", "space")
+		self.action_manager.add_keystroke("enter", "return")
+		self.action_manager.add_keystroke("caps lock", "caps lock")
+		self.action_manager.add_keystroke("shift", "left shift")
+		self.action_manager.add_keystroke("shift", "right shift")
+		
+		for i in self.alphabet:
+			self.action_manager.add_keystroke(i, i)
+		
+		self.isUppercase = False
+		self.isCaps_lock = False
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
@@ -215,11 +237,45 @@ class ChSettingState(BaseState):
 				self.fsm.ch_state(SettingsState(self.fsm))
 			elif action == "Exit":
 				self.fsm.ch_state(ExitState(self.fsm))
+			
+			elif action == "backspace":
+				self.new_val = self.new_val[:-1]
+			
+			elif action == "space":
+				self.new_val += ' '
+			
+			elif action == "enter":
+				self.confirmed_val= self.new_val
+				self.confirmed_input= TextLine(self.confirmed_val, self.font, (200, 400))
+				print(f"Changing current value to {self.confirmed_val}")
+				ch_config(self.setting, self.confirmed_val)
+				config= get_config()
+				self.fsm= State_Manager()
+				self.fsm.curr_state= MainMenuState(self.fsm)
+			
+			elif action == "shift":
+				self.isUppercase = not self.isCaps_lock
+			
+			elif action == "caps lock":
+				self.isCaps_lock = not self.isCaps_lock
+			
+			elif action in self.alphabet:
+				if self.isUppercase:
+					self.new_val += action.upper()
+				else:
+					self.new_val += action
+		
+		self.isUppercase = self.isCaps_lock
+		
+		self.text_input= TextLine(self.new_val, self.font, (200, 300))
+
 	
 	def draw(self):
 		super().draw()
 		self.fsm.screen.blit(self.setting_text[0], self.setting_text[1])
 		self.fsm.screen.blit(self.val_text[0], self.val_text[1])
+		self.text_input.draw(self.fsm.screen)
+		self.confirmed_input.draw(self.fsm.screen)
 
 
 class AchievementsState(BaseState):
@@ -344,7 +400,6 @@ class PlayGameState(BaseState):
 		actions = self.action_manager.chk_actions(pygame.event.get())
 		
 		orbsONSCREEN = [orb for orb in self.orbs if orb.getTail() > 0]
-		# print(len(orbsONSCREEN))
 		
 		for action in actions:
 			
@@ -366,6 +421,7 @@ class PlayGameState(BaseState):
 				for orb in orbsONSCREEN:
 					if abs(orb.getTail() - 500) < 10 and orb.lane == 0:
 						self.score += 1
+						print("Score += 1")
 				self.laneIcons[0][1] = True
 			
 			if action == "f (up)":
@@ -373,14 +429,14 @@ class PlayGameState(BaseState):
 					if orb.lane == 0:
 						penalty = round(0.1*max(orb.y - 500, 0))
 						self.score -= penalty
-						print(penalty)
+						print(f"Penalty to score : -{penalty}")		
 				self.laneIcons[0][1] = False
 			
 			if action == "g (down)":
 				for orb in orbsONSCREEN:
 					if abs(orb.getTail() - 500) < 10 and orb.lane == 1:
 						self.score += 1
-
+						print("Score += 1")
 				self.laneIcons[1][1] = True
 			
 			if action == "g (up)":
@@ -388,13 +444,14 @@ class PlayGameState(BaseState):
 					if orb.lane == 1:
 						penalty = round(0.1*max(orb.y - 500, 0))
 						self.score -= penalty
-						print(penalty)				
+						print(f"Penalty to score : -{penalty}")				
 				self.laneIcons[1][1] = False
 			
 			if action == "h (down)":
 				for orb in orbsONSCREEN:
 					if abs(orb.getTail() - 500) < 10 and orb.lane == 2:
 						self.score += 1
+						print("Score += 1")
 				self.laneIcons[2][1] = True
 			
 			if action == "h (up)":
@@ -402,13 +459,14 @@ class PlayGameState(BaseState):
 					if orb.lane == 2:
 						penalty = round(0.1*max(orb.y - 500, 0))
 						self.score -= penalty
-						print(penalty)
+						print(f"Penalty to score : -{penalty}")		
 				self.laneIcons[2][1] = False
 			
 			if action == "j (down)":
 				for orb in orbsONSCREEN:
 					if abs(orb.getTail() - 500) < 10 and orb.lane == 3:
 						self.score += 1
+						print("Score += 1")
 				self.laneIcons[3][1] = True
 			
 			if action == "j (up)":
@@ -416,7 +474,7 @@ class PlayGameState(BaseState):
 					if orb.lane == 3:
 						penalty = round(0.1*max(orb.y - 500, 0))
 						self.score -= penalty
-						print(penalty)
+						print(f"Penalty to score : -{penalty}")		
 				self.laneIcons[3][1] = False
 		
 		if self.isPlaying:  # pause handling
@@ -428,8 +486,8 @@ class PlayGameState(BaseState):
 		if len(self.orbs) == 0:
 			self.countdown -= 1
 			if self.countdown <= 0:
-				print("Completed!")
-				self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": self.score})
+				print("Track Completed!")
+				self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file.rsplit('.', 1)[0], "score": self.score})
 		
 		self.score_line = TextLine(str(self.score), self.score_font, (550, 50))
 		# print(game_time)
@@ -457,13 +515,26 @@ class GameOverState(BaseState):
 		self.action_manager.add_button("Back to Main Menu", (500, 400), (50, 50), ret="Main Menu")
 		self.action_manager.add_button("Back to Start", (300, 400), (50, 50), ret="Start")
 		self.action_manager.add_keystroke("Exit", "escape")
+		self.high_scores= get_user_data()["Highscores"]
+		self.score_font = pygame.font.SysFont('Comic Sans MS', 36)
+		print(self.high_scores)
+		self.high_score_text= TextLine("High Score achieved!", self.score_font, (350, 300))
 	
 	def enter(self, args):
 		self.args = args
 		
 		self.score = args["score"]
-		self.score_font = pygame.font.SysFont('Comic Sans MS', 36)
-		self.score_line = TextLine(f"Score : {self.score}", self.score_font, (350, 100))
+		self.track= args["file_name"]
+
+		self.score_line = TextLine(f"Score : {self.score}", self.score_font, (350, 150))
+		self.track_line= TextLine(self.track, self.score_font, (200, 50))
+		if self.high_scores[self.track] < self.score:
+			print("High Score achieved!")
+			self.isHighScore= True
+			update_user_data(("Highscores", args["file_name"]), args["score"])
+		else:
+			print("High Score not achieved")
+			self.isHighScore= False			
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
@@ -486,6 +557,9 @@ class GameOverState(BaseState):
 	def draw(self):
 		super().draw()
 		self.score_line.draw(self.fsm.screen)
+		self.track_line.draw(self.fsm.screen)
+		if self.isHighScore:
+			self.high_score_text.draw(self.fsm.screen)
 
 
 class EditTextState(BaseState):

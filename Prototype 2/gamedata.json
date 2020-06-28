@@ -1,9 +1,10 @@
 {
     "Settings": {
-        "FPS": 60,
+        "FPS": "60",
         "Screen Height": 600,
         "Screen Width": 800,
-        "Track Directory": "./tracks",
+        "Track Directory": ".{sep}beatmaps{sep}",
+        "WAV_DIR": ".{sep}wav_files{sep}",
         "SysFont": "Comic Sans MS"
     },
     "Users": {
@@ -16,7 +17,7 @@
                 "Modern Times": false
             },
             "Highscores": {
-                "Sarabande": -999,
+                "Sarabande": 0,
                 "Spring, Allegro": 0,
                 "Toccata and Fugue": 0,
                 "Trumpet Concerto, Andante": 0,
