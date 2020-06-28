@@ -123,7 +123,7 @@ class SelectTrackState(BaseState):
 		super().__init__(fsm)
 		self.tracks = listdir(self.fsm.TRACKS_DIR)
 		for i, file in enumerate(self.tracks):
-			self.action_manager.add_button(file, (375, i * 100 + 50), (50, 50), canScroll=True)
+			self.action_manager.add_button(file.rsplit('.',1)[0], (375, i * 100 + 50), (50, 50), canScroll=True)
 		
 		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 50), ret="Exit", key="escape")
 		self.action_manager.add_button("Back (Backspace)", (50, 50), (50, 50), ret="Back", key="backspace")
@@ -279,7 +279,7 @@ class PlayGameState(BaseState):
 		self.score_font = pygame.font.SysFont('Comic Sans MS', 36)
 		self.score_line = TextLine(str(self.score), self.score_font, (750, 50))
 		
-		pygame.key.set_repeat(10)
+		pygame.key.set_repeat(1)
 	
 	def enter(self, args):
 		self.fsm.screen.fill(rgb.WHITE)
@@ -369,21 +369,46 @@ class PlayGameState(BaseState):
 				self.laneIcons[0][1] = False
 			
 			if action == "g (down)":
+				for orb in orbsONSCREEN:
+					if abs(orb.getTail() - 500) < 10 and orb.lane == 1:
+						self.score += 1
+
 				self.laneIcons[1][1] = True
 			
 			if action == "g (up)":
+				for orb in orbsONSCREEN:
+					if orb.lane == 1:
+						penalty = round(max(orb.y - 500, 0))
+						self.score -= penalty
+						print(penalty)				
 				self.laneIcons[1][1] = False
 			
 			if action == "h (down)":
+				for orb in orbsONSCREEN:
+					if abs(orb.getTail() - 500) < 10 and orb.lane == 2:
+						self.score += 1
 				self.laneIcons[2][1] = True
 			
 			if action == "h (up)":
+				for orb in orbsONSCREEN:
+					if orb.lane == 2:
+						penalty = round(max(orb.y - 500, 0))
+						self.score -= penalty
+						print(penalty)
 				self.laneIcons[2][1] = False
 			
 			if action == "j (down)":
+				for orb in orbsONSCREEN:
+					if abs(orb.getTail() - 500) < 10 and orb.lane == 3:
+						self.score += 1
 				self.laneIcons[3][1] = True
 			
 			if action == "j (up)":
+				for orb in orbsONSCREEN:
+					if orb.lane == 3:
+						penalty = round(max(orb.y - 500, 0))
+						self.score -= penalty
+						print(penalty)
 				self.laneIcons[3][1] = False
 		
 		if self.isPlaying or self.player.is_playing():
