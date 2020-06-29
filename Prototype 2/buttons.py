@@ -52,9 +52,9 @@ class ActionManager:
 		self.keystrokes= []
 		self.sp_keystrokes= []
 	
-	def add_button(self, name, pos, size, ret=None, key= None, colour= rgb.GREY, \
-				font= pygame.font.SysFont(config["SysFont"], 30), \
-					font_colour= rgb.BLACK, hl_colour= rgb.YELLOW, sel_colour= rgb.GREEN, \
+	def add_button(self, name, pos, size, ret=None, key= None, colour= rgb.BLACK, \
+				font= pygame.font.Font('Barcade-R4LM.otf', 22), \
+					font_colour= rgb.YELLOW, hl_colour= rgb.GREY, sel_colour= rgb.GREEN, \
 						canScroll= False):
 		if canScroll:
 			self.scroll_buttons.append(Button(name, ret, pos, size, key, colour, font, font_colour, hl_colour, sel_colour))

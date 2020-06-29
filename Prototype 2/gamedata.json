@@ -5,7 +5,7 @@
         "Screen Width": 800,
         "Track Directory": ".{sep}beatmaps{sep}",
         "WAV_DIR": ".{sep}wav_files{sep}",
-        "SysFont": "Comic Sans MS"
+        "SysFont": "ARCADE_R.TTF"
     },
     "Users": {
         "David": {
@@ -41,7 +41,7 @@
             "Screen Height": 600,
             "Screen Width": 800,
             "Track Directory": "./tracks",
-            "SysFont": "Comic Sans MS"
+            "SysFont": "ARCADE_R.TTF"
         },
         "New User": {
             "Achievements": {

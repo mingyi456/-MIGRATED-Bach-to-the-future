@@ -66,19 +66,20 @@ class BaseState:
 	def __init__(self, fsm):
 		self.fsm = fsm
 		self.action_manager = ActionManager()
+		self.background = pygame.image.load('background.jpg').convert()
 	
 	def enter(self, args):
 		print("Entering base state")
 	
 	def exit(self):
-		self.fsm.screen.fill(rgb.WHITE)
+		self.fsm.screen.blit(self.background, (0,0))
 		print("Exiting base state")
 	
 	def update(self, game_time, lag):
 		print("Updating base state")
 	
 	def draw(self):
-		self.fsm.screen.fill(rgb.WHITE)
+		self.fsm.screen.blit(self.background, (0,0))
 		self.action_manager.draw_buttons(self.fsm.screen)
 
 class MainMenuState(BaseState):
@@ -145,10 +146,6 @@ class SelectTrackState(BaseState):
 	
 	def draw(self):
 		super().draw()
-		
-	def exit(self):
-		super().exit()
-		self.fsm.screen.fill(rgb.WHITE)
 
 
 class SettingsState(BaseState):
@@ -346,10 +343,6 @@ class PlayGameState(BaseState):
 		self.countdown = 30 * 5
 	
 	def enter(self, args):
-
-		self.fsm.screen.fill(rgb.WHITE)
-		font = pygame.font.Font(config["SysFont"], 30)
-
 		self.file = args["file_name"]
 		print(f"File name = {self.file}")
 		file_path = f"{self.fsm.TRACKS_DIR}{self.file}"
@@ -503,6 +496,11 @@ class PlayGameState(BaseState):
 		super().draw()
 		self.score_line.draw(self.fsm.screen)
 		pygame.draw.line(self.fsm.screen, rgb.GREY, (0,500), (800,500), 5)
+		
+		for pos in self.positions:
+			x = pos - 35
+			pygame.draw.line(self.fsm.screen, rgb.GREEN, (x, 0), (x, 600), 5)
+		pygame.draw.line(self.fsm.screen, rgb.GREEN, (self.positions[-1] + 60, 0), (self.positions[-1] + 60, 600), 5)
 		
 		for i in self.orbs:
 			self.fsm.screen.blit(self.image, (round(i.x), round(i.y + i.length * 0.1)), (0, 0, 30, round(i.length * 0.9)))
