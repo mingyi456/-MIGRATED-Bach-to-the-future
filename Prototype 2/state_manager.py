@@ -3,8 +3,7 @@ import pygame
 
 import rgb
 from os import listdir, sep
-import time
-from buttons import ActionManager, TextBox, TextLine
+from buttons import ActionManager, TextLine
 import csv
 
 from readJSON import data
@@ -84,10 +83,10 @@ class BaseState:
 class MainMenuState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.action_manager.add_button("Start (Space)", (50, 50), (50, 20), ret="Start", key="space")
-		self.action_manager.add_button("Options", (50, 150), (50, 20))
-		self.action_manager.add_button("Achievements", (50, 250), (50, 20))
-		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 20), ret="Exit", key="escape")
+		self.action_manager.add_button("Start (Space)", (50, 50), (50, 30), ret="Start", key="space")
+		self.action_manager.add_button("Options", (50, 150), (50, 30))
+		self.action_manager.add_button("Achievements", (50, 250), (50, 30))
+		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 30), ret="Exit", key="escape")
 		
 		self.font = pygame.font.Font(config["SysFont"], 24)
 		
@@ -122,10 +121,10 @@ class SelectTrackState(BaseState):
 		super().__init__(fsm)
 		self.tracks = listdir(self.fsm.TRACKS_DIR)
 		for i, file in enumerate(self.tracks):
-			self.action_manager.add_button(file.rsplit('.',1)[0], (375, i * 100 + 50), (50, 20), canScroll=True, ret=file)
+			self.action_manager.add_button(file.rsplit('.',1)[0], (375, i * 50 + 50), (50, 30), canScroll=True, ret=file)
 		
-		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 20), ret="Exit", key="escape")
-		self.action_manager.add_button("Back (Backspace)", (50, 50), (50, 20), ret="Back", key="backspace")
+		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 30), ret="Exit", key="escape")
+		self.action_manager.add_button("Back (Backspace)", (50, 50), (50, 30), ret="Back", key="backspace")
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
@@ -150,11 +149,11 @@ class SelectTrackState(BaseState):
 class SettingsState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.action_manager.add_button("Back", (50, 50), (50, 20))
-		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 20), ret="Exit", key="escape")
-		self.action_manager.add_button("Restore", (50, 150), (90, 20), ret="Restore defaults")
-		self.action_manager.add_button("defaults", (50, 170), (90, 20), ret="Restore defaults")
-		self.font = pygame.font.Font(config["SysFont"], 10)
+		self.action_manager.add_button("Back", (50, 50), (50, 30))
+		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 30), ret="Exit", key="escape")
+		self.action_manager.add_button("Restore", (50, 150), (110, 30), ret="Restore defaults")
+		self.action_manager.add_button("defaults", (50, 180), (110, 30), ret="Restore defaults")
+		self.font = pygame.font.Font(config["SysFont"], 15)
 	
 	def enter(self, args):
 		self.settings = config
@@ -162,8 +161,8 @@ class SettingsState(BaseState):
 		
 		for i, setting in enumerate(config):
 			val = config[setting]
-			self.text.append((self.font.render(f"{setting} : {val}", 1, rgb.WHITE), (300, i * 50 + 25, 10, 10)))
-			self.action_manager.add_button("Change", (200, i * 50 + 25), (30, 40), ret=setting, font=self.font)
+			self.text.append((self.font.render(f"{setting} : {val}", 1, rgb.WHITE), (300, i * 50 + 30, 10, 10)))
+			self.action_manager.add_button("Change", (200, i * 50 + 25), (30, 40), ret=setting)
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
@@ -196,7 +195,7 @@ class ChSettingState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
 		self.font = pygame.font.Font(config["SysFont"], 30)
-		self.action_manager.add_button("Back", (50, 50), (50, 20))
+		self.action_manager.add_button("Back", (50, 50), (50, 30))
 	
 	def enter(self, args):
 		self.args= args
@@ -277,7 +276,7 @@ class ChSettingState(BaseState):
 class AchievementsState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.action_manager.add_button("Back", (50, 50), (50, 20))
+		self.action_manager.add_button("Back", (50, 50), (50, 30))
 		print(data)
 		self.name_font = pygame.font.Font(config["SysFont"], 20)
 		self.des_font = pygame.font.Font(config["SysFont"], 14)
@@ -325,7 +324,7 @@ class PlayGameState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
 		pygame.key.set_repeat(1)
-		self.action_manager.add_button("Back", (700, 50), (50, 20), ret="Back", key="backspace")
+		self.action_manager.add_button("Back", (700, 50), (50, 30), ret="Back", key="backspace")
 		self.action_manager.add_keystroke("Pause", 'p')
 		self.isPlaying = True
 		self.beatmap = None
@@ -471,6 +470,7 @@ class PlayGameState(BaseState):
 						self.score -= penalty
 						print(f"Penalty to score : -{penalty}")		
 				self.laneIcons[3][1] = False
+
 		
 		if self.isPlaying:  # pause handling
 			for i in self.orbs:
@@ -510,9 +510,9 @@ class PlayGameState(BaseState):
 class GameOverState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.action_manager.add_button("Retry", (200, 400), (50, 20))
-		self.action_manager.add_button("Back to Main Menu", (500, 400), (50, 20), ret="Main Menu")
-		self.action_manager.add_button("Back to Start", (300, 400), (50, 20), ret="Start")
+		self.action_manager.add_button("Retry", (200, 400), (50, 30))
+		self.action_manager.add_button("Back to Main Menu", (500, 400), (50, 30), ret="Main Menu")
+		self.action_manager.add_button("Back to Start", (300, 400), (50, 30), ret="Start")
 		self.action_manager.add_keystroke("Exit", "escape")
 		self.high_scores= get_user_data()["Highscores"]
 		self.score_font = pygame.font.Font(config["SysFont"], 24)

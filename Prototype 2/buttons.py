@@ -136,7 +136,7 @@ class ActionManager:
 					
 				
 		
-		for button in self.buttons:
+		for button in self.buttons + self.scroll_buttons:
 			if isWithin(curr_pos, button.rect):
 				button.colour= rgb.GREY
 			else:
