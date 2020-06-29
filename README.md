@@ -4,6 +4,9 @@
 
 A music rhythm game that is played directly from the computer keyboard.
 
+## Poster
+<img alt="Poster" src="./Milestone 2 poster Last Minute Wonders.png">
+
 #### Proposed Level of Achievement: Apollo 11
 
 ## Motivation
@@ -125,8 +128,7 @@ To workaround this, we wrapped this function in our own function which takes the
 
 * A sandbox mode allows players to bypass the storyline if they wish to and just play any track available. They can also upload their own MIDI tracks in this mode to play.
 
-## Poster
-<img alt="Poster" src="./Milestone 2 poster Last Minute Wonders.png">
+
 
 ## [Video](https://www.youtube.com/watch?v=9Qv3JzVdR2c&t=1s)
 

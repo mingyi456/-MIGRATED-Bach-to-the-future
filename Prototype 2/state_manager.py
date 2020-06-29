@@ -26,6 +26,8 @@ class State_Manager():
 		pygame.font.init()
 		
 		pygame.display.set_caption(TITLE)
+		self.icon= pygame.image.load("quaver.png")
+		pygame.display.set_icon(self.icon)
 		self.fps_clock = pygame.time.Clock()
 		self.screen = pygame.display.set_mode(SIZE)
 		self.SIZE = self.WIDTH, self.HEIGHT = SIZE
