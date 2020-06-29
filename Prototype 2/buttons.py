@@ -163,7 +163,7 @@ class ActionManager:
 
 
 class TextLine:
-	def __init__(self, text, font, pos, size= (50, 50), font_colour= rgb.BLACK):
+	def __init__(self, text, font, pos, size= (50, 50), font_colour= rgb.WHITE):
 		self.content= font.render(text, True, font_colour)
 		width= max(size[0], self.content.get_width())
 		height= max(size[1], self.content.get_height())
@@ -174,7 +174,7 @@ class TextLine:
 
 		
 class TextBox:
-	def __init__(self, text, font, pos, size= (400, 50), font_colour= rgb.BLACK):
+	def __init__(self, text, font, pos, size= (400, 50), font_colour= rgb.WHITE):
 		words= text.split(' ')
 		contents= []
 		for word in words:

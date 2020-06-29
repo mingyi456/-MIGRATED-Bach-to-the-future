@@ -56,7 +56,7 @@ class State_Manager():
 	def chk_slp(self, st):
 		del_t = self.fps_clock.tick_busy_loop(self.FPS) / 1000 - self.f_t
 		if del_t > 0:
-			print(f"Lag : {del_t}s")
+			# print(f"Lag : {del_t}s")
 			return time.time() - st, del_t
 		else:
 			return time.time() - st, 0
@@ -92,7 +92,7 @@ class MainMenuState(BaseState):
 		
 		self.font = pygame.font.Font(config["SysFont"], 24)
 		
-		self.text_line = TextLine("Welcome and hello!", self.font, (300, 50))
+		self.text_line = TextLine("~BACH TO THE FUTURE~", self.font, (300, 50))
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
@@ -155,7 +155,7 @@ class SettingsState(BaseState):
 		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 20), ret="Exit", key="escape")
 		self.action_manager.add_button("Restore", (50, 150), (90, 20), ret="Restore defaults")
 		self.action_manager.add_button("defaults", (50, 170), (90, 20), ret="Restore defaults")
-		self.font = pygame.font.Font(config["SysFont"], 14)
+		self.font = pygame.font.Font(config["SysFont"], 10)
 	
 	def enter(self, args):
 		self.settings = config
@@ -163,7 +163,7 @@ class SettingsState(BaseState):
 		
 		for i, setting in enumerate(config):
 			val = config[setting]
-			self.text.append((self.font.render(f"{setting} : {val}", 1, rgb.BLACK), (300, i * 50 + 25, 10, 10)))
+			self.text.append((self.font.render(f"{setting} : {val}", 1, rgb.WHITE), (300, i * 50 + 25, 10, 10)))
 			self.action_manager.add_button("Change", (200, i * 50 + 25), (30, 40), ret=setting, font=self.font)
 	
 	def update(self, game_time, lag):
@@ -202,9 +202,9 @@ class ChSettingState(BaseState):
 	def enter(self, args):
 		self.args= args
 		self.setting = args["setting"]
-		self.setting_text = self.font.render(self.setting, 1, rgb.BLACK), (250, 50, 50, 50)
+		self.setting_text = self.font.render(self.setting, 1, rgb.WHITE), (250, 50, 50, 50)
 		self.val = args["value"]
-		self.val_text = self.font.render(f"Current value : {self.val}", 1, rgb.BLACK), (250, 100, 50, 50)
+		self.val_text = self.font.render(f"Current value : {self.val}", 1, rgb.WHITE), (250, 100, 50, 50)
 		
 		self.new_val= ""
 		self.confirmed_val = ""
@@ -285,7 +285,7 @@ class AchievementsState(BaseState):
 		self.des_font = pygame.font.Font(config["SysFont"], 14)
 		self.text = []
 		for i, achievement in enumerate(data):
-			font_col = rgb.BLACK
+			font_col = rgb.WHITE
 			self.text.append((self.name_font.render(achievement["name"], 1, font_col), (200, i * 80 + 50, 50, 50)))
 			self.text.append(
 				(self.des_font.render(achievement["description"], 1, font_col), (200, i * 80 + 85, 50, 50)))
