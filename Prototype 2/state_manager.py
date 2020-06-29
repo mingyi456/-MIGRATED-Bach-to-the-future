@@ -12,7 +12,6 @@ import vlc
 import string
 from data_parser import get_config, ch_config, get_user_data, update_user_data
 
-
 config= get_config()
 
 
@@ -42,7 +41,7 @@ class State_Manager():
 		self.curr_state.update(self.g_t, self.lag)
 		self.curr_state.draw()
 		pygame.display.update()
-		self.time, self.lag = self.chk_slp(time.time())
+		self.time, self.lag = self.chk_slp()
 		self.g_t += self.time
 	
 	def ch_state(self, new_state, args={}):
@@ -53,13 +52,13 @@ class State_Manager():
 		self.curr_state.enter(args)
 		self.g_t = 0
 	
-	def chk_slp(self, st):
+	def chk_slp(self):
 		del_t = self.fps_clock.tick_busy_loop(self.FPS) / 1000 - self.f_t
 		if del_t > 0:
-			# print(f"Lag : {del_t}s")
-			return time.time() - st, del_t
+			print(f"Lag : {del_t}s")
+			return self.fps_clock.get_time()/1000, del_t
 		else:
-			return time.time() - st, 0
+			return self.fps_clock.get_time()/1000, 0
 
 
 class BaseState:
@@ -247,9 +246,8 @@ class ChSettingState(BaseState):
 				self.confirmed_input= TextLine(self.confirmed_val, self.font, (200, 400))
 				print(f"Changing current value to {self.confirmed_val}")
 				ch_config(self.setting, self.confirmed_val)
-				config= get_config()
-				self.fsm= State_Manager()
-				self.fsm.curr_state= MainMenuState(self.fsm)
+				
+				self.fsm.ch_state(ExitState(self.fsm))
 			
 			elif action == "shift":
 				self.isUppercase = not self.isCaps_lock
@@ -382,7 +380,7 @@ class PlayGameState(BaseState):
 			
 			end_time = float(beat[4])
 			duration = float(beat[2])
-			y = -end_time * self.orb_spd + (498 - self.orb_spd * 0.1)
+			y = -(end_time * self.orb_spd) + (498 - self.orb_spd * 0.17)
 			start_time = float(beat[3])
 			orb = OrbModel(x, y, duration, lane, start_time, end_time)
 			self.orbs.append(orb)
@@ -503,7 +501,7 @@ class PlayGameState(BaseState):
 		pygame.draw.line(self.fsm.screen, rgb.GREEN, (self.positions[-1] + 60, 0), (self.positions[-1] + 60, 600), 5)
 		
 		for i in self.orbs:
-			self.fsm.screen.blit(self.image, (round(i.x), round(i.y + i.length * 0.1)), (0, 0, 30, round(i.length * 0.9)))
+			self.fsm.screen.blit(self.image, (i.x, i.y + i.length * 0.1), (0, 0, 30, i.length * 0.9))
 			
 		for args, boolean in self.laneIcons:
 			if boolean:

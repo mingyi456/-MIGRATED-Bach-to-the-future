@@ -5,7 +5,7 @@ from data_parser import get_config
 
 config= get_config()
 
-pygame.init()
+pygame.font.init()
 
 
 
