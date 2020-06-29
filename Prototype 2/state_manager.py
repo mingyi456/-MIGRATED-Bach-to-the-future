@@ -17,7 +17,7 @@ config= get_config()
 
 
 class State_Manager():
-	def __init__(self, TITLE="Prototype 2", SIZE=(config["Screen Width"], config["Screen Height"]), FPS=int(config["FPS"]), TRACKS_DIR=config["Track Directory"], WAV_DIR=config["WAV_DIR"]):
+	def __init__(self, TITLE="Prototype 2", SIZE=(config["Screen Width"], config["Screen Height"]), FPS=int(config["FPS"]), TRACKS_DIR=config["Track Directory"], WAV_DIR=config["WAV_DIR"], DEF_FONT= config["SysFont"]):
 		
 		self.WAV_DIR = WAV_DIR.replace("{sep}", sep)
 		self.wav_files = {}
@@ -84,12 +84,12 @@ class BaseState:
 class MainMenuState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.action_manager.add_button("Start (Space)", (50, 50), (50, 50), ret="Start", key="space")
-		self.action_manager.add_button("Options", (50, 150), (50, 50))
-		self.action_manager.add_button("Achievements", (50, 250), (50, 50))
-		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 50), ret="Exit", key="escape")
+		self.action_manager.add_button("Start (Space)", (50, 50), (50, 20), ret="Start", key="space")
+		self.action_manager.add_button("Options", (50, 150), (50, 20))
+		self.action_manager.add_button("Achievements", (50, 250), (50, 20))
+		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 20), ret="Exit", key="escape")
 		
-		self.font = pygame.font.SysFont('Comic Sans MS', 36)
+		self.font = pygame.font.Font(config["SysFont"], 24)
 		
 		self.text_line = TextLine("Welcome and hello!", self.font, (300, 50))
 	
@@ -122,10 +122,10 @@ class SelectTrackState(BaseState):
 		super().__init__(fsm)
 		self.tracks = listdir(self.fsm.TRACKS_DIR)
 		for i, file in enumerate(self.tracks):
-			self.action_manager.add_button(file.rsplit('.',1)[0], (375, i * 100 + 50), (50, 50), canScroll=True, ret=file)
+			self.action_manager.add_button(file.rsplit('.',1)[0], (375, i * 100 + 50), (50, 20), canScroll=True, ret=file)
 		
-		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 50), ret="Exit", key="escape")
-		self.action_manager.add_button("Back (Backspace)", (50, 50), (50, 50), ret="Back", key="backspace")
+		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 20), ret="Exit", key="escape")
+		self.action_manager.add_button("Back (Backspace)", (50, 50), (50, 20), ret="Back", key="backspace")
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
@@ -145,16 +145,20 @@ class SelectTrackState(BaseState):
 	
 	def draw(self):
 		super().draw()
+		
+	def exit(self):
+		super().exit()
+		self.fsm.screen.fill(rgb.WHITE)
 
 
 class SettingsState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.action_manager.add_button("Back", (50, 50), (50, 50))
-		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 50), ret="Exit", key="escape")
-		self.action_manager.add_button("Restore", (50, 150), (50, 50), ret="Restore defaults")
-		self.action_manager.add_button("defaults", (50, 200), (50, 50), ret="Restore defaults")
-		self.font = pygame.font.SysFont('Comic Sans MS', 24)
+		self.action_manager.add_button("Back", (50, 50), (50, 20))
+		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 20), ret="Exit", key="escape")
+		self.action_manager.add_button("Restore", (50, 150), (90, 20), ret="Restore defaults")
+		self.action_manager.add_button("defaults", (50, 170), (90, 20), ret="Restore defaults")
+		self.font = pygame.font.Font(config["SysFont"], 14)
 	
 	def enter(self, args):
 		self.settings = config
@@ -195,8 +199,8 @@ class SettingsState(BaseState):
 class ChSettingState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.font = pygame.font.SysFont('Comic Sans MS', 30)
-		self.action_manager.add_button("Back", (50, 50), (50, 50))
+		self.font = pygame.font.Font(config["SysFont"], 30)
+		self.action_manager.add_button("Back", (50, 50), (50, 20))
 	
 	def enter(self, args):
 		self.args= args
@@ -278,13 +282,13 @@ class ChSettingState(BaseState):
 class AchievementsState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.action_manager.add_button("Back", (50, 50), (50, 50))
+		self.action_manager.add_button("Back", (50, 50), (50, 20))
 		print(data)
-		self.name_font = pygame.font.SysFont('Comic Sans MS', 24)
-		self.des_font = pygame.font.SysFont('Comic Sans MS', 18)
+		self.name_font = pygame.font.Font(config["SysFont"], 20)
+		self.des_font = pygame.font.Font(config["SysFont"], 14)
 		self.text = []
 		for i, achievement in enumerate(data):
-			font_col = rgb.RED
+			font_col = rgb.BLACK
 			self.text.append((self.name_font.render(achievement["name"], 1, font_col), (200, i * 80 + 50, 50, 50)))
 			self.text.append(
 				(self.des_font.render(achievement["description"], 1, font_col), (200, i * 80 + 85, 50, 50)))
@@ -297,6 +301,8 @@ class AchievementsState(BaseState):
 		for action in actions:
 			if action == "Back":
 				self.fsm.ch_state(MainMenuState(self.fsm))
+			elif action == "Exit":
+				self.fsm.ch_state(ExitState(self.fsm))
 	
 	def draw(self):
 		super().draw()
@@ -323,8 +329,8 @@ class OrbModel:
 class PlayGameState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		pygame.key.set_repeat(33)
-		self.action_manager.add_button("Back", (700, 50), (50, 50), ret="Back", key="backspace")
+		pygame.key.set_repeat(1)
+		self.action_manager.add_button("Back", (700, 50), (50, 20), ret="Back", key="backspace")
 		self.action_manager.add_keystroke("Pause", 'p')
 		self.isPlaying = True
 		self.beatmap = None
@@ -332,7 +338,7 @@ class PlayGameState(BaseState):
 		self.image = pygame.image.load('longrectangle.png').convert()
 		
 		self.score = 0
-		self.score_font = pygame.font.SysFont('Comic Sans MS', 36)
+		self.score_font = pygame.font.Font(config["SysFont"], 24)
 		self.score_line = TextLine(str(self.score), self.score_font, (750, 50))
 		
 		self.orb_spd= 450
@@ -340,10 +346,10 @@ class PlayGameState(BaseState):
 		self.countdown = 30 * 5
 	
 	def enter(self, args):
+
 		self.fsm.screen.fill(rgb.WHITE)
-		font = pygame.font.SysFont('Comic Sans MS', 30)
-		TextLine("Loading...", font, (300, 100)).draw(self.fsm.screen)
-		
+		font = pygame.font.Font(config["SysFont"], 30)
+
 		self.file = args["file_name"]
 		print(f"File name = {self.file}")
 		file_path = f"{self.fsm.TRACKS_DIR}{self.file}"
@@ -356,7 +362,6 @@ class PlayGameState(BaseState):
 		
 		############################################################################
 		
-		self.laneLock = {1: False, 2: False, 3: False, 4: False}
 		self.lane1 = pygame.image.load('red.png').convert()
 		self.lane2 = pygame.image.load('green.png').convert()
 		self.lane3 = pygame.image.load('yellow.png').convert()
@@ -384,7 +389,7 @@ class PlayGameState(BaseState):
 			
 			end_time = float(beat[4])
 			duration = float(beat[2])
-			y = -end_time * 450 + 500
+			y = -end_time * self.orb_spd + (498 - self.orb_spd * 0.1)
 			start_time = float(beat[3])
 			orb = OrbModel(x, y, duration, lane, start_time, end_time)
 			self.orbs.append(orb)
@@ -392,6 +397,7 @@ class PlayGameState(BaseState):
 		
 		wav_file = self.file.rsplit('.', 1)[0]
 		self.player = self.fsm.wav_files[wav_file]
+
 		self.player.play()
 	
 	def update(self, game_time, lag):
@@ -411,7 +417,7 @@ class PlayGameState(BaseState):
 				self.isPlaying = not self.isPlaying
 				self.player.pause()
 				if pygame.key.get_repeat() == 0:
-					pygame.key.set_repeat(33)
+					pygame.key.set_repeat(1)
 				else:
 					pygame.key.set_repeat(0)
 			
@@ -485,10 +491,9 @@ class PlayGameState(BaseState):
 			self.countdown -= 1
 			if self.countdown <= 0:
 				print("Track Completed!")
-				self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file.rsplit('.', 1)[0], "score": self.score})
+				self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": self.score})
 		
 		self.score_line = TextLine(str(self.score), self.score_font, (550, 50))
-		# print(game_time)
 	
 	def exit(self):
 		self.player.stop()
@@ -509,12 +514,12 @@ class PlayGameState(BaseState):
 class GameOverState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.action_manager.add_button("Retry", (200, 400), (50, 50))
-		self.action_manager.add_button("Back to Main Menu", (500, 400), (50, 50), ret="Main Menu")
-		self.action_manager.add_button("Back to Start", (300, 400), (50, 50), ret="Start")
+		self.action_manager.add_button("Retry", (200, 400), (50, 20))
+		self.action_manager.add_button("Back to Main Menu", (500, 400), (50, 20), ret="Main Menu")
+		self.action_manager.add_button("Back to Start", (300, 400), (50, 20), ret="Start")
 		self.action_manager.add_keystroke("Exit", "escape")
 		self.high_scores= get_user_data()["Highscores"]
-		self.score_font = pygame.font.SysFont('Comic Sans MS', 36)
+		self.score_font = pygame.font.Font(config["SysFont"], 24)
 		print(self.high_scores)
 		self.high_score_text= TextLine("High Score achieved!", self.score_font, (350, 300))
 	
@@ -522,7 +527,7 @@ class GameOverState(BaseState):
 		self.args = args
 		
 		self.score = args["score"]
-		self.track= args["file_name"]
+		self.track= args["file_name"].rsplit('.', 1)[0]
 
 		self.score_line = TextLine(f"Score : {self.score}", self.score_font, (350, 150))
 		self.track_line= TextLine(self.track, self.score_font, (200, 50))
