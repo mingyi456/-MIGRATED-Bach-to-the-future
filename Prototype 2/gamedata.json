@@ -1,6 +1,6 @@
 {
     "Settings": {
-        "FPS": "60",
+        "FPS": "30",
         "Screen Height": 600,
         "Screen Width": 800,
         "Track Directory": ".{sep}beatmaps{sep}",
@@ -32,7 +32,8 @@
                 "Rhapsody in Blue": 0,
                 "Piano Concerto, Adagio Sostenuto": 0,
                 "Mary Had A Little Lamb": 0,
-                "The Swan.csv": 3039
+                "The Swan.csv": 3039,
+                "Mary Had A Little Lamb.csv": 720
             }
         }
     },

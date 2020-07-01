@@ -379,10 +379,10 @@ class PlayGameState(BaseState):
 			lane = (lane + diff) % lanes
 			x = self.positions[lane]
 			
+			start_time = float(beat[3])
 			end_time = float(beat[4])
 			duration = float(beat[2])
-			y = -(end_time * self.orb_spd) + (498 - self.orb_spd * 0.17)
-			start_time = float(beat[3])
+			y = -(end_time) * self.orb_spd + 498 - self.orb_spd * 0.17
 			orb = OrbModel(x, y, duration, lane, start_time, end_time)
 			self.orbs.append(orb)
 			reference_note = int(beat[1])
@@ -503,7 +503,7 @@ class PlayGameState(BaseState):
 		pygame.draw.line(self.fsm.screen, rgb.GREEN, (self.positions[-1] + 60, 0), (self.positions[-1] + 60, 600), 5)
 		
 		for i in self.orbs:
-			self.fsm.screen.blit(self.image, (i.x, i.y + i.length * 0.1), (0, 0, 30, i.length * 0.9))
+			self.fsm.screen.blit(self.image, (i.x, i.y + i.length * 0.2), (0, 0, 30, i.length * 0.8))
 			
 		for args, boolean in self.laneIcons:
 			if boolean:
