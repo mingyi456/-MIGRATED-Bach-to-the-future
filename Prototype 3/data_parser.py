@@ -3,6 +3,11 @@ import json
 with open('gamedata.json') as file:
 	data = json.load(file)
 
+def get_paths(data_file= "gamedata.json"):
+	with open(data_file) as file:
+		data = json.load(file)
+	
+	return data["WAV Directory"], data["CSV Directory"]
 
 def get_config(data_file= "gamedata.json"):
 	with open(data_file) as file:
@@ -13,7 +18,7 @@ def get_config(data_file= "gamedata.json"):
 
 def ch_config(key, new_val):
 	try:
-		data["Settings"][key]= new_val
+		data["Settings"][key]["Value"]= new_val
 		save_json(data)
 	except:
 		print("Failed!")
@@ -23,12 +28,12 @@ def get_user_data(data_file= "gamedata.json"):
 	with open(data_file) as file:
 		data = json.load(file)
 	
-	user_data= data["Users"]["David"]
+	user_data= data["Users"]["Guest"]
 	return user_data
 
 def update_user_data(key, new_val):
 	try:
-		data["Users"]["David"][key[0]][key[1]]= new_val
+		data["Users"]["Guest"][key[0]][key[1]]= new_val
 		save_json(data)
 	except:
 		print("Failed!")

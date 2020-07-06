@@ -9,7 +9,7 @@ import csv
 from readJSON import data
 import vlc
 import string
-from data_parser import get_config, ch_config, get_user_data, update_user_data
+from data_parser import get_config, ch_config, get_user_data, update_user_data, get_paths
 
 config= get_config()
 
@@ -17,7 +17,9 @@ config= get_config()
 class State_Manager():
 	def __init__(self, config= get_config()):
 		
-		self.WAV_DIR = config["WAV_DIR"].replace("{sep}", sep)
+		raw_paths= get_paths()
+		
+		self.WAV_DIR = raw_paths[0].replace("{sep}", sep)
 		self.wav_files = {}
 		for i in listdir(self.WAV_DIR):
 			self.wav_files[i.rsplit('.', 1)[0]] = vlc.MediaPlayer(f"{self.WAV_DIR}{i}")
@@ -25,21 +27,21 @@ class State_Manager():
 		pygame.display.init()
 		pygame.font.init()
 		
-		self.SYSFONT= config["SysFont"]
+		self.SYSFONT= "ARCADE_R.TTF"
 		
 		pygame.display.set_caption("Prototype 2")
 		self.icon= pygame.image.load("quaver.png")
 		pygame.display.set_icon(self.icon)
 		self.fps_clock = pygame.time.Clock()
 		
-		self.SIZE = self.WIDTH, self.HEIGHT = config["Screen Width"], config["Screen Height"]
+		self.SIZE = self.WIDTH, self.HEIGHT = eval(config["Resolution"]["Value"])
 		self.screen = pygame.display.set_mode(self.SIZE)
-		self.FPS = int(config["FPS"])
+		self.FPS = int(config["FPS"]["Value"])
 		self.f_t = 1 / self.FPS
 		self.time = 0
 		self.lag = 0
 		self.g_t = 0
-		self.TRACKS_DIR = config["Track Directory"].replace("{sep}", sep)
+		self.TRACKS_DIR = raw_paths[1].replace("{sep}", sep)
 	
 	def update(self):
 		self.curr_state.update(self.g_t, self.lag)
@@ -60,8 +62,6 @@ class State_Manager():
 		del_t = self.fps_clock.tick_busy_loop(self.FPS) / 1000 - self.f_t
 		if del_t > 0:
 			print(f"Lag : {del_t}s")
-			print(f"Time : {self.fps_clock.get_time()}, Raw Time: {self.fps_clock.get_rawtime()}")
-
 				
 			return self.fps_clock.get_time()/1000, del_t
 		else:
@@ -203,7 +203,7 @@ class SettingsState(BaseState):
 		self.text = []
 		
 		for i, setting in enumerate(config):
-			val = config[setting]
+			val = config[setting]["Value"]
 			self.text.append((self.font.render(f"{setting} : {val}", 1, rgb.WHITE), (300, i * 50 + 30, 10, 10)))
 			self.action_manager.add_button("Change", (200, i * 50 + 25), (30, 40), ret=setting)
 	
@@ -219,7 +219,7 @@ class SettingsState(BaseState):
 			elif action == "Back":
 				self.fsm.ch_state(MainMenuState(self.fsm))
 			elif action in self.settings:
-				self.fsm.ch_state(ChSettingState(self.fsm), {"setting": action, "value": config[action]})
+				self.fsm.ch_state(ChSettingState(self.fsm), {"setting": action, "value": config[action]["Value"]})
 			
 			elif action == "Restore defaults":
 				
@@ -237,7 +237,7 @@ class SettingsState(BaseState):
 class ChSettingState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.font = pygame.font.Font(self.fsm.SYSFONT, 30)
+		self.font = pygame.font.Font(self.fsm.SYSFONT, 20)
 		self.action_manager.add_button("Back", (50, 50), (50, 30))
 	
 	def enter(self, args):
