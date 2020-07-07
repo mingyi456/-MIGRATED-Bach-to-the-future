@@ -5,7 +5,7 @@ import rgb
 from os import listdir, sep
 from UIManager import ActionManager, TextLine
 import csv
-
+import time
 from readJSON import data
 import vlc
 import string
@@ -219,7 +219,7 @@ class SettingsState(BaseState):
 			elif action == "Back":
 				self.fsm.ch_state(MainMenuState(self.fsm))
 			elif action in self.settings:
-				self.fsm.ch_state(ChSettingState(self.fsm), {"setting": action, "value": config[action]["Value"]})
+				self.fsm.ch_state(ChSettingState(self.fsm), {"setting": action, "value": config[action]})
 			
 			elif action == "Restore defaults":
 				
@@ -244,8 +244,13 @@ class ChSettingState(BaseState):
 		self.args= args
 		self.setting = args["setting"]
 		self.setting_text = self.font.render(self.setting, 1, rgb.WHITE), (250, 50, 50, 50)
-		self.val = args["value"]
+		self.val = args["value"]["Value"]
 		self.val_text = self.font.render(f"Current value : {self.val}", 1, rgb.WHITE), (250, 100, 50, 50)
+		print(args["value"]["Choices"])
+
+		
+		for e, i in enumerate(args["value"]["Choices"]):
+ 			self.action_manager.add_button(str(i), (250, e*50+150), (50, 30))
 		
 		self.new_val= ""
 		self.confirmed_val = ""
@@ -288,8 +293,13 @@ class ChSettingState(BaseState):
 				self.confirmed_input= TextLine(self.confirmed_val, self.font, (200, 400))
 				print(f"Changing current value to {self.confirmed_val}")
 				ch_config(self.setting, self.confirmed_val)
+				config2= get_config()
+				print(config2["FPS"])
+				self.fsm.__init__(config2)
+				self.fsm.curr_state= MainMenuState(self.fsm)
+				self.fsm.ch_state(SettingsState(self.fsm))
 				
-				self.fsm.ch_state(ExitState(self.fsm))
+				# self.fsm.ch_state(ExitState(self.fsm))
 			
 			elif action == "shift":
 				self.isUppercase = not self.isCaps_lock
@@ -383,6 +393,7 @@ class PlayGameState(BaseState):
 		self.countdown = 30 * 5
 	
 	def enter(self, args):
+		
 		self.file = args["file_name"]
 		print(f"File name = {self.file}")
 		file_path = f"{self.fsm.TRACKS_DIR}{self.file}"
@@ -576,7 +587,7 @@ class GameOverState(BaseState):
 		if self.high_scores[self.track] < self.score:
 			print("High Score achieved!")
 			self.isHighScore= True
-			update_user_data(("Highscores", args["file_name"]), args["score"])
+			update_user_data(("Highscores", args["file_name"].rsplit('.', 1)[0]), args["score"])
 		else:
 			print("High Score not achieved")
 			self.isHighScore= False			

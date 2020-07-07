@@ -1,7 +1,7 @@
 {
     "Settings": {
         "FPS": {
-            "Value": 60,
+            "Value": "60",
             "Type": "int",
             "Choices": [
                 30,
@@ -41,9 +41,6 @@
                 "Rhapsody in Blue": 0,
                 "Piano Concerto, Adagio Sostenuto": 0,
                 "Mary Had A Little Lamb": 0,
-                "The Swan.csv": 0,
-                "Mary Had A Little Lamb.csv": 0,
-                "Pavane.csv": 0
             }
         }
     },
