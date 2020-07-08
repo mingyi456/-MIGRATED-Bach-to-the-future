@@ -2,14 +2,14 @@ from sys import exit
 import pygame
 
 import rgb
-from os import listdir, sep
+from os import listdir, path
 from UIManager import ActionManager, TextLine
 import csv
 import time
 from readJSON import data
 import vlc
 import string
-from data_parser import get_config, ch_config, get_user_data, update_user_data, get_paths
+from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config
 
 config= get_config()
 
@@ -17,9 +17,9 @@ config= get_config()
 class State_Manager():
 	def __init__(self, config= get_config()):
 		
-		raw_paths= get_paths()
+		raw_paths= get_sys_config()
 		
-		self.WAV_DIR = raw_paths[0].replace("{sep}", sep)
+		self.WAV_DIR = path.join(*raw_paths["WAV Directory"])
 		self.wav_files = {}
 		for i in listdir(self.WAV_DIR):
 			self.wav_files[i.rsplit('.', 1)[0]] = vlc.MediaPlayer(f"{self.WAV_DIR}{i}")
@@ -41,7 +41,7 @@ class State_Manager():
 		self.time = 0
 		self.lag = 0
 		self.g_t = 0
-		self.TRACKS_DIR = raw_paths[1].replace("{sep}", sep)
+		self.TRACKS_DIR = path.join(*raw_paths["CSV Directory"])
 	
 	def update(self):
 		self.curr_state.update(self.g_t, self.lag)
@@ -246,10 +246,10 @@ class ChSettingState(BaseState):
 		self.setting_text = self.font.render(self.setting, 1, rgb.WHITE), (250, 50, 50, 50)
 		self.val = args["value"]["Value"]
 		self.val_text = self.font.render(f"Current value : {self.val}", 1, rgb.WHITE), (250, 100, 50, 50)
-		print(args["value"]["Choices"])
+		self.choices= args["value"]["Choices"]
+		print(self.choices)
 
-		
-		for e, i in enumerate(args["value"]["Choices"]):
+		for e, i in enumerate(args["value"]["Choices"]):		
  			self.action_manager.add_button(str(i), (250, e*50+150), (50, 30))
 		
 		self.new_val= ""
@@ -281,6 +281,15 @@ class ChSettingState(BaseState):
 				self.fsm.ch_state(SettingsState(self.fsm))
 			elif action == "Exit":
 				self.fsm.ch_state(ExitState(self.fsm))
+			
+			elif action in self.choices or eval(action) in self.choices:
+				print(f"Choice clicked : {eval(action)}")
+				ch_config(self.setting, action)
+				config2= get_config()
+				print(config2["FPS"])
+				self.fsm.__init__(config2)
+				self.fsm.curr_state= MainMenuState(self.fsm)
+				self.fsm.ch_state(SettingsState(self.fsm))
 			
 			elif action == "backspace":
 				self.new_val = self.new_val[:-1]

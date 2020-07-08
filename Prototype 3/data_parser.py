@@ -3,11 +3,11 @@ import json
 with open('gamedata.json') as file:
 	data = json.load(file)
 
-def get_paths(data_file= "gamedata.json"):
+def get_sys_config(data_file= "gamedata.json"):
 	with open(data_file) as file:
 		data = json.load(file)
 	
-	return data["WAV Directory"], data["CSV Directory"]
+	return data["System"]
 
 def get_config(data_file= "gamedata.json"):
 	with open(data_file) as file:
