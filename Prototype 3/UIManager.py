@@ -20,7 +20,7 @@ class Button:
 		self.name= name
 		self.coords= list(pos)
 		self.size= list(size)
-		self.rect= self.coords+self.size
+		self.rect= pygame.Rect(self.coords+self.size)
 		self.key= key
 		if ret is None:
 			self.ret= name
@@ -167,7 +167,16 @@ class TextLine:
 		self.content= font.render(text, True, font_colour)
 		width= max(size[0], self.content.get_width())
 		height= max(size[1], self.content.get_height())
-		self.rect= [pos[0], pos[1], width, height]
+		self.rect= pygame.Rect(pos[0], pos[1], width, height)
+		
+	
+	def align_ctr(self, pos= None):
+		if pos is None:
+			self.rect.center= self.rect.topleft
+		else:
+			self.rect.center= pos
+		
+		return self
 	
 	def draw(self, screen):
 		screen.blit(self.content, self.rect)

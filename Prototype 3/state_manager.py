@@ -11,7 +11,6 @@ import vlc
 import string
 from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config
 
-config= get_config()
 
 
 class State_Manager():
@@ -199,11 +198,11 @@ class SettingsState(BaseState):
 		self.font = pygame.font.Font(self.fsm.SYSFONT, 15)
 	
 	def enter(self, args):
-		self.settings = config
+		self.settings = get_config()
 		self.text = []
 		
-		for i, setting in enumerate(config):
-			val = config[setting]["Value"]
+		for i, setting in enumerate(self.settings):
+			val = self.settings[setting]["Value"]
 			self.text.append((self.font.render(f"{setting} : {val}", 1, rgb.WHITE), (300, i * 50 + 30, 10, 10)))
 			self.action_manager.add_button("Change", (200, i * 50 + 25), (30, 40), ret=setting)
 	
@@ -219,7 +218,7 @@ class SettingsState(BaseState):
 			elif action == "Back":
 				self.fsm.ch_state(MainMenuState(self.fsm))
 			elif action in self.settings:
-				self.fsm.ch_state(ChSettingState(self.fsm), {"setting": action, "value": config[action]})
+				self.fsm.ch_state(ChSettingState(self.fsm), {"setting": action, "value": self.settings[action]})
 			
 			elif action == "Restore defaults":
 				
@@ -252,24 +251,7 @@ class ChSettingState(BaseState):
 		for e, i in enumerate(args["value"]["Choices"]):		
  			self.action_manager.add_button(str(i), (250, e*50+150), (50, 30))
 		
-		self.new_val= ""
-		self.confirmed_val = ""
-		self.text_input= TextLine(self.new_val, self.font, (200, 300))
-		self.confirmed_input= TextLine(self.confirmed_val, self.font, (200, 400))
 
-		self.alphabet = list(string.printable)
-		self.action_manager.add_keystroke("backspace", "backspace")
-		self.action_manager.add_keystroke("space", "space")
-		self.action_manager.add_keystroke("enter", "return")
-		self.action_manager.add_keystroke("caps lock", "caps lock")
-		self.action_manager.add_keystroke("shift", "left shift")
-		self.action_manager.add_keystroke("shift", "right shift")
-		
-		for i in self.alphabet:
-			self.action_manager.add_keystroke(i, i)
-		
-		self.isUppercase = False
-		self.isCaps_lock = False
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
@@ -281,7 +263,7 @@ class ChSettingState(BaseState):
 				self.fsm.ch_state(SettingsState(self.fsm))
 			elif action == "Exit":
 				self.fsm.ch_state(ExitState(self.fsm))
-			
+					
 			elif action in self.choices or eval(action) in self.choices:
 				print(f"Choice clicked : {eval(action)}")
 				ch_config(self.setting, action)
@@ -290,49 +272,14 @@ class ChSettingState(BaseState):
 				self.fsm.__init__(config2)
 				self.fsm.curr_state= MainMenuState(self.fsm)
 				self.fsm.ch_state(SettingsState(self.fsm))
-			
-			elif action == "backspace":
-				self.new_val = self.new_val[:-1]
-			
-			elif action == "space":
-				self.new_val += ' '
-			
-			elif action == "enter":
-				self.confirmed_val= self.new_val
-				self.confirmed_input= TextLine(self.confirmed_val, self.font, (200, 400))
-				print(f"Changing current value to {self.confirmed_val}")
-				ch_config(self.setting, self.confirmed_val)
-				config2= get_config()
-				print(config2["FPS"])
-				self.fsm.__init__(config2)
-				self.fsm.curr_state= MainMenuState(self.fsm)
-				self.fsm.ch_state(SettingsState(self.fsm))
-				
-				# self.fsm.ch_state(ExitState(self.fsm))
-			
-			elif action == "shift":
-				self.isUppercase = not self.isCaps_lock
-			
-			elif action == "caps lock":
-				self.isCaps_lock = not self.isCaps_lock
-			
-			elif action in self.alphabet:
-				if self.isUppercase:
-					self.new_val += action.upper()
-				else:
-					self.new_val += action
-		
-		self.isUppercase = self.isCaps_lock
-		
-		self.text_input= TextLine(self.new_val, self.font, (200, 300))
+
+
 
 	
 	def draw(self):
 		super().draw()
 		self.fsm.screen.blit(self.setting_text[0], self.setting_text[1])
 		self.fsm.screen.blit(self.val_text[0], self.val_text[1])
-		self.text_input.draw(self.fsm.screen)
-		self.confirmed_input.draw(self.fsm.screen)
 
 
 class AchievementsState(BaseState):
@@ -590,9 +537,13 @@ class GameOverState(BaseState):
 		
 		self.score = args["score"]
 		self.track= args["file_name"].rsplit('.', 1)[0]
+		
+		center= self.fsm.WIDTH // 2
 
-		self.score_line = TextLine(f"Score : {self.score}", self.score_font, (350, 150))
-		self.track_line= TextLine(self.track, self.score_font, (200, 50))
+		self.score_line = TextLine(f"Score : {self.score}", self.score_font, (center, 150)).align_ctr()
+
+		self.track_line= TextLine(self.track, self.score_font, (center, 50)).align_ctr()
+
 		if self.high_scores[self.track] < self.score:
 			print("High Score achieved!")
 			self.isHighScore= True
