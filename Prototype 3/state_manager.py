@@ -5,9 +5,8 @@ import rgb
 from os import listdir, path
 from UIManager import ActionManager, TextLine
 import csv
-from readJSON import data
 import vlc
-from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config
+from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config, get_achievements
 
 
 
@@ -68,14 +67,13 @@ class BaseState:
 	def __init__(self, fsm):
 		self.fsm = fsm
 		self.action_manager = ActionManager()
-		self.background = pygame.image.load('background.jpg').convert()
+		self.background = pygame.image.load('background.jpg').convert_alpha()
 	
 	def enter(self, args):
-		print("Entering base state")
+		pass
 	
 	def exit(self):
 		self.fsm.screen.blit(self.background, (0,0))
-		print("Exiting base state")
 	
 	def update(self, game_time, lag):
 		print("Updating base state")
@@ -88,10 +86,11 @@ class MainMenuState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
 		self.action_manager.add_button("Start (Space)", (50, 50), (50, 30), ret="Start", key="space")
-		self.action_manager.add_button("Options", (50, 150), (50, 30))
-		self.action_manager.add_button("Achievements", (50, 250), (50, 30))
-		self.action_manager.add_button("About", (50, self.fsm.HEIGHT - 200), (50, 30))
-		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 30), ret="Exit", key="escape")
+		self.action_manager.add_button("Options", (50, 100), (50, 30))
+		self.action_manager.add_button("Achievements", (50, 150), (50, 30))
+		self.action_manager.add_button("Storyline", (50, 200), (50, 30))
+		self.action_manager.add_button("About", (50, self.fsm.HEIGHT - 100), (50, 30))
+		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 50), (50, 30), ret="Exit", key="escape")
 		
 		self.font = pygame.font.Font(self.fsm.SYSFONT, 24)
 		
@@ -118,7 +117,10 @@ class MainMenuState(BaseState):
 			elif action == "About":
 				self.fsm.ch_state(AboutState(self.fsm))
 			
-	
+			elif action == "Storyline":
+				from Storyline import StoryState
+				self.fsm.ch_state(StoryState(self.fsm), {"file" : "storyline.json"})
+			
 	def draw(self):
 		super().draw()
 		self.text_line.draw(self.fsm.screen)
@@ -247,8 +249,6 @@ class ChSettingState(BaseState):
 
 		for e, i in enumerate(args["value"]["Choices"]):		
  			self.action_manager.add_button(str(i), (250, e*50+150), (50, 30))
-		
-
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
@@ -269,9 +269,6 @@ class ChSettingState(BaseState):
 				self.fsm.curr_state= MainMenuState(self.fsm)
 				self.fsm.ch_state(SettingsState(self.fsm))
 
-
-
-	
 	def draw(self):
 		super().draw()
 		self.fsm.screen.blit(self.setting_text[0], self.setting_text[1])
@@ -282,12 +279,18 @@ class AchievementsState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
 		self.action_manager.add_button("Back", (50, 50), (50, 30))
-		print(data)
 		self.name_font = pygame.font.Font(self.fsm.SYSFONT, 20)
 		self.des_font = pygame.font.Font(self.fsm.SYSFONT, 14)
 		self.text = []
-		for i, achievement in enumerate(data):
-			font_col = rgb.WHITE
+		hasAchieved= get_user_data()["Achievements"]
+		print(hasAchieved)
+		achievements= get_achievements()
+		for i, achievement in enumerate(achievements):
+			if hasAchieved[achievement["name"]]:
+				font_col = rgb.WHITE
+			else:
+				font_col= rgb.RED				
+			
 			self.text.append((self.name_font.render(achievement["name"], 1, font_col), (200, i * 80 + 50, 50, 50)))
 			self.text.append(
 				(self.des_font.render(achievement["description"], 1, font_col), (200, i * 80 + 85, 50, 50)))
@@ -310,20 +313,17 @@ class AchievementsState(BaseState):
 
 
 class OrbModel:
-	def __init__(self, x, y, duration, lane, start_time, end_time):
+	def __init__(self, x, y, duration, lane, end_time):
 		self.length = duration * 450  # pixels
 		
 		self.x = x
 		self.y = y
 		self.lane = lane
-		self.start_time = start_time
+
 		self.end_time = end_time
 	
 	def getTail(self):
 		return self.y + self.length
-	
-	
-
 
 class PlayGameState(BaseState):
 	def __init__(self, fsm):
@@ -351,7 +351,7 @@ class PlayGameState(BaseState):
 		file_path = f"{self.fsm.TRACKS_DIR}{self.file}"
 		with open(file_path, 'r') as file:
 			reader = csv.reader(file)
-			header = next(reader)
+			next(reader)
 			self.beatmap = [row for row in reader]
 		lanes = 4
 		self.positions = [i * 100 for i in range(1, lanes + 1)]
@@ -374,26 +374,23 @@ class PlayGameState(BaseState):
 		
 		############################################################################
 		
-		# generating orbs
-		reference_note = int(self.beatmap[0][1])
+		reference_note = int(self.beatmap[0][2])
 		lane = 0
 		
 		for beat in self.beatmap:
-			diff = int(beat[1]) - reference_note
+			diff = int(beat[2]) - reference_note
 			lane = (lane + diff) % lanes
 			x = self.positions[lane]
 			
-			end_time = float(beat[4])
-			duration = float(beat[2])
-			y = -(end_time * self.orb_spd) + (498 - self.orb_spd * 0.17)
-			start_time = float(beat[3])
-			orb = OrbModel(x, y, duration, lane, start_time, end_time)
+			end_time = float(beat[0])
+			duration = float(beat[1])
+			y = -(end_time) * self.orb_spd + 498 - self.orb_spd * 0.1
+			orb = OrbModel(x, y, duration, lane, end_time)
 			self.orbs.append(orb)
-			reference_note = int(beat[1])
+			reference_note = int(beat[2])
 		
 		wav_file = self.file.rsplit('.', 1)[0]
 		self.player = self.fsm.wav_files[wav_file]
-
 		self.player.play()
 	
 	def update(self, game_time, lag):
@@ -480,7 +477,7 @@ class PlayGameState(BaseState):
 		
 		if self.isPlaying:  # pause handling
 			for i in self.orbs:
-				i.y += self.orb_spd * (self.fsm.f_t + lag)
+				i.y += self.orb_spd * (self.fsm.fps_clock.get_time() / 1000)
 				if i.y > self.fsm.HEIGHT:
 					self.orbs.remove(i)
 		
@@ -525,7 +522,6 @@ class GameOverState(BaseState):
 		self.action_manager.add_keystroke("Exit", "escape")
 		self.high_scores= get_user_data()["Highscores"]
 		self.score_font = pygame.font.Font(self.fsm.SYSFONT, 24)
-		print(self.high_scores)
 		self.high_score_text= TextLine("High Score achieved!", self.score_font, (250, 300))
 	
 	def enter(self, args):

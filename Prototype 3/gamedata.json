@@ -19,7 +19,7 @@
         "Guest": {
             "Achievements": {
                 "Resurrection": true,
-                "Der Kapellmeister": false,
+                "Der Kapellmeister": true,
                 "Enlightened": false,
                 "Let Me Spill My Heart!": false,
                 "Modern Times": false
@@ -36,7 +36,7 @@
                 "La Campanella": 0,
                 "Blue Danube Waltz": 0,
                 "Intermezzo": 0,
-                "Pavane": 355,
+                "Pavane": 465,
                 "Rhapsody in Blue": 0,
                 "Piano Concerto, Adagio Sostenuto": 0,
                 "Mary Had A Little Lamb": 49,

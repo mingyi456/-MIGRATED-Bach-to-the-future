@@ -1,0 +1,61 @@
+[
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "Sheep may safely graze.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1713: En route to Wissenfels"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "1.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Narrator",
+      "Text" : "Meet Johann Sebastian Bach."
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Narrator",
+      "Text" : "He is on his way to celebrate the 31st birthday of the Duke."
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Narrator",
+      "Text" : "He had prepared an original work for this occassion, and it is a really good one..."
+    }
+  ],
+  [
+    {
+      "Type" : "Script",
+      "File" : "fadeout.py"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "noise.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "After the celebration..."
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "2.png"
+    }
+  ]
+]

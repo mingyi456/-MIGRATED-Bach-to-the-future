@@ -39,6 +39,10 @@ def update_user_data(key, new_val):
 		print("Failed!")
 		return -1		
 
+def get_achievements(achievement_file= "achievements.json"):
+	with open(achievement_file) as file:
+		achievements= json.load(file)
+	return achievements
 
 def save_json(data= data, data_file= "gamedata.json"):
 	try:
