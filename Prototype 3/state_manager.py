@@ -5,10 +5,8 @@ import rgb
 from os import listdir, path
 from UIManager import ActionManager, TextLine
 import csv
-import time
 from readJSON import data
 import vlc
-import string
 from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config
 
 
@@ -66,7 +64,6 @@ class State_Manager():
 		else:
 			return self.fps_clock.get_time()/1000, 0
 
-
 class BaseState:
 	def __init__(self, fsm):
 		self.fsm = fsm
@@ -99,7 +96,7 @@ class MainMenuState(BaseState):
 		self.font = pygame.font.Font(self.fsm.SYSFONT, 24)
 		
 		self.text_line = TextLine("~BACH TO THE FUTURE~", self.font, (300, 50))
-	
+		
 	def update(self, game_time, lag):
 		events = pygame.event.get()
 		
@@ -149,21 +146,21 @@ class AboutState(BaseState):
 			elif action == "Back":
 				self.fsm.ch_state(MainMenuState(self.fsm))
 		
-		
 	def draw(self):
 		super().draw()
 		for line in self.text_lines:
 			line.draw(self.fsm.screen)
-		
-		
-		
+
 		
 class SelectTrackState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
 		self.tracks = listdir(self.fsm.TRACKS_DIR)
+		
 		for i, file in enumerate(self.tracks):
 			self.action_manager.add_button(file.rsplit('.',1)[0], (375, i * 50 + 50), (50, 30), canScroll=True, ret=file)
+		
+		self.action_manager.scroll_max = self.action_manager.scroll_buttons[-1].rect[1] - (self.fsm.HEIGHT//4)*3
 		
 		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 30), ret="Exit", key="escape")
 		self.action_manager.add_button("Back (Backspace)", (50, 50), (50, 30), ret="Back", key="backspace")
@@ -268,7 +265,6 @@ class ChSettingState(BaseState):
 				print(f"Choice clicked : {eval(action)}")
 				ch_config(self.setting, action)
 				config2= get_config()
-				print(config2["FPS"])
 				self.fsm.__init__(config2)
 				self.fsm.curr_state= MainMenuState(self.fsm)
 				self.fsm.ch_state(SettingsState(self.fsm))

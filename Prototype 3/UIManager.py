@@ -16,7 +16,7 @@ def isWithin(point, rect):
 	return False
 
 class Button:
-	def __init__(self, name, ret, pos, size, key, colour,font, font_colour, hl_colour, sel_colour):
+	def __init__(self, name, ret, pos, size, key, colour, font, font_colour, hl_colour, sel_colour):
 		self.name= name
 		self.coords= list(pos)
 		self.size= list(size)
@@ -31,6 +31,10 @@ class Button:
 		self.hl_colour= hl_colour
 		self.sel_colour= sel_colour
 		self.font= font
+		self.text= font.render(self.name, True, self.font_colour)
+		self.rect[2]= self.width= max(size[0], self.text.get_width())
+		self.rect[3]= self.height= max(size[1], self.text.get_height())
+		
 
 class KeyStroke:
 	def __init__(self, name, key, ret):
@@ -51,6 +55,10 @@ class ActionManager:
 		self.scroll_buttons= []
 		self.keystrokes= []
 		self.sp_keystrokes= []
+		self.scroll_items= []
+		self.scroll_pos= 0
+		self.scroll_min= 0
+		self.scroll_max= 600
 	
 	def add_button(self, name, pos, size, ret=None, key= None, colour= rgb.BLACK, \
 				font= pygame.font.Font('Barcade-R4LM.otf', 22), \
@@ -94,17 +102,29 @@ class ActionManager:
 					print(f"No buttons clicked! Cursor position : {curr_pos}")
 				
 				elif event.button == 4:
-					print("Mouse Button 4 : Scroll up")
+					print(f"Mouse Button 4 : Scroll up, scroll_pos : {self.scroll_pos}")
+
+					if self.scroll_pos > self.scroll_min:
+						self.scroll_pos -= 15
 					
-					for button in self.scroll_buttons:
-						button.rect[1] += 15
+						for button in self.scroll_buttons:
+							button.rect[1] += 15
+						
+						for item in self.scroll_items:
+							item.rect[1] += 15
 				
 				elif event.button == 5:
-					print("Mouse Button 5 : Scroll down")
+					print(f"Mouse Button 5 : Scroll down, scroll_pos : {self.scroll_pos}")
 					
-					for button in self.scroll_buttons:
-						button.rect[1] -= 15
+					if self.scroll_pos < self.scroll_max:
+						self.scroll_pos += 15
 	
+						for button in self.scroll_buttons:
+							button.rect[1] -= 15
+							
+						for item in self.scroll_items:
+							item.rect[1] -= 15
+
 			elif event.type == pygame.MOUSEBUTTONUP:
 	
 				for button in self.buttons:
@@ -133,8 +153,6 @@ class ActionManager:
 						# print(f"Special Keystroke \"{keystroke.name}\" key \"{keystroke.key}\" depressed, return value : \"{keystroke.ret}\" (up)")
 						actions.append(f"{keystroke.ret} (up)")
 				
-					
-				
 		
 		for button in self.buttons + self.scroll_buttons:
 			if isWithin(curr_pos, button.rect):
@@ -146,20 +164,18 @@ class ActionManager:
 		
 	def draw_buttons(self, screen):
 		for button in self.buttons:
-			text= button.font.render(button.name, 1, button.font_colour)
-			text_len= text.get_width()
-			button.rect[2]= max( ( text_len, button.rect[2]))
+# 			text= button.font.render(button.name, 1, button.font_colour)
+# 			text_len= text.get_width()
+# 			button.rect[2]= max( ( text_len, button.rect[2]))
 	
 			pygame.draw.rect(screen, button.colour, button.rect)
-			screen.blit(text, button.rect)
+			screen.blit(button.text, button.rect)
 			
 		for button in self.scroll_buttons:
-			text= button.font.render(button.name, 1, button.font_colour)
-			text_len= text.get_width()
-			button.rect[2]= max( ( text_len, button.rect[2]))
+
 	
 			pygame.draw.rect(screen, button.colour, button.rect)
-			screen.blit(text, button.rect)
+			screen.blit(button.text, button.rect)
 
 
 class TextLine:
