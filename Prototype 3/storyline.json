@@ -41,7 +41,7 @@
       "Type" : "Script",
       "File" : "fadeout.py",
       "Init" : "self.curr_alpha= 0; self.surf= pygame.Surface((800, 600)).convert()",
-      "max_frame" : 255
+      "max_frame" : 60
       
     }
   ],

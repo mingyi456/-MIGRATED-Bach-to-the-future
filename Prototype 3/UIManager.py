@@ -1,13 +1,12 @@
 
 import rgb
 import pygame
-from data_parser import get_config
-
-config= get_config()
+from data_parser import get_sys_config
+from os import path
 
 pygame.font.init()
 
-
+ASSETS_DIR= path.join(*(get_sys_config()["Assets"]))
 
 def isWithin(point, rect):
 	if point[0] > rect[0] and point[0] < (rect[0] + rect[2]):
@@ -51,6 +50,7 @@ class SpKeyStroke(KeyStroke):
 
 class ActionManager:
 	def __init__(self):
+
 		self.buttons= []
 		self.scroll_buttons= []
 		self.keystrokes= []
@@ -61,7 +61,7 @@ class ActionManager:
 		self.scroll_max= 600
 	
 	def add_button(self, name, pos, size, ret=None, key= None, colour= rgb.BLACK, \
-				font= pygame.font.Font('Barcade-R4LM.otf', 22), \
+				font= pygame.font.Font(f"{ASSETS_DIR}Barcade-R4LM.otf", 22), \
 					font_colour= rgb.YELLOW, hl_colour= rgb.GREY, sel_colour= rgb.GREEN, \
 						canScroll= False):
 		if canScroll:

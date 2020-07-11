@@ -14,7 +14,7 @@ class State_Manager():
 	def __init__(self, config= get_config()):
 		
 		raw_paths= get_sys_config()
-		
+		self.ASSETS_DIR= path.join(*raw_paths["Assets"])
 		self.WAV_DIR = path.join(*raw_paths["WAV Directory"])
 		self.wav_files = {}
 		for i in listdir(self.WAV_DIR):
@@ -23,10 +23,10 @@ class State_Manager():
 		pygame.display.init()
 		pygame.font.init()
 		
-		self.SYSFONT= "ARCADE_R.TTF"
+		self.SYSFONT= f"{self.ASSETS_DIR}ARCADE_R.TTF"
 		
 		pygame.display.set_caption("Prototype 2")
-		self.icon= pygame.image.load("quaver.png")
+		self.icon= pygame.image.load(f"{self.ASSETS_DIR}quaver.png")
 		pygame.display.set_icon(self.icon)
 		self.fps_clock = pygame.time.Clock()
 		
@@ -67,7 +67,7 @@ class BaseState:
 	def __init__(self, fsm):
 		self.fsm = fsm
 		self.action_manager = ActionManager()
-		self.background = pygame.image.load('background.jpg').convert()
+		self.background = pygame.image.load(f"{self.fsm.ASSETS_DIR}background.jpg").convert()
 	
 	def enter(self, args):
 		pass
@@ -331,7 +331,7 @@ class PlayGameState(BaseState):
 		self.isPlaying = True
 		self.beatmap = None
 		self.orbs = []
-		self.image = pygame.image.load('longrectangle.png').convert()
+		self.image = pygame.image.load(f"{self.fsm.ASSETS_DIR}longrectangle.png").convert()
 		
 		self.score = 0
 		self.score_font = pygame.font.Font(self.fsm.SYSFONT, 24)
@@ -355,10 +355,10 @@ class PlayGameState(BaseState):
 		
 		############################################################################
 		
-		self.lane1 = pygame.image.load('red.png').convert()
-		self.lane2 = pygame.image.load('green.png').convert()
-		self.lane3 = pygame.image.load('yellow.png').convert()
-		self.lane4 = pygame.image.load('purple.png').convert()
+		self.lane1 = pygame.image.load(f"{self.fsm.ASSETS_DIR}red.png").convert()
+		self.lane2 = pygame.image.load(f"{self.fsm.ASSETS_DIR}green.png").convert()
+		self.lane3 = pygame.image.load(f"{self.fsm.ASSETS_DIR}yellow.png").convert()
+		self.lane4 = pygame.image.load(f"{self.fsm.ASSETS_DIR}purple.png").convert()
 		self.laneIcons = [[(self.lane1, (self.positions[0], 490)), False], \
 		                  [(self.lane2, (self.positions[1], 490)), False], \
 		                  [(self.lane3, (self.positions[2], 490)), False], \

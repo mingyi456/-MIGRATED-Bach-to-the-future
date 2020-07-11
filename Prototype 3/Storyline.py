@@ -60,6 +60,7 @@ class StoryState(BaseState):
 		
 	def advance(self, commands):
 		self.curr_frame= 0
+		self.max_frame= 0
 		self.isDone= False
 		self.scripts= []
 		self.curr_text= ""
@@ -92,7 +93,7 @@ class StoryState(BaseState):
 				self.scripts.append(script_code)
 				self.curr_alpha= 0
 				self.surf= pygame.image.load(command["File"]).convert()
-				self.max_frame= max(self.max_frame, 255)
+				self.max_frame= max(self.max_frame, 60)
 
 		self.max_frame= max(self.max_frame, self.text_len)
 	
