@@ -2,7 +2,7 @@
   [
     {
       "Type" : "Audio Start",
-      "File" : "Sheep may safely graze.mp3"
+      "File" : "Sheep may safely graze.ogg"
     },
     {
       "Type" : "Title",
@@ -39,7 +39,10 @@
   [
     {
       "Type" : "Script",
-      "File" : "fadeout.py"
+      "File" : "fadeout.py",
+      "Init" : "self.curr_alpha= 0; self.surf= pygame.Surface((800, 600)).convert()",
+      "max_frame" : 255
+      
     }
   ],
   [
