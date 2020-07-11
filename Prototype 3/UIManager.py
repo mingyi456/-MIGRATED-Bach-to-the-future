@@ -125,11 +125,9 @@ class ActionManager:
 						for item in self.scroll_items:
 							item.rect[1] -= 15
 
-			elif event.type == pygame.MOUSEBUTTONUP:
-	
-				for button in self.buttons:
-					button.colour= button.def_colour
-	
+			# elif event.type == pygame.MOUSEBUTTONUP:
+				# for button in self.buttons:
+					# button.colour= button.def_colour
 
 			elif event.type == pygame.KEYDOWN:
 						

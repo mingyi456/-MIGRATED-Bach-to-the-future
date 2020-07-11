@@ -286,11 +286,8 @@ class AchievementsState(BaseState):
 		print(hasAchieved)
 		achievements= get_achievements()
 		for i, achievement in enumerate(achievements):
-			if hasAchieved[achievement["name"]]:
-				font_col = rgb.WHITE
-			else:
-				font_col= rgb.RED				
 			
+			font_col= rgb.GREEN if hasAchieved[achievement["name"]] else rgb.WHITE
 			self.text.append((self.name_font.render(achievement["name"], 1, font_col), (200, i * 80 + 50, 50, 50)))
 			self.text.append(
 				(self.des_font.render(achievement["description"], 1, font_col), (200, i * 80 + 85, 50, 50)))

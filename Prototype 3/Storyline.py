@@ -2,6 +2,7 @@ import pygame
 import rgb
 from UIManager import TextLine, TextBox
 from state_manager import State_Manager, BaseState, ExitState, MainMenuState
+import rgb
 import json
 
 class StoryState(BaseState):
@@ -22,6 +23,7 @@ class StoryState(BaseState):
 		self.isDone= True
 	
 	def enter(self, args):
+		self.background.fill(rgb.BLACK)
 		with open(args["file"]) as file:
 			self.script= json.load(file)
 		self.curr_line= 0
@@ -37,13 +39,14 @@ class StoryState(BaseState):
 			
 			elif action == "Advance":
 				if self.isDone:
-					self.advance(self.script[self.curr_line])
-					self.curr_line += 1
-					if self.curr_line > self.max_line:
+					if self.curr_line == self.max_line:
 						print("Scene completed!")
 						self.fsm.ch_state(MainMenuState(self.fsm))
+					else:
+						self.advance(self.script[self.curr_line])
+						self.curr_line += 1
 				else:
-					self.curr_frame= len(self.curr_text)
+					self.curr_frame= self.max_frame
 		
 		self.curr_text_pos= min(self.curr_frame, self.text_len)
 		self.curr_text_box= TextBox(self.curr_text[:self.curr_text_pos] , self.font2, (50, 350), (700, 250))
@@ -52,6 +55,7 @@ class StoryState(BaseState):
 			self.isDone= True
 		for file, time in self.scripts:
 			if self.curr_frame <= time:
+
 				exec(open(file).read())
 		
 	def advance(self, commands):
@@ -67,16 +71,18 @@ class StoryState(BaseState):
 				self.curr_text= command["Text"]
 				self.text_len= len(self.curr_text)
 			elif command["Type"] == "Script":
-				self.scripts.append((command["File"], 60))
+				self.scripts.append((command["File"], 120))
 			elif command["Type"] == "Background":
 				self.background = pygame.image.load('background.jpg').convert_alpha()
+				# self.scripts.append(("fadein.py", 60))
 				
 
 		
 		self.max_frame= len(self.curr_text)
 	
 	def draw(self):
-		super().draw()
+		self.fsm.screen.blit(self.background, (0,0))
+		self.action_manager.draw_buttons(self.fsm.screen)
 		self.title.draw(self.fsm.screen)
 		self.curr_text_box.draw(self.fsm.screen)
 
