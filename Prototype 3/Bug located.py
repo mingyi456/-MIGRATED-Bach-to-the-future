@@ -1,20 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jun 25 02:15:34 2020
-
-@author: user
-"""
-
-from os import listdir, getcwd
+from os import listdir
 import vlc
-from time import sleep
+from sys import exit
 
 import pygame
-
-
-
-
-
 
 class Foo:
 	def __init__(self):
@@ -22,24 +10,26 @@ class Foo:
 		for i in listdir(".\\wav_files\\"):
 			self.wav_files.append(vlc.MediaPlayer(f".\\wav_files\\{i}"))
 
+def playall():
+	for i in Foo().wav_files:
+		i.play()
 
 
 if __name__ == "__main__":
+	
+	playall() # Here there is no error
 
-# 	files= Foo()
-# 		
-# 	for i in files.wav_files:
-# 		i.play()
 	pygame.mixer.init()
 	pygame.display.init()
-	pygame.font.init()
-	print("Sheep may safely graze.mp3" in listdir())
-	
-	pygame.mixer.Sound("Sheep may safely graze.mp3").play()
 
-	fps_clock = pygame.time.Clock()
 	screen = pygame.display.set_mode((600, 400))
-	pygame.mixer.quit()
+	
+	# playall() # Here there is an error
+		
+	while True:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				exit()
 
 
-sleep(30)
