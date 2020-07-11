@@ -4,6 +4,7 @@ from UIManager import TextLine, TextBox
 from state_manager import State_Manager, BaseState, ExitState, MainMenuState
 import rgb
 import json
+import vlc
 
 class StoryState(BaseState):
 	def __init__(self, fsm):
@@ -53,10 +54,9 @@ class StoryState(BaseState):
 		self.curr_frame += 1
 		if self.curr_frame >= self.max_frame:
 			self.isDone= True
-		for file, time in self.scripts:
-			if self.curr_frame <= time:
-
-				exec(open(file).read())
+		for script_code in self.scripts:
+			
+			exec(script_code)
 		
 	def advance(self, commands):
 		self.curr_frame= 0
@@ -70,15 +70,31 @@ class StoryState(BaseState):
 			elif command["Type"] == "Speech":
 				self.curr_text= command["Text"]
 				self.text_len= len(self.curr_text)
-			elif command["Type"] == "Script":
-				self.scripts.append((command["File"], 120))
-			elif command["Type"] == "Background":
-				self.background = pygame.image.load('background.jpg').convert_alpha()
-				# self.scripts.append(("fadein.py", 60))
 				
+			elif command["Type"] == "Audio Start":
+				self.player= vlc.MediaPlayer("Sheep may safely graze.mp3")
+				self.player.play()
+			
+			elif command["Type"] == "Audio Stop":
+				pygame.mixer.music.stop()
+			
+			elif command["Type"] == "Script":
+				
+				with open(command["File"]) as script_file:
+					script_code= script_file.read()
+				self.scripts.append(script_code)
+				exec(command["Init"])
+				self.max_frame= max(self.max_frame, command["max_frame"])
+				
+			elif command["Type"] == "Background":
+				with open("fadein.py") as script_file:
+					script_code= script_file.read()
+				self.scripts.append(script_code)
+				self.curr_alpha= 0
+				self.surf= pygame.image.load(command["File"]).convert()
+				self.max_frame= max(self.max_frame, 255)
 
-		
-		self.max_frame= len(self.curr_text)
+		self.max_frame= max(self.max_frame, self.text_len)
 	
 	def draw(self):
 		self.fsm.screen.blit(self.background, (0,0))

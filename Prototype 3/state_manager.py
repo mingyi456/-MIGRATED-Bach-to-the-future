@@ -67,7 +67,7 @@ class BaseState:
 	def __init__(self, fsm):
 		self.fsm = fsm
 		self.action_manager = ActionManager()
-		self.background = pygame.image.load('background.jpg').convert_alpha()
+		self.background = pygame.image.load('background.jpg').convert()
 	
 	def enter(self, args):
 		pass
