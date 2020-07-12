@@ -395,9 +395,9 @@ class PlayGameState(BaseState):
 		
 		wav_file = self.file.rsplit('.', 1)[0]
 		self.player = self.fsm.wav_files[wav_file]
-		self.volume= 100
+		self.volume= int(get_config()["Default Volume"]["Value"])
+		print(self.volume)
 		self.player.audio_set_volume(self.volume)
-		print(f"Volume : {self.player.audio_get_volume()}")
 		self.player.play()
 	
 	def update(self, game_time, lag):
@@ -507,9 +507,7 @@ class PlayGameState(BaseState):
 		
 		self.score_line = TextLine(str(self.score), self.score_font, (550, 50))
 	
-		
 
-		
 	def exit(self):
 		self.player.stop()
 		pygame.key.set_repeat(0)

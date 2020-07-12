@@ -133,7 +133,7 @@ class ActionManager:
 						
 				for keystroke in self.keystrokes:
 					if pygame.key.name(event.key) == keystroke.key:
-						print(f"Keystroke \"{keystroke.name}\" key \"{keystroke.key}\" pressed, return value : \"{keystroke.ret}\"")
+						# print(f"Keystroke \"{keystroke.name}\" key \"{keystroke.key}\" pressed, return value : \"{keystroke.ret}\"")
 						actions.append(keystroke.ret)
 
 				for keystroke in self.sp_keystrokes:

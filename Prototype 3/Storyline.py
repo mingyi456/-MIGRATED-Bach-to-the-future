@@ -4,6 +4,7 @@ from UIManager import TextLine, TextBox
 from state_manager import State_Manager, BaseState, ExitState, MainMenuState
 import json
 import vlc
+from data_parser import get_config
 
 class StoryState(BaseState):
 	def __init__(self, fsm):
@@ -11,6 +12,8 @@ class StoryState(BaseState):
 		#self.action_manager.add_button("Back", (50, 50), (50, 30))
 		self.action_manager.add_keystroke("space", "space", ret= "Advance")
 		self.action_manager.add_keystroke("enter", "return", ret= "Advance")
+		self.action_manager.add_keystroke("Vol+", "up")
+		self.action_manager.add_keystroke("Vol-", "down")
 		self.font1= pygame.font.Font(self.fsm.SYSFONT, 22)
 		self.font2= pygame.font.Font(self.fsm.SYSFONT, 14)
 		self.title= TextLine("StoryState", self.font1, (400, 50)).align_ctr()
@@ -28,6 +31,8 @@ class StoryState(BaseState):
 			self.script= json.load(file)
 		self.curr_line= 0
 		self.max_line= len(self.script)
+		self.volume= int(get_config()["Default Volume"]["Value"])
+		self.player= None
 
 	def update(self, game_time, lag):
 		actions= self.action_manager.chk_actions(pygame.event.get())
@@ -36,6 +41,18 @@ class StoryState(BaseState):
 				self.fsm.ch_state(ExitState(self.fsm))
 			elif action == "Back":
 				self.fsm.ch_state(MainMenuState(self.fsm))
+			
+			elif action == "Vol+":
+				self.volume += 1
+				if self.player is not None:
+					self.player.audio_set_volume(self.volume)
+				print(f"Volume : {self.player.audio_get_volume()}")
+			
+			elif action == "Vol-":
+				self.volume= max(0, self.volume-1)
+				if self.player is not None:
+					self.player.audio_set_volume(self.volume)
+				print(f"Volume : {self.player.audio_get_volume()}")
 			
 			elif action == "Advance":
 				if self.isDone:
@@ -72,11 +89,10 @@ class StoryState(BaseState):
 				self.text_len= len(self.curr_text)
 				
 			elif command["Type"] == "Audio Start":
+				if self.player is not None:
+					self.player.stop()
 				self.player= vlc.MediaPlayer("Sheep may safely graze.ogg")
 				self.player.play()
-				pygame.mixer.init()
-				pygame.mixer.music.load("Sheep may safely graze.ogg")
-				pygame.mixer.music.play()
 			
 			elif command["Type"] == "Audio Stop":
 				pygame.mixer.music.stop()
@@ -94,8 +110,10 @@ class StoryState(BaseState):
 					script_code= script_file.read()
 				self.scripts.append(script_code)
 				self.curr_alpha= 0
-				self.surf= pygame.image.load(command["File"]).convert()
-				self.max_frame= max(self.max_frame, 60)
+				self.bg_copy= self.background.copy()
+				self.fade_spd= 2
+				self.mask= pygame.image.load(command["File"]).convert()
+				self.max_frame= max(self.max_frame, 128)
 
 		self.max_frame= max(self.max_frame, self.text_len)
 	
@@ -105,6 +123,10 @@ class StoryState(BaseState):
 		self.action_manager.draw_buttons(self.fsm.screen)
 		self.title.draw(self.fsm.screen)
 		self.curr_text_box.draw(self.fsm.screen)
+	
+	def exit(self):
+		if self.player is not None:
+			self.player.stop()
 
 if __name__ == "__main__":
 	
