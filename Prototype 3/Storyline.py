@@ -24,6 +24,7 @@ class StoryState(BaseState):
 		self.max_frame= 0
 		self.scripts= []
 		self.isDone= True
+		self.forceDone= False
 	
 	def enter(self, args):
 		self.background.fill(rgb.BLACK)
@@ -63,6 +64,7 @@ class StoryState(BaseState):
 						self.advance(self.script[self.curr_line])
 						self.curr_line += 1
 				else:
+					self.forceDone= True
 					self.curr_frame= self.max_frame
 		
 		self.curr_text_pos= min(self.curr_frame, self.text_len)
@@ -71,13 +73,13 @@ class StoryState(BaseState):
 		if self.curr_frame >= self.max_frame:
 			self.isDone= True
 		for script_code in self.scripts:
-			
 			exec(script_code)
 		
 	def advance(self, commands):
 		self.curr_frame= 0
 		self.max_frame= 0
 		self.isDone= False
+		self.forceDone= False
 		self.scripts= []
 		self.curr_text= ""
 		for command in commands:

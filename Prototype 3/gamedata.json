@@ -24,7 +24,7 @@
             ]
         },
         "Default Volume": {
-            "Value": "80",
+            "Value": "100",
             "Choices": [
                 "20",
                 "40",
@@ -64,7 +64,7 @@
     "Factory Data": {
         "Settings": {
             "FPS": {
-                "Value": 60,
+                "Value": "60",
                 "Choices": [
                     30,
                     60
@@ -74,7 +74,26 @@
                 "Value": "(800, 600)",
                 "Choices": [
                     "(800, 600)",
-                    "(1200, 600)"
+                    "(1200, 600)",
+                    "(1200, 800)",
+                    "(1920, 1080)"
+                ]
+            },
+            "Fullscreen": {
+                "Value": "False",
+                "Choices": [
+                    "True",
+                    "False"
+                ]
+            },
+            "Default Volume": {
+                "Value": "100",
+                "Choices": [
+                    "20",
+                    "40",
+                    "60",
+                    "80",
+                    "100"
                 ]
             }
         },

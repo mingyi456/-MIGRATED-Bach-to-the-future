@@ -6,8 +6,7 @@ import pygame
 from UIManager import ActionManager, TextLine
 import csv
 import vlc
-from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config, get_achievements
-
+from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config, get_achievements, reset_config
 
 
 class State_Manager():
@@ -67,6 +66,7 @@ class State_Manager():
 		else:
 			return self.fps_clock.get_time()/1000, 0
 
+
 class BaseState:
 	def __init__(self, fsm):
 		self.fsm = fsm
@@ -86,6 +86,7 @@ class BaseState:
 		self.fsm.screen.fill(rgb.BLACK)
 		self.fsm.screen.blit(self.background, (0,0))
 		self.action_manager.draw_buttons(self.fsm.screen)
+
 
 class MainMenuState(BaseState):
 	def __init__(self, fsm):
@@ -129,6 +130,7 @@ class MainMenuState(BaseState):
 	def draw(self):
 		super().draw()
 		self.text_line.draw(self.fsm.screen)
+
 
 class AboutState(BaseState):
 	def __init__(self, fsm):
@@ -225,7 +227,7 @@ class SettingsState(BaseState):
 				self.fsm.ch_state(ChSettingState(self.fsm), {"setting": action, "value": self.settings[action]})
 			
 			elif action == "Restore defaults":
-				
+				reset_config()
 				self.fsm.__init__()
 				self.fsm.curr_state = MainMenuState(self.fsm)
 				self.fsm.ch_state(SettingsState(self.fsm))
@@ -431,7 +433,6 @@ class PlayGameState(BaseState):
 				self.player.audio_set_volume(self.volume)
 				print(f"Volume : {self.player.audio_get_volume()}")
 			
-			
 			elif action == "f (down)":
 				for orb in orbsONSCREEN:
 					if abs(orb.getTail() - 500) < 10 and orb.lane == 0:
@@ -546,11 +547,11 @@ class GameOverState(BaseState):
 		self.score = args["score"]
 		self.track= args["file_name"].rsplit('.', 1)[0]
 		
-		center= self.fsm.WIDTH // 2
+		ctr= self.fsm.WIDTH // 2
 
-		self.score_line = TextLine(f"Score : {self.score}", self.score_font, (center, 150)).align_ctr()
+		self.score_line = TextLine(f"Score : {self.score}", self.score_font, (ctr, 150)).align_ctr()
 
-		self.track_line= TextLine(self.track, self.score_font, (center, 50)).align_ctr()
+		self.track_line= TextLine(self.track, self.score_font, (ctr, 50)).align_ctr()
 
 		if self.high_scores[self.track] < self.score:
 			print("High Score achieved!")

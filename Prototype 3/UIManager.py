@@ -33,7 +33,14 @@ class Button:
 		self.text= font.render(self.name, True, self.font_colour)
 		self.rect[2]= self.width= max(size[0], self.text.get_width())
 		self.rect[3]= self.height= max(size[1], self.text.get_height())
-		
+	
+	def align_ctr(self, pos= None):
+		if pos is None:
+			self.rect.center= self.rect.topleft
+		else:
+			self.rect.center= pos
+		return self
+
 
 class KeyStroke:
 	def __init__(self, name, key, ret):
@@ -171,7 +178,6 @@ class ActionManager:
 			
 		for button in self.scroll_buttons:
 
-	
 			pygame.draw.rect(screen, button.colour, button.rect)
 			screen.blit(button.text, button.rect)
 
@@ -183,7 +189,6 @@ class TextLine:
 		height= max(size[1], self.content.get_height())
 		self.rect= pygame.Rect(pos[0], pos[1], width, height)
 		
-	
 	def align_ctr(self, pos= None):
 		if pos is None:
 			self.rect.center= self.rect.topleft
