@@ -2,7 +2,6 @@ import pygame
 import rgb
 from UIManager import TextLine, TextBox
 from state_manager import State_Manager, BaseState, ExitState, MainMenuState
-import rgb
 import json
 import vlc
 
@@ -73,8 +72,11 @@ class StoryState(BaseState):
 				self.text_len= len(self.curr_text)
 				
 			elif command["Type"] == "Audio Start":
-				self.player= vlc.MediaPlayer("Sheep may safely graze.mp3")
+				self.player= vlc.MediaPlayer("Sheep may safely graze.ogg")
 				self.player.play()
+				pygame.mixer.init()
+				pygame.mixer.music.load("Sheep may safely graze.ogg")
+				pygame.mixer.music.play()
 			
 			elif command["Type"] == "Audio Stop":
 				pygame.mixer.music.stop()
@@ -98,6 +100,7 @@ class StoryState(BaseState):
 		self.max_frame= max(self.max_frame, self.text_len)
 	
 	def draw(self):
+		self.fsm.screen.fill(rgb.BLACK)
 		self.fsm.screen.blit(self.background, (0,0))
 		self.action_manager.draw_buttons(self.fsm.screen)
 		self.title.draw(self.fsm.screen)

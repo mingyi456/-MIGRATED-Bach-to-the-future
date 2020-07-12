@@ -11,7 +11,16 @@
             "Value": "(800, 600)",
             "Choices": [
                 "(800, 600)",
-                "(1200, 600)"
+                "(1200, 600)",
+                "(1200, 800)",
+                "(1920, 1080)"
+            ]
+        },
+        "Fullscreen": {
+            "Value": "False",
+            "Choices": [
+                "True",
+                "False"
             ]
         }
     },
@@ -36,7 +45,7 @@
                 "La Campanella": 0,
                 "Blue Danube Waltz": 0,
                 "Intermezzo": 0,
-                "Pavane": 482,
+                "Pavane": 1971,
                 "Rhapsody in Blue": 0,
                 "Piano Concerto, Adagio Sostenuto": 0,
                 "Mary Had A Little Lamb": 49,

@@ -1,8 +1,8 @@
 from sys import exit
-import pygame
-
 import rgb
-from os import listdir, path
+from os import listdir, path, environ
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = ''
+import pygame
 from UIManager import ActionManager, TextLine
 import csv
 import vlc
@@ -31,7 +31,11 @@ class State_Manager():
 		self.fps_clock = pygame.time.Clock()
 		
 		self.SIZE = self.WIDTH, self.HEIGHT = eval(config["Resolution"]["Value"])
-		self.screen = pygame.display.set_mode(self.SIZE)
+		self.isFullScreen= eval(config["Fullscreen"]["Value"])
+		if self.isFullScreen:
+			self.screen = pygame.display.set_mode(self.SIZE, pygame.FULLSCREEN)
+		else:
+			self.screen = pygame.display.set_mode(self.SIZE)
 		self.FPS = int(config["FPS"]["Value"])
 		self.f_t = 1 / self.FPS
 		self.time = 0
@@ -79,6 +83,7 @@ class BaseState:
 		print("Updating base state")
 	
 	def draw(self):
+		self.fsm.screen.fill(rgb.BLACK)
 		self.fsm.screen.blit(self.background, (0,0))
 		self.action_manager.draw_buttons(self.fsm.screen)
 
@@ -203,7 +208,7 @@ class SettingsState(BaseState):
 		for i, setting in enumerate(self.settings):
 			val = self.settings[setting]["Value"]
 			self.text.append((self.font.render(f"{setting} : {val}", 1, rgb.WHITE), (300, i * 50 + 30, 10, 10)))
-			self.action_manager.add_button("Change", (200, i * 50 + 25), (30, 40), ret=setting)
+			self.action_manager.add_button("Change", (200, i * 50 + 25), (30, 30), ret=setting)
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
@@ -328,6 +333,8 @@ class PlayGameState(BaseState):
 		pygame.key.set_repeat(1)
 		self.action_manager.add_button("Back", (700, 50), (50, 30), ret="Back", key="backspace")
 		self.action_manager.add_keystroke("Pause", 'p')
+		self.action_manager.add_keystroke("Vol+", "up")
+		self.action_manager.add_keystroke("Vol-", "down")
 		self.isPlaying = True
 		self.beatmap = None
 		self.orbs = []
@@ -388,6 +395,9 @@ class PlayGameState(BaseState):
 		
 		wav_file = self.file.rsplit('.', 1)[0]
 		self.player = self.fsm.wav_files[wav_file]
+		self.volume= 100
+		self.player.audio_set_volume(self.volume)
+		print(f"Volume : {self.player.audio_get_volume()}")
 		self.player.play()
 	
 	def update(self, game_time, lag):
@@ -411,14 +421,25 @@ class PlayGameState(BaseState):
 				else:
 					pygame.key.set_repeat(0)
 			
-			if action == "f (down)":
+			elif action == "Vol+":
+				self.volume += 1
+				self.player.audio_set_volume(self.volume)
+				print(f"Volume : {self.player.audio_get_volume()}")
+			
+			elif action == "Vol-":
+				self.volume= max(0, self.volume-1)
+				self.player.audio_set_volume(self.volume)
+				print(f"Volume : {self.player.audio_get_volume()}")
+			
+			
+			elif action == "f (down)":
 				for orb in orbsONSCREEN:
 					if abs(orb.getTail() - 500) < 10 and orb.lane == 0:
 						self.score += 1
 						print("Score += 1")
 				self.laneIcons[0][1] = True
 			
-			if action == "f (up)":
+			elif action == "f (up)":
 				for orb in orbsONSCREEN:
 					if orb.lane == 0:
 						penalty = round(0.1*max(orb.y - 500, 0))
@@ -426,14 +447,14 @@ class PlayGameState(BaseState):
 						print(f"Penalty to score : -{penalty}")		
 				self.laneIcons[0][1] = False
 			
-			if action == "g (down)":
+			elif action == "g (down)":
 				for orb in orbsONSCREEN:
 					if abs(orb.getTail() - 500) < 10 and orb.lane == 1:
 						self.score += 1
 						print("Score += 1")
 				self.laneIcons[1][1] = True
 			
-			if action == "g (up)":
+			elif action == "g (up)":
 				for orb in orbsONSCREEN:
 					if orb.lane == 1:
 						penalty = round(0.1*max(orb.y - 500, 0))
@@ -441,14 +462,14 @@ class PlayGameState(BaseState):
 						print(f"Penalty to score : -{penalty}")				
 				self.laneIcons[1][1] = False
 			
-			if action == "h (down)":
+			elif action == "h (down)":
 				for orb in orbsONSCREEN:
 					if abs(orb.getTail() - 500) < 10 and orb.lane == 2:
 						self.score += 1
 						print("Score += 1")
 				self.laneIcons[2][1] = True
 			
-			if action == "h (up)":
+			elif action == "h (up)":
 				for orb in orbsONSCREEN:
 					if orb.lane == 2:
 						penalty = round(0.1*max(orb.y - 500, 0))
@@ -456,14 +477,14 @@ class PlayGameState(BaseState):
 						print(f"Penalty to score : -{penalty}")		
 				self.laneIcons[2][1] = False
 			
-			if action == "j (down)":
+			elif action == "j (down)":
 				for orb in orbsONSCREEN:
 					if abs(orb.getTail() - 500) < 10 and orb.lane == 3:
 						self.score += 1
 						print("Score += 1")
 				self.laneIcons[3][1] = True
 			
-			if action == "j (up)":
+			elif action == "j (up)":
 				for orb in orbsONSCREEN:
 					if orb.lane == 3:
 						penalty = round(0.1*max(orb.y - 500, 0))
@@ -500,8 +521,8 @@ class PlayGameState(BaseState):
 		
 		for pos in self.positions:
 			x = pos - 35
-			pygame.draw.line(self.fsm.screen, rgb.GREEN, (x, 0), (x, 600), 5)
-		pygame.draw.line(self.fsm.screen, rgb.GREEN, (self.positions[-1] + 60, 0), (self.positions[-1] + 60, 600), 5)
+			pygame.draw.line(self.fsm.screen, rgb.GREEN, (x, 0), (x, self.fsm.HEIGHT), 5)
+		pygame.draw.line(self.fsm.screen, rgb.GREEN, (self.positions[-1] + 60, 0), (self.positions[-1] + 60, self.fsm.HEIGHT), 5)
 		
 		for i in self.orbs:
 			self.fsm.screen.blit(self.image, (i.x, round(i.y + i.length * 0.1)), (0, 0, 30, round(i.length * 0.9)))
