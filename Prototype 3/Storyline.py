@@ -1,3 +1,5 @@
+from os import environ
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = ''
 import pygame
 import rgb
 from UIManager import TextLine, TextBox

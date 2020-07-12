@@ -104,7 +104,6 @@ class MainMenuState(BaseState):
 		
 	def update(self, game_time, lag):
 		events = pygame.event.get()
-		
 		actions = self.action_manager.chk_actions(events)
 		
 		for action in actions:
@@ -176,9 +175,6 @@ class SelectTrackState(BaseState):
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
-		for event in events:
-			if event.type == pygame.QUIT:
-				self.fsm.ch_state(ExitState(self.fsm))
 		actions = self.action_manager.chk_actions(events)
 		
 		for action in actions:
@@ -204,17 +200,17 @@ class SettingsState(BaseState):
 		self.font = pygame.font.Font(self.fsm.SYSFONT, 15)
 	
 	def enter(self, args):
-		self.settings = get_config()
-		self.text = []
+		self.settings= get_config()
+		self.text= []
+		self.text_lines= []
 		
 		for i, setting in enumerate(self.settings):
 			val = self.settings[setting]["Value"]
-			self.text.append((self.font.render(f"{setting} : {val}", 1, rgb.WHITE), (300, i * 50 + 30, 10, 10)))
+			self.text_lines.append(TextLine(f"{setting} : {val}", self.font, (300, i * 50 + 30, 10, 10)))
 			self.action_manager.add_button("Change", (200, i * 50 + 25), (30, 30), ret=setting)
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
-		
 		actions = self.action_manager.chk_actions(events)
 		
 		for action in actions:
@@ -235,9 +231,9 @@ class SettingsState(BaseState):
 	def draw(self):
 		super().draw()
 		
-		for line in self.text:
-			self.fsm.screen.blit(line[0], line[1])
-
+		for text_line in self.text_lines:
+			text_line.draw(self.fsm.screen)
+		
 
 class ChSettingState(BaseState):
 	def __init__(self, fsm):
@@ -248,12 +244,11 @@ class ChSettingState(BaseState):
 	def enter(self, args):
 		self.args= args
 		self.setting = args["setting"]
-		self.setting_text = self.font.render(self.setting, 1, rgb.WHITE), (250, 50, 50, 50)
+		self.setting_text_line= TextLine(self.setting, self.font, (250, 50))
 		self.val = args["value"]["Value"]
-		self.val_text = self.font.render(f"Current value : {self.val}", 1, rgb.WHITE), (250, 100, 50, 50)
+		self.val_text_line= TextLine(f"Current value : {self.val}", self.font, (250, 100))
+		
 		self.choices= args["value"]["Choices"]
-		print(self.choices)
-
 		for e, i in enumerate(args["value"]["Choices"]):		
  			self.action_manager.add_button(str(i), (250, e*50+150), (50, 30))
 	
@@ -278,8 +273,9 @@ class ChSettingState(BaseState):
 
 	def draw(self):
 		super().draw()
-		self.fsm.screen.blit(self.setting_text[0], self.setting_text[1])
-		self.fsm.screen.blit(self.val_text[0], self.val_text[1])
+		self.setting_text_line.draw(self.fsm.screen)
+		self.val_text_line.draw(self.fsm.screen)
+
 
 
 class AchievementsState(BaseState):
@@ -288,20 +284,20 @@ class AchievementsState(BaseState):
 		self.action_manager.add_button("Back", (50, 50), (50, 30))
 		self.name_font = pygame.font.Font(self.fsm.SYSFONT, 20)
 		self.des_font = pygame.font.Font(self.fsm.SYSFONT, 14)
-		self.text = []
+
+		self.text_lines= []
 		hasAchieved= get_user_data()["Achievements"]
 		print(hasAchieved)
 		achievements= get_achievements()
 		for i, achievement in enumerate(achievements):
 			
 			font_col= rgb.GREEN if hasAchieved[achievement["name"]] else rgb.WHITE
-			self.text.append((self.name_font.render(achievement["name"], 1, font_col), (200, i * 80 + 50, 50, 50)))
-			self.text.append(
-				(self.des_font.render(achievement["description"], 1, font_col), (200, i * 80 + 85, 50, 50)))
+			self.text_lines.append(TextLine(achievement["name"], self.name_font, (200, i * 80 + 50), font_colour= font_col))
+			self.text_lines.append(TextLine(achievement["description"], self.des_font, (200, i * 80 + 85), font_colour= font_col))
+
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
-		
 		actions = self.action_manager.chk_actions(events)
 		
 		for action in actions:
@@ -312,18 +308,17 @@ class AchievementsState(BaseState):
 	
 	def draw(self):
 		super().draw()
-		for line in self.text:
-			self.fsm.screen.blit(line[0], line[1])
+
+		for line in self.text_lines:
+			line.draw(self.fsm.screen)
 
 
 class OrbModel:
 	def __init__(self, x, y, duration, lane, end_time):
 		self.length = duration * 450  # pixels
-		
 		self.x = x
 		self.y = y
 		self.lane = lane
-
 		self.end_time = end_time
 	
 	def getTail(self):
@@ -333,7 +328,7 @@ class PlayGameState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
 		pygame.key.set_repeat(1)
-		self.action_manager.add_button("Back", (700, 50), (50, 30), ret="Back", key="backspace")
+		self.action_manager.add_button("Back", (self.fsm.WIDTH-100, 50), (50, 30), ret="Back", key="backspace")
 		self.action_manager.add_keystroke("Pause", 'p')
 		self.action_manager.add_keystroke("Vol+", "up")
 		self.action_manager.add_keystroke("Vol-", "down")
@@ -347,8 +342,7 @@ class PlayGameState(BaseState):
 		self.score_line = TextLine(str(self.score), self.score_font, (750, 50))
 		
 		self.orb_spd= 450
-		
-		self.countdown = 30 * 5
+		self.countdown = self.fsm.FPS * 5
 	
 	def enter(self, args):
 		
@@ -508,7 +502,6 @@ class PlayGameState(BaseState):
 		
 		self.score_line = TextLine(str(self.score), self.score_font, (550, 50))
 	
-
 	def exit(self):
 		self.player.stop()
 		pygame.key.set_repeat(0)
@@ -585,7 +578,6 @@ class GameOverState(BaseState):
 		self.track_line.draw(self.fsm.screen)
 		if self.isHighScore:
 			self.high_score_text.draw(self.fsm.screen)
-
 
 
 class ExitState(BaseState):
