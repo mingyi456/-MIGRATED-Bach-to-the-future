@@ -19,14 +19,16 @@
     {
       "Type" : "Speech",
       "Speaker" : "Narrator",
-      "Text" : "Meet Johann Sebastian Bach."
+      "Text" : "Meet Johann Sebastian Bach.",
+      "Right" : false
     }
   ],
   [
     {
       "Type" : "Speech",
       "Speaker" : "Narrator",
-      "Text" : "He is on his way to celebrate the 31st birthday of the Duke."
+      "Text" : "He is on his way to celebrate the 31st birthday of the Duke.",
+      "Right" : true
     }
   ],
   [
@@ -40,9 +42,7 @@
     {
       "Type" : "Script",
       "File" : "fadeout.py",
-      "Init" : "self.curr_alpha= 0; self.mask= pygame.Surface((800, 600)).convert(); self.bg_copy= self.background.copy(); self.fade_spd= 2",
-      "max_frame" : 128
-      
+      "Init" : "self.curr_alpha= 0; self.mask= pygame.Surface((800, 600)).convert(); self.bg_copy= self.background.copy(); self.fade_spd= 2"
     }
   ],
   [
@@ -58,22 +58,20 @@
   [
     {
       "Type" : "Sprite",
-      "File" : "assets/quaver.png",
-      "Pos" : "(0, 200)"
+      "File" : "assets/green.png",
+      "Pos" : "(0, 400)"
     },
     {
       "Type" : "Script",
       "File" : "move.py",
-      "Init" : "self.sp= self.sprites['assets/quaver.png']",
-      "max_frame" : 60
+      "Init" : "self.sp= self.sprites['assets/green.png']"
     }      
   ],
   [
     {
       "Type" : "Script",
       "File" : "hop.py",
-      "Init" : "self.sp= self.sprites['assets/quaver.png']; self.vel= -10",
-      "max_frame" : 60
+      "Init" : "self.sp= self.sprites['assets/green.png']; self.vel= -10"
     }  
   ],
   [
