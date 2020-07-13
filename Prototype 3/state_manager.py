@@ -345,9 +345,13 @@ class PlayGameState(BaseState):
 		self.countdown = self.fsm.FPS * 5
 	
 	def enter(self, args):
-		
 		self.file = args["file_name"]
 		print(f"File name = {self.file}")
+		if "Story" in args.keys():
+			self.story= True
+			self.story_line= args["Story"]
+		else:
+			self.story= False
 		file_path = f"{self.fsm.TRACKS_DIR}{self.file}"
 		with open(file_path, 'r') as file:
 			reader = csv.reader(file)
@@ -397,10 +401,10 @@ class PlayGameState(BaseState):
 		self.player.play()
 	
 	def update(self, game_time, lag):
-		actions = self.action_manager.chk_actions(pygame.event.get())
 		
 		orbsONSCREEN = [orb for orb in self.orbs if orb.getTail() > 0]
 		
+		actions = self.action_manager.chk_actions(pygame.event.get())
 		for action in actions:
 			
 			if action == "Exit":
@@ -498,7 +502,10 @@ class PlayGameState(BaseState):
 			self.countdown -= 1
 			if self.countdown <= 0:
 				print("Track Completed!")
-				self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": self.score})
+				if self.story:
+					self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": self.score, "Story": self.story_line})
+				else:
+					self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": self.score})
 		
 		self.score_line = TextLine(str(self.score), self.score_font, (550, 50))
 	
@@ -527,8 +534,7 @@ class GameOverState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
 		self.action_manager.add_button("Retry", (200, 400), (50, 30))
-		self.action_manager.add_button("Back to Main Menu", (500, 400), (50, 30), ret="Main Menu")
-		self.action_manager.add_button("Back to Start", (300, 400), (50, 30), ret="Start")
+
 		self.action_manager.add_keystroke("Exit", "escape")
 		self.high_scores= get_user_data()["Highscores"]
 		self.score_font = pygame.font.Font(self.fsm.SYSFONT, 24)
@@ -539,6 +545,15 @@ class GameOverState(BaseState):
 		
 		self.score = args["score"]
 		self.track= args["file_name"].rsplit('.', 1)[0]
+		
+		if "Story" in args.keys():
+			self.story= True
+			self.story_line= args["Story"]
+			self.action_manager.add_button("Continue", (550, 400), (50, 30))
+		
+		else:
+			self.action_manager.add_button("Back to Main Menu", (500, 400), (50, 30), ret="Main Menu")
+			self.action_manager.add_button("Back to Start", (300, 400), (50, 30), ret="Start")			
 		
 		ctr= self.fsm.WIDTH // 2
 
@@ -571,6 +586,10 @@ class GameOverState(BaseState):
 			
 			elif action == "Exit":
 				self.fsm.ch_state(ExitState(self.fsm))
+			
+			elif action == "Continue":
+				from Storyline import StoryState
+				self.fsm.ch_state(StoryState(self.fsm), {"file" : "storyline.json", "curr_line": self.story_line})
 	
 	def draw(self):
 		super().draw()

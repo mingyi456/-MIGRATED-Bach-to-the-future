@@ -1,4 +1,3 @@
-
 import rgb
 import pygame
 from data_parser import get_sys_config
@@ -197,6 +196,14 @@ class TextLine:
 		
 		return self
 	
+	def align_top_ctr(self, pos= None):
+		if pos is None:
+			self.rect.centerx= self.rect.left
+		else:
+			self.rect.midtop= pos
+		
+		return self
+	
 	def draw(self, screen):
 		screen.blit(self.content, self.rect)
 
@@ -209,7 +216,6 @@ class TextBox:
 			word_img= font.render(''.join([word, ' ']), True, font_colour)
 			contents.append(word_img)
 			
-		
 		self.lines= []
 		vert_offset= 0
 		
@@ -247,5 +253,26 @@ class TextBox:
 			for word in line:
 				screen.blit(word[0], word[1])
 		
-		
+class Sprite:
+	def __init__(self, img, pos):
+		self.img= pygame.image.load(img).convert_alpha()
+		self.rect= pygame.Rect(pos, self.img.get_size())
 	
+	def draw(self, screen):
+		screen.blit(self.img, self.rect)
+	
+	def align_ctr(self, pos= None):
+		if pos is None:
+			self.rect.center= self.rect.topleft
+		else:
+			self.rect.center= pos
+		
+		return self
+	
+	def align_top_ctr(self, pos= None):
+		if pos is None:
+			self.rect.centerx= self.rect.left
+		else:
+			self.rect.midtop= pos
+		
+		return self		

@@ -1,0 +1,1016 @@
+[
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "Sheep may safely graze.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1713: En route to Wissenfels"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "1.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Narrator",
+      "Text" : "Meet Johann Sebastian Bach."
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Narrator",
+      "Text" : "He is on his way to celebrate the 31st birthday of the Duke."
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Narrator",
+      "Text" : "He had prepared an original work for this occassion, and it is a really good one..."
+    }
+  ],
+  [
+    {
+      "Type" : "Script",
+      "File" : "fadeout.py",
+      "Init" : "self.curr_alpha= 0; self.surf= pygame.Surface((800, 600)).convert()",
+      "max_frame" : 60
+    },
+    {
+      "Type" : "Audio Stop"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "noise.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "After the celebration..."
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "2.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Duke",
+      "Text" : "Bravo! Johann, that was splendid!"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Thank you, your highness. I wish you good health and happiness."
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Duke",
+      "Text" : "Follow me, Johann. I think I have something that you might fancy."
+    },
+    {
+      "Type" : "Audio Stop"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "Text" : "walking sounds.mp3"
+    },
+    {
+      "Type" : "Script",
+      "File" : "fadeout.py",
+      "Init" : "self.curr_alpha= 0; self.surf= pygame.Surface((800, 600)).convert()",
+      "max_frame" : 60
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Stop"
+    },
+    {
+      "Type" : "Speech",
+      "Speaker" : "Duke",
+      "Text" : "Last week, when I went hunting in the forest, I saw a huge bolt of lightning come down in the middle of a sunny day. I went to check out what the lightning had struck, and there it was - a metal harpsichord."
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "metal piano in palace.png"
+    },
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "It's enormous!"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Duke",
+      "Text" : "Yes, indeed! It sounds weird too, go on, play it!"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "Speaker" : "sitdown.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "It has 88 keys! This is... amazing!"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "bmv851.mp3"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Narrator",
+      "Text" : "As he played, he felt a surge of refreshing energy coursing through him, he was composing on the spot!"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "timetravel.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Duke",
+      "Text" : "Johann? Where did you go?"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Narrator",
+      "Text" : "Bach had his eyes closed the whole time, he was too deeply immersed in the sounds he was creating. Never realising that he was tunnelling through a wormhole... He was heading to the FUTURE!"
+    },
+    {
+      "Type" : "Audio Start",
+      "File" : "wormhole.mp3"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Stop"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1791: Vienna"
+    },
+    {
+      "Type" : "Audio Start",
+      "File" : "farm.mp3"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "Text" : "vienna.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "I just had a brilliant idea... your highness?\""
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Where am I?"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Stop"
+    },
+    {
+      "Type" : "Speech",
+      "Speaker" : "Narrator",
+      "Text" : "From afar, he heard music like never before... soaring angelic voice that was filled with rage."
+    }
+  ],
+  [
+    {
+      "Type" : "Enter Game",
+      "Track" : "Queen of the Night"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "wormhole.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1800: Vienna"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "bar.png"
+    },
+    {
+      "Type" : "Audio Start",
+      "File" : "street.mp3"
+    },
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Can I get some water please?"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "bar with water.png"
+    },
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Thank you so much! Can you tell me where am I?"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bartender",
+      "Text" : "This is Wieden, Vienna!"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "shocked Bach.png"
+    },
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Vienna?!"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "1800 calendar.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Hey, is this a real calendar?"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bartender",
+      "Text" : "If you're going to keep asking me weird questions, I suggest you better get going!"
+    },
+    {
+      "Type" : "Audio Stop"
+    },
+    {
+      "Type" : "Audio Start",
+      "File" : "kicked out.mp3"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "Burgtheatre.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "A theatre! Wonder what music is being performed today...\""
+    }
+  ],
+  [
+    {
+      "Type" : "Enter Game",
+      "Track" : "Trumpet Concerto"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "That was so lovely!"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "wormhole.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1808: Vienna"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "Theatre an der Wien.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "I wonder what surprises await me..."
+    }
+  ],
+  [
+    {
+      "Type" : "Enter Game",
+      "Track" : "Fifth Symphony"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "I want to go home..."
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "wormhole.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1828: Vienna"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "Paganini Poster.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Hmm, a virtuoso violinist... Interesting!"
+    }
+  ],
+  [
+    {
+      "Type" : "Enter Game",
+      "Speaker" : "Violin Concerto, Adagio"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "He was so good! He must be the devil!"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "wormhole.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1832: Vienna"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "Schubert Sale.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "A posthumous publication of Schubert at a discount? That's a good deal to learn some new songs!"
+    }
+  ],
+  [
+    {
+      "Type" : "Enter Game",
+      "Speaker" : "Schubert, Serenade"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Wow, young people these days really know how to express themselves! 😭"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "wormhole.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1839: Paris"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "paris bakery.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Baker",
+      "Text" : "Croissants fraîchement cuits!"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "France? What a great surprise! I wonder what history has prepared this time..."
+    }
+  ],
+  [
+    {
+      "Type" : "Enter Game",
+      "Speaker" : "Chopin Prelude"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Frédéric Chopin, now that's a name that I will not forget! He really made that piano sing!"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "wormhole.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1858: Paris"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "paris alley.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Well, I am really loving this time travel trip, but I'm feeling kind of tired hearing all these serious concerts."
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Wonder if there's any comedy performances nearby..."
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "women laughing.png"
+    },
+    {
+      "Type" : "Speech",
+      "Speaker" : "Passerby",
+      "Text" : "I can't wait to watch it again tonight! It's hilarious!"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Excusez-moi madame, what are you watching tonight?"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Passerby",
+      "Text" : "Oh, it's Jacques Offenbach's new operetta, Orpheus in the Underworld! It's all the rage in town now!"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Where can I get the tickets?"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Passerby",
+      "Text" : "Come with me!"
+    }
+  ],
+  [
+    {
+      "Type" : "Enter Game",
+      "Speaker" : "Galop Infernal"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "HAHAHAHA, what a fantastic night!"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "wormhole.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1875: Paris"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "Opera-Comique.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "\"...a naïve soldier who is seduced by the wiles of the fiery gypsy Carmen... another opera! Sign me up!"
+    }
+  ],
+  [
+    {
+      "Type" : "Enter Game",
+      "Speaker" : "Habanera"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "drunk bach.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Well, that was RIVETING! Ugh, where is my lovely piano, I... I need MORE!"
+    },
+    {
+      "Type" : "Audio Start",
+      "File" : "falldown on piano.mp3"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "wormhole.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1876: Oslo, Norway"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "hangover state in snow.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Ah, it's freezing! My head hurts..."
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Darn it, I changed places again! Where is this?"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "entrance to Christiania Theatre with ticket boy.png"
+    },
+    {
+      "Type" : "Speech",
+      "Speaker" : "Ticketboy",
+      "Text" : "Doors to Peer Gynt closes in 5 minutes!"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Ooh, what a lavish theatre! It sure looks warm and cosy in there... Wait for me!!!"
+    }
+  ],
+  [
+    {
+      "Type" : "Enter Game",
+      "Track" : "In the hall of the Mountain King"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "Bach being chased.png"
+    },
+    {
+      "Type" : "Speech",
+      "Speaker" : "Ticketboy",
+      "Text" : "Hey, you didn't pay for your ticket!"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Time to get away!"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "wormhole.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1888: Paris"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "Société Nationale de Musique lawn.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Phew, that was a close one!"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Servant",
+      "Text" : "Monsieur, are you here for the concert?"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Concert? Oh, yes, concert."
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Servant",
+      "Text" : "Kindly follow me."
+    }
+  ],
+  [
+    {
+      "Type" : "Enter Game",
+      "Speaker" : "Pavane"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "wormhole.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1916: Moscow"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "snowy in front of red concert hall.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Oh boy, can it get any colder!"
+    }
+  ],
+  [
+    {
+      "Type" : "Enter Game",
+      "Speaker" : "Vocalise"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio",
+      "File" : "Wind Howling.mp3"
+    },
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Great music! But TERRIBLE WEATHER!!!"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "wormhole.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1957: New York City"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "broadway with cars.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Uh... where is this place?"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Are those magical carriages?"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "broadway with american.png"
+    },
+    {
+      "Type" : "Speech",
+      "Speaker" : "Passerby",
+      "Text" : "Hey, cool piano dude!"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Dude? What's a dude? Where am I?"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Passerby",
+      "Text" : "It's Broadway, baby! The cultural capital of the world!"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Well, I guess I could always learn more by watching some of their theatre!"
+    }
+  ],
+  [
+    {
+      "Type" : "Enter Game",
+      "Speaker" : "West Side Story, Tonight"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "The people here are so barbaric, how can this place be the cultural capital?"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "wormhole.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1960: Somewhere in America"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "CD shop.png"
+    },
+    {
+      "Type" : "Audio Start",
+      "File" : "giant steps.mp3"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Hey... dude. Can you tell me where is the band playing?"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "What band?"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "The band that is playing right now, you can hear them!"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Oh... haha, that's a recording! The band is not actually here."
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Recording? What's that?"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "explaining vinyl to bach.png"
+    },
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "You can store music inside these discs these days, surely you must have heard of vinyl-"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Vinyl? So you just put them on that machine and sound comes out magically?"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Yep! Just like magic!"
+    }
+  ],
+  [
+    {
+      "Type" : "Enter Game",
+      "Speaker" : "Giant Steps"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Ok, I think I've had enough of this... jazz business. I want to go home."
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Start",
+      "File" : "wormhole.mp3"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "1713: Back at the Palace"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "empty room.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "bach returns duke shocked beside.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Duke",
+      "Text" : "Good God! Johann! Where did you come from?"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Uh..."
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Duke",
+      "Text" : "And what silly clothes are you wearing? There are guests out there, don't make a fool of yourself!"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Uh..."
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "servants appear.png"
+    },
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Servants, get Herr Bach here some clothes now!"
+    }
+  ],
+  [
+    {
+      "Type" : "Background",
+      "File" : "black screen with circle.png"
+    },
+    {
+      "Type" : "Title",
+      "Text" : "fin"
+    }
+  ]
+]

@@ -2,8 +2,8 @@ from os import environ
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = ''
 import pygame
 import rgb
-from UIManager import TextLine, TextBox
-from state_manager import State_Manager, BaseState, ExitState, MainMenuState
+from UIManager import TextLine, TextBox, Sprite
+from state_manager import State_Manager, BaseState, ExitState, MainMenuState, PlayGameState
 import json
 import vlc
 from data_parser import get_config
@@ -21,7 +21,9 @@ class StoryState(BaseState):
 		self.title= TextLine("StoryState", self.font1, (400, 50)).align_ctr()
 		self.curr_text= ""
 		self.text_len= 0
-		self.curr_text_box= TextBox(self.curr_text , self.font2, (50, 350), (700, 250))
+		self.curr_text_box= TextBox(self.curr_text , self.font2, (50, 450), (700, 250))
+		self.speaker_box= None
+		self.speaker_text_line= None
 		self.curr_frame= 0
 		self.max_frame= 0
 		self.scripts= []
@@ -32,10 +34,18 @@ class StoryState(BaseState):
 		self.background.fill(rgb.BLACK)
 		with open(args["file"]) as file:
 			self.script= json.load(file)
-		self.curr_line= 0
+		if "curr_line" in args.keys():
+			self.curr_line= args["curr_line"]
+		else:
+			self.curr_line= 0
 		self.max_line= len(self.script)
 		self.volume= int(get_config()["Default Volume"]["Value"])
-		self.player= None
+
+		self.players= {}
+		self.sprites= {}
+		print(f"curr_line : {self.curr_line}, len(script) : {len(self.script)}")
+		if self.curr_line < len(self.script):
+			self.advance(self.script[self.curr_line])
 
 	def update(self, game_time, lag):
 		actions= self.action_manager.chk_actions(pygame.event.get())
@@ -47,30 +57,31 @@ class StoryState(BaseState):
 			
 			elif action == "Vol+":
 				self.volume += 1
-				if self.player is not None:
-					self.player.audio_set_volume(self.volume)
-				print(f"Volume : {self.player.audio_get_volume()}")
+
+				print(f"Volume : {self.volume}")
+				for player in self.players.values():
+					player.audio_set_volume(self.volume)
 			
 			elif action == "Vol-":
 				self.volume= max(0, self.volume-1)
-				if self.player is not None:
-					self.player.audio_set_volume(self.volume)
-				print(f"Volume : {self.player.audio_get_volume()}")
-			
+
+				print(f"Volume : {self.volume}")
+				for player in self.players.values():
+					player.audio_set_volume(self.volume)
+
 			elif action == "Advance":
 				if self.isDone:
-					if self.curr_line == self.max_line:
+					if self.curr_line >= self.max_line:
 						print("Scene completed!")
 						self.fsm.ch_state(MainMenuState(self.fsm))
 					else:
 						self.advance(self.script[self.curr_line])
-						self.curr_line += 1
 				else:
 					self.forceDone= True
 					self.curr_frame= self.max_frame
 		
 		self.curr_text_pos= min(self.curr_frame, self.text_len)
-		self.curr_text_box= TextBox(self.curr_text[:self.curr_text_pos] , self.font2, (50, 350), (700, 250))
+		self.curr_text_box= TextBox(self.curr_text[:self.curr_text_pos] , self.font2, (50, 450), (700, 250))
 		self.curr_frame += 1
 		if self.curr_frame >= self.max_frame:
 			self.isDone= True
@@ -78,28 +89,49 @@ class StoryState(BaseState):
 			exec(script_code)
 		
 	def advance(self, commands):
+		print("Advancing...")
+		self.curr_line += 1
 		self.curr_frame= 0
 		self.max_frame= 0
 		self.isDone= False
 		self.forceDone= False
 		self.scripts= []
 		self.curr_text= ""
+		self.speaker_text_line= None
+		self.speaker_box= None
 		for command in commands:
 			print(command)
 			if command["Type"] == "Title":
 				self.title= TextLine(command["Text"], self.font1, (400, 50)).align_ctr()
+			
 			elif command["Type"] == "Speech":
 				self.curr_text= command["Text"]
 				self.text_len= len(self.curr_text)
 				
+				if "Speaker" in command.keys():
+					if "Right" in command.keys() and command["Right"]:
+						speaker_text_pos= (self.fsm.WIDTH - 95, 420)
+					else:
+						speaker_text_pos= (95, 420)
+					self.speaker_text_line= TextLine(command["Speaker"], self.font1, speaker_text_pos).align_top_ctr()
+					
+				else:
+					self.speaker_text_line= None
+					self.speaker_box= None
+				
 			elif command["Type"] == "Audio Start":
-				if self.player is not None:
-					self.player.stop()
-				self.player= vlc.MediaPlayer("Sheep may safely graze.ogg")
-				self.player.play()
+
+				self.players[command["File"]]= vlc.MediaPlayer("Sheep may safely graze.mp3")
+				self.players[command["File"]].play()
 			
 			elif command["Type"] == "Audio Stop":
-				pygame.mixer.music.stop()
+				if "File" in command.keys():
+					self.players[command["File"]].stop()
+					del self.players[command["File"]]
+				else:
+					for player in self.players.values():
+						player.stop()	
+					self.players= {}
 			
 			elif command["Type"] == "Script":
 				
@@ -118,6 +150,12 @@ class StoryState(BaseState):
 				self.fade_spd= 2
 				self.mask= pygame.image.load(command["File"]).convert()
 				self.max_frame= max(self.max_frame, 128)
+			
+			elif command["Type"] == "Sprite":
+				self.sprites[command["File"]]= Sprite(command["File"], eval(command["Pos"]))
+			
+			elif command["Type"] == "Enter Game":
+				self.fsm.ch_state(PlayGameState(self.fsm), {"file_name" : f"{command['File']}.csv", "Story" : self.curr_line + 1})
 
 		self.max_frame= max(self.max_frame, self.text_len)
 	
@@ -127,10 +165,18 @@ class StoryState(BaseState):
 		self.action_manager.draw_buttons(self.fsm.screen)
 		self.title.draw(self.fsm.screen)
 		self.curr_text_box.draw(self.fsm.screen)
+		for sprite in self.sprites.values():
+			sprite.draw(self.fsm.screen)
+		if self.speaker_text_line is not None:
+			self.speaker_text_line.draw(self.fsm.screen)
+		if self.speaker_box is not None:
+			self.speaker_box.draw(self.fsm.screen)
 	
 	def exit(self):
-		if self.player is not None:
-			self.player.stop()
+		for player in self.players.values():
+			player.stop()
+		self.players= {}
+
 
 if __name__ == "__main__":
 	

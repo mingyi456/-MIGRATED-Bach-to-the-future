@@ -57,8 +57,35 @@
   ],
   [
     {
+      "Type" : "Sprite",
+      "File" : "assets/quaver.png",
+      "Pos" : "(0, 200)"
+    },
+    {
+      "Type" : "Script",
+      "File" : "move.py",
+      "Init" : "self.sp= self.sprites['assets/quaver.png']",
+      "max_frame" : 60
+    }      
+  ],
+  [
+    {
+      "Type" : "Script",
+      "File" : "hop.py",
+      "Init" : "self.sp= self.sprites['assets/quaver.png']; self.vel= -10",
+      "max_frame" : 60
+    }  
+  ],
+  [
+    {
       "Type" : "Background",
       "File" : "2.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Enter Game",
+      "File" : "Pavane"
     }
   ]
 ]

@@ -24,13 +24,14 @@
             ]
         },
         "Default Volume": {
-            "Value": "100",
+            "Value": "80",
             "Choices": [
                 "20",
                 "40",
                 "60",
                 "80",
-                "100"
+                "100",
+                "120"
             ]
         }
     },
@@ -55,7 +56,7 @@
                 "La Campanella": 0,
                 "Blue Danube Waltz": 0,
                 "Intermezzo": 0,
-                "Pavane": 1971,
+                "Pavane": 511,
                 "Rhapsody in Blue": 0,
                 "Piano Concerto, Adagio Sostenuto": 0
             }
@@ -93,7 +94,8 @@
                     "40",
                     "60",
                     "80",
-                    "100"
+                    "100",
+                    "120"
                 ]
             }
         },
