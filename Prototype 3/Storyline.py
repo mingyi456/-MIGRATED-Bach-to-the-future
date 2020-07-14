@@ -150,6 +150,13 @@ class StoryState(BaseState):
 			elif command["Type"] == "Sprite":
 				self.sprites[f"./story_assets/{command['File']}"]= Sprite(f"./story_assets/{command['File']}", (400, 300))
 			
+			elif command["Type"] == "Sprite Clear":
+				if "File" in command.keys():
+					del self.sprites[f"./story_assets/{command['File']}"]
+				
+				else:
+					self.sprites= {}
+			
 			elif command["Type"] == "Enter Game":
 				self.fsm.ch_state(PlayGameState(self.fsm), {"file_name" : f"{command['File']}.csv", "Story" : self.curr_line + 1})
 			
@@ -159,13 +166,13 @@ class StoryState(BaseState):
 		self.fsm.screen.blit(self.background, (0,0))
 		self.action_manager.draw_buttons(self.fsm.screen)
 		self.title.draw(self.fsm.screen)
-		self.curr_text_box.draw(self.fsm.screen)
 		for sprite in self.sprites.values():
 			sprite.draw(self.fsm.screen)
 		if self.speaker_text_line is not None:
 			self.speaker_text_line.draw(self.fsm.screen)
 		if self.speaker_box is not None:
 			self.speaker_box.draw(self.fsm.screen)
+		self.curr_text_box.draw(self.fsm.screen)
 	
 	def exit(self):
 		for player in self.players.values():
