@@ -1,4 +1,4 @@
-from os import environ
+from os import environ, path
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = ''
 import pygame
 import rgb
@@ -15,8 +15,8 @@ class StoryState(BaseState):
 		self.action_manager.add_keystroke("enter", "return", ret= "Advance")
 		self.action_manager.add_keystroke("Vol+", "up")
 		self.action_manager.add_keystroke("Vol-", "down")
-		self.font1= pygame.font.Font(self.fsm.SYSFONT, 22)
-		self.font2= pygame.font.Font(self.fsm.SYSFONT, 14)
+		self.font1= pygame.font.Font(path.join('.', "assets", "ARCADE_R.TTF"), 22)
+		self.font2= pygame.font.Font(path.join('.', "assets", "Helvetica.ttf"), 22)
 		self.title= TextLine("StoryState", self.font1, (400, 50)).align_ctr()
 		self.curr_text= ""
 		self.text_len= 0
@@ -119,13 +119,13 @@ class StoryState(BaseState):
 				
 			elif command["Type"] == "Audio Start":
 
-				self.players[command["File"]]= vlc.MediaPlayer("Sheep may safely graze.mp3")
+				self.players[command["File"]]= vlc.MediaPlayer(f"./story_assets/{command['File']}")
 				self.players[command["File"]].play()
 			
 			elif command["Type"] == "Audio Stop":
 				if "File" in command.keys():
-					self.players[command["File"]].stop()
-					del self.players[command["File"]]
+					self.players[f"./story_assets/{command['File']}"].stop()
+					del self.players[f"./story_assets/{command['File']}"]
 				else:
 					for player in self.players.values():
 						player.stop()	
@@ -145,10 +145,10 @@ class StoryState(BaseState):
 				self.curr_alpha= 0
 				self.bg_copy= self.background.copy()
 				self.fade_spd= 2
-				self.mask= pygame.image.load(command["File"]).convert()
+				self.mask= pygame.image.load(f"./story_assets/{command['File']}").convert()
 			
 			elif command["Type"] == "Sprite":
-				self.sprites[command["File"]]= Sprite(command["File"], eval(command["Pos"]))
+				self.sprites[f"./story_assets/{command['File']}"]= Sprite(f"./story_assets/{command['File']}", (400, 300))
 			
 			elif command["Type"] == "Enter Game":
 				self.fsm.ch_state(PlayGameState(self.fsm), {"file_name" : f"{command['File']}.csv", "Story" : self.curr_line + 1})
@@ -177,6 +177,6 @@ if __name__ == "__main__":
 	
 	fsm = State_Manager()
 	fsm.curr_state = MainMenuState(fsm)
-	fsm.ch_state(StoryState(fsm), {"file" : "storyline.json"})
+	fsm.ch_state(StoryState(fsm), {"file" : "storyline1.json"})
 	while True:
 		fsm.update()

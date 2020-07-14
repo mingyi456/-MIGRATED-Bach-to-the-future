@@ -58,21 +58,28 @@
   [
     {
       "Type" : "Sprite",
-      "File" : "assets/green.png",
-      "Pos" : "(0, 400)"
+      "File" : "assets/background.jpg",
+      "Pos" : "(0, 300)"
     },
     {
       "Type" : "Script",
       "File" : "move.py",
-      "Init" : "self.sp= self.sprites['assets/green.png']"
+      "Init" : "self.sp= self.sprites['assets/background.jpg']"
     }      
   ],
   [
     {
       "Type" : "Script",
       "File" : "hop.py",
-      "Init" : "self.sp= self.sprites['assets/green.png']; self.vel= -10"
+      "Init" : "self.sp= self.sprites['assets/background.jpg']; self.vel= -10"
     }  
+  ],
+  [
+    {
+      "Type" : "Script",
+      "File" : "rotate.py",
+      "Init" : "self.sp= self.sprites['assets/background.jpg']; self.angle= 0; self.sp_rect_copy= self.sp.rect.copy(); self.sp_img_copy= self.sp.img.copy()"
+    }
   ],
   [
     {
