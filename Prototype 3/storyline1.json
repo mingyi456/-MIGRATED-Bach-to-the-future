@@ -12,36 +12,44 @@
   [
     {
       "Type" : "Background",
-      "File" : "1.png"
+      "File" : "travelling carriage.png"
     }
   ],
   [
+    {
+      "Type" : "Background",
+      "File" : "inside carriage.png"
+    },
     {
       "Type" : "Speech",
       "Speaker" : "Narrator",
       "Text" : "Meet Johann Sebastian Bach."
+    },
+    {
+      "Type" : "Sprite",
+      "File" : "bach in the carriage.png"
     }
   ],
   [
     {
       "Type" : "Speech",
-      "Speaker" : "Narrator",
       "Text" : "He is on his way to celebrate the 31st birthday of the Duke."
     }
   ],
   [
     {
       "Type" : "Speech",
-      "Speaker" : "Narrator",
       "Text" : "He had prepared an original work for this occassion, and it is a really good one..."
     }
   ],
   [
     {
+      "Type" : "Sprite Clear"
+    },
+    {
       "Type" : "Script",
       "File" : "fadeout.py",
-      "Init" : "self.curr_alpha= 0; self.surf= pygame.Surface((800, 600)).convert()",
-      "max_frame" : 60
+      "Init" : "self.curr_alpha= 0; self.mask= pygame.Surface((800, 600)).convert(); self.bg_copy= self.background.copy(); self.fade_spd= 6  "
     },
     {
       "Type" : "Audio Stop"
@@ -50,7 +58,7 @@
   [
     {
       "Type" : "Audio Start",
-      "File" : "noise.mp3"
+      "File" : "less noisy street.mp3"
     },
     {
       "Type" : "Title",
@@ -60,14 +68,27 @@
   [
     {
       "Type" : "Background",
-      "File" : "2.png"
+      "File" : "after celebration.png"
+    },
+    {
+      "Type" : "Title",
+      "Text" : ""
     }
   ],
   [
     {
       "Type" : "Speech",
       "Speaker" : "Duke",
-      "Text" : "Bravo! Johann, that was splendid!"
+      "Text" : "Bravo! Johann, that was splendid!",
+      "Right" : true
+    },
+    {
+      "Type" : "Sprite",
+      "File" : "duke.png"
+    },
+    {
+      "Type" : "Sprite",
+      "File" : "bach close mouth.png"
     }
   ],
   [
@@ -81,7 +102,8 @@
     {
       "Type" : "Speech",
       "Speaker" : "Duke",
-      "Text" : "Follow me, Johann. I think I have something that you might fancy."
+      "Text" : "Follow me, Johann. I think I have something that you might fancy.",
+      "Right" : true
     },
     {
       "Type" : "Audio Stop"
@@ -90,13 +112,12 @@
   [
     {
       "Type" : "Audio Start",
-      "Text" : "walking sounds.mp3"
+      "File" : "less noisy street.mp3"
     },
     {
       "Type" : "Script",
       "File" : "fadeout.py",
-      "Init" : "self.curr_alpha= 0; self.surf= pygame.Surface((800, 600)).convert()",
-      "max_frame" : 60
+      "Init" : "self.curr_alpha= 0; self.mask= pygame.Surface((800, 600)).convert(); self.bg_copy= self.background.copy(); self.fade_spd= 6  "
     }
   ],
   [
@@ -112,7 +133,11 @@
   [
     {
       "Type" : "Background",
-      "File" : "metal piano in palace.png"
+      "File" : "piano room.png"
+    },
+    {
+      "Type" : "Sprite",
+      "File" : "piano.png"
     },
     {
       "Type" : "Speech",
@@ -124,13 +149,17 @@
     {
       "Type" : "Speech",
       "Speaker" : "Duke",
-      "Text" : "Yes, indeed! It sounds weird too, go on, play it!"
+      "Text" : "Yes, indeed! It sounds weird too, go on, play it!",
+      "Right" : true
     }
   ],
   [
     {
-      "Type" : "Background",
-      "Speaker" : "sitdown.png"
+      "Type" : "Sprite Clear"
+    },
+    {
+      "Type" : "Sprite",
+      "File" : "piano with person.png"
     }
   ],
   [
@@ -155,8 +184,9 @@
   ],
   [
     {
-      "Type" : "Background",
-      "File" : "timetravel.png"
+      "Type" : "Script",
+      "File" : "fadeout.py",
+      "Init" : "self.curr_alpha= 0; self.mask= pygame.Surface((800, 600)).convert(); self.bg_copy= self.background.copy(); self.fade_spd= 2"
     }
   ],
   [
@@ -187,13 +217,17 @@
     },
     {
       "Type" : "Audio Start",
-      "File" : "farm.mp3"
+      "File" : "farm noises.mp3"
     }
   ],
   [
     {
       "Type" : "Background",
-      "Text" : "vienna.png"
+      "File" : "vienna farm.png"
+    },
+    {
+      "Type" : "Sprite",
+      "File" : "bach open mouth.png"
     }
   ],
   [
@@ -216,14 +250,13 @@
     },
     {
       "Type" : "Speech",
-      "Speaker" : "Narrator",
       "Text" : "From afar, he heard music like never before... soaring angelic voice that was filled with rage."
     }
   ],
   [
     {
       "Type" : "Enter Game",
-      "Track" : "Queen of the Night"
+      "File" : "Pavane"
     }
   ],
   [

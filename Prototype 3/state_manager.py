@@ -124,7 +124,7 @@ class MainMenuState(BaseState):
 			
 			elif action == "Storyline":
 				from Storyline import StoryState
-				self.fsm.ch_state(StoryState(self.fsm), {"file" : "storyline.json"})
+				self.fsm.ch_state(StoryState(self.fsm), {"file" : "storyline1.json"})
 			
 	def draw(self):
 		super().draw()
@@ -589,7 +589,7 @@ class GameOverState(BaseState):
 			
 			elif action == "Continue":
 				from Storyline import StoryState
-				self.fsm.ch_state(StoryState(self.fsm), {"file" : "storyline.json", "curr_line": self.story_line})
+				self.fsm.ch_state(StoryState(self.fsm), {"file" : "storyline1.json", "curr_line": self.story_line})
 	
 	def draw(self):
 		super().draw()
