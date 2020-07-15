@@ -262,6 +262,9 @@ class Sprite:
 		screen.blit(self.img, (self.rect[0]-self.img.get_width() / 2, self.rect[1]-self.img.get_height() / 2))
 		#screen.blit(self.img, self.img.get_rect().topleft)
 	
+	def draw_top_left(self, screen):
+		screen.blit(self.img, self.rect)
+	
 	def align_ctr(self, pos= None):
 		if pos is None:
 			self.rect.center= self.rect.topleft

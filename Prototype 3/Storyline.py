@@ -20,7 +20,8 @@ class StoryState(BaseState):
 		self.title= TextLine("StoryState", self.font1, (400, 50)).align_ctr()
 		self.curr_text= ""
 		self.text_len= 0
-		self.curr_text_box= TextBox(self.curr_text , self.font2, (50, 450), (700, 250))
+		self.curr_text_box= TextBox(self.curr_text , self.font2, (50, 450), (700, 250), font_colour= rgb.BLACK)
+		self.text_frame= None
 		self.speaker_box= None
 		self.speaker_text_line= None
 		self.curr_frame= 0
@@ -80,7 +81,7 @@ class StoryState(BaseState):
 					self.curr_frame= self.text_len
 		
 		curr_text_pos= min(self.curr_frame, self.text_len)
-		self.curr_text_box= TextBox(self.curr_text[:curr_text_pos] , self.font2, (50, 450), (700, 250))
+		self.curr_text_box= TextBox(self.curr_text[:curr_text_pos] , self.font2, (55, 455), (630, 245), font_colour= rgb.BLACK)
 		self.curr_frame += 1
 		self.scriptsDone= []
 		for script_code in self.scripts:
@@ -98,6 +99,7 @@ class StoryState(BaseState):
 		self.curr_text= ""
 		self.speaker_text_line= None
 		self.speaker_box= None
+		self.text_frame= None
 		for command in commands:
 			print(command)
 			if command["Type"] == "Title":
@@ -105,6 +107,7 @@ class StoryState(BaseState):
 			
 			elif command["Type"] == "Speech":
 				self.curr_text= command["Text"]
+				self.text_frame= Sprite(path.join('.', "story_assets", "textbox.png"), (45, 445))
 				
 				if "Speaker" in command.keys():
 					if "Right" in command.keys() and command["Right"]:
@@ -172,6 +175,8 @@ class StoryState(BaseState):
 			self.speaker_text_line.draw(self.fsm.screen)
 		if self.speaker_box is not None:
 			self.speaker_box.draw(self.fsm.screen)
+		if self.text_frame is not None:
+			self.text_frame.draw_top_left(self.fsm.screen)
 		self.curr_text_box.draw(self.fsm.screen)
 	
 	def exit(self):
