@@ -24,7 +24,7 @@
             ]
         },
         "Default Volume": {
-            "Value": "80",
+            "Value": "100",
             "Choices": [
                 "20",
                 "40",
@@ -58,7 +58,8 @@
                 "Intermezzo": 0,
                 "Pavane": 511,
                 "Rhapsody in Blue": 0,
-                "Piano Concerto, Adagio Sostenuto": 0
+                "Piano Concerto, Adagio Sostenuto": 0,
+                "shortmidi": 58
             }
         }
     },
