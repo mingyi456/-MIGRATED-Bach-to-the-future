@@ -49,7 +49,7 @@
     {
       "Type" : "Script",
       "File" : "fadeout.py",
-      "Init" : "self.curr_alpha= 0; self.mask= pygame.Surface((800, 600)).convert(); self.bg_copy= self.background.copy(); self.fade_spd= 6"
+      "Init" : "self.curr_alpha= 0; self.mask= pygame.Surface((800, 600)).convert(); self.bg_copy= self.background.copy(); self.fade_spd= 1"
     },
     {
       "Type" : "Audio Stop"

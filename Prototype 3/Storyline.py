@@ -17,12 +17,13 @@ class StoryState(BaseState):
 		self.action_manager.add_keystroke("Vol-", "down")
 		self.font1= pygame.font.Font(path.join('.', "assets", "ARCADE_R.TTF"), 22)
 		self.font2= pygame.font.Font(path.join('.', "assets", "Helvetica.ttf"), 22)
+		self.font3= pygame.font.Font(path.join('.', "assets", "Helvetica.ttf"), 28)
 		self.title= TextLine("StoryState", self.font1, (400, 50)).align_ctr()
 		self.curr_text= ""
 		self.text_len= 0
-		self.curr_text_box= TextBox(self.curr_text , self.font2, (50, 450), (700, 250), font_colour= rgb.BLACK)
+		self.curr_text_box= TextBox(self.curr_text, self.font2, (55, 455), (620, 245), font_colour= rgb.BLACK)
 		self.text_frame= None
-		self.speaker_box= None
+		self.speaker_box= Sprite(path.join('.', "story_assets", "trapezium.png"), (45, 390))
 		self.speaker_text_line= None
 		self.curr_frame= 0
 		self.scripts= []
@@ -55,14 +56,12 @@ class StoryState(BaseState):
 			
 			elif action == "Vol+":
 				self.volume += 1
-
 				print(f"Volume : {self.volume}")
 				for player in self.players.values():
 					player.audio_set_volume(self.volume)
 			
 			elif action == "Vol-":
 				self.volume= max(0, self.volume-1)
-
 				print(f"Volume : {self.volume}")
 				for player in self.players.values():
 					player.audio_set_volume(self.volume)
@@ -81,7 +80,7 @@ class StoryState(BaseState):
 					self.curr_frame= self.text_len
 		
 		curr_text_pos= min(self.curr_frame, self.text_len)
-		self.curr_text_box= TextBox(self.curr_text[:curr_text_pos] , self.font2, (55, 455), (630, 245), font_colour= rgb.BLACK)
+		self.curr_text_box= TextBox(self.curr_text[:curr_text_pos], self.font2, (55, 455), (620, 245), font_colour= rgb.BLACK)
 		self.curr_frame += 1
 		self.scriptsDone= []
 		for script_code in self.scripts:
@@ -98,7 +97,6 @@ class StoryState(BaseState):
 		self.scriptsDone= []
 		self.curr_text= ""
 		self.speaker_text_line= None
-		self.speaker_box= None
 		self.text_frame= None
 		for command in commands:
 			print(command)
@@ -111,14 +109,15 @@ class StoryState(BaseState):
 				
 				if "Speaker" in command.keys():
 					if "Right" in command.keys() and command["Right"]:
-						speaker_text_pos= (self.fsm.WIDTH - 95, 420)
+						speaker_text_pos= (self.fsm.WIDTH - 125, 432)
+						self.speaker_box.rect.right= 755
 					else:
-						speaker_text_pos= (95, 420)
-					self.speaker_text_line= TextLine(command["Speaker"], self.font2, speaker_text_pos).align_top_ctr()
-					
+						speaker_text_pos= (125, 432)
+						self.speaker_box.rect[0]= 45
+					self.speaker_text_line= TextLine(command["Speaker"], self.font3, speaker_text_pos).align_ctr(speaker_text_pos)
+						
 				else:
 					self.speaker_text_line= None
-					self.speaker_box= None
 				
 			elif command["Type"] == "Audio Start":
 
@@ -172,11 +171,10 @@ class StoryState(BaseState):
 		for sprite in self.sprites.values():
 			sprite.draw(self.fsm.screen)
 		if self.speaker_text_line is not None:
+			self.speaker_box.draw_raw(self.fsm.screen)
 			self.speaker_text_line.draw(self.fsm.screen)
-		if self.speaker_box is not None:
-			self.speaker_box.draw(self.fsm.screen)
 		if self.text_frame is not None:
-			self.text_frame.draw_top_left(self.fsm.screen)
+			self.text_frame.draw_raw(self.fsm.screen)
 		self.curr_text_box.draw(self.fsm.screen)
 	
 	def exit(self):

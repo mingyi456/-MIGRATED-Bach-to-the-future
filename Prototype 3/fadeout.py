@@ -8,4 +8,3 @@ self.curr_alpha = min(self.curr_alpha, 255)
 self.background.fill((0,0,0, self.curr_alpha))
 if self.curr_alpha < 255:
 	self.scriptsDone.append(False)
-print(self.curr_alpha)
