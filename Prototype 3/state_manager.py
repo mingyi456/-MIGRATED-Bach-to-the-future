@@ -560,14 +560,21 @@ class GameOverState(BaseState):
 		self.score_line = TextLine(f"Score : {self.score}", self.score_font, (ctr, 150)).align_ctr()
 
 		self.track_line= TextLine(self.track, self.score_font, (ctr, 50)).align_ctr()
+		
+		if self.track in self.high_scores.keys():
 
-		if self.high_scores[self.track] < self.score:
-			print("High Score achieved!")
+			if self.high_scores[self.track] < self.score:
+				print("High Score achieved!")
+				self.isHighScore= True
+				update_user_data(("Highscores", args["file_name"].rsplit('.', 1)[0]), args["score"])
+			else:
+				print("High Score not achieved")
+				self.isHighScore= False
+		else:
+			print("No previous high score found")
 			self.isHighScore= True
 			update_user_data(("Highscores", args["file_name"].rsplit('.', 1)[0]), args["score"])
-		else:
-			print("High Score not achieved")
-			self.isHighScore= False			
+	
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
