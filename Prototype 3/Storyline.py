@@ -119,13 +119,13 @@ class StoryState(BaseState):
 				
 			elif command["Type"] == "Audio Start":
 
-				self.players[command["File"]]= vlc.MediaPlayer(f"./story_assets/{command['File']}")
+				self.players[command["File"]]= vlc.MediaPlayer(path.join('.', "story_assets", command['File']))
 				self.players[command["File"]].play()
 			
 			elif command["Type"] == "Audio Stop":
 				if "File" in command.keys():
-					self.players[f"./story_assets/{command['File']}"].stop()
-					del self.players[f"./story_assets/{command['File']}"]
+					self.players[command['File']].stop()
+					del self.players[command['File']]
 				else:
 					for player in self.players.values():
 						player.stop()	
@@ -145,14 +145,14 @@ class StoryState(BaseState):
 				self.curr_alpha= 0
 				self.bg_copy= self.background.copy()
 				self.fade_spd= 2
-				self.mask= pygame.image.load(f"./story_assets/{command['File']}").convert()
+				self.mask= pygame.image.load(path.join('.', "story_assets", command['File'])).convert()
 			
 			elif command["Type"] == "Sprite":
-				self.sprites[f"./story_assets/{command['File']}"]= Sprite(f"./story_assets/{command['File']}", (400, 300))
+				self.sprites[command['File']]= Sprite(path.join('.', "story_assets", command['File']), (400, 300))
 			
 			elif command["Type"] == "Sprite Clear":
 				if "File" in command.keys():
-					del self.sprites[f"./story_assets/{command['File']}"]
+					del self.sprites[command['File']]
 				
 				else:
 					self.sprites= {}

@@ -87,6 +87,11 @@
       "File" : "duke.png"
     },
     {
+      "Type" : "Script",
+      "File" : "hop.py",
+      "Init" : "self.sp= self.sprites['duke.png']; self.vel= -10"
+    },
+    {
       "Type" : "Sprite",
       "File" : "bach close mouth.png"
     }
@@ -96,7 +101,12 @@
       "Type" : "Speech",
       "Speaker" : "Bach",
       "Text" : "Thank you, your highness. I wish you good health and happiness."
-    }
+    },
+    {
+      "Type" : "Script",
+      "File" : "hop.py",
+      "Init" : "self.sp= self.sprites['bach close mouth.png']; self.vel= -10"
+    }    
   ],
   [
     {
@@ -104,6 +114,11 @@
       "Speaker" : "Duke",
       "Text" : "Follow me, Johann. I think I have something that you might fancy.",
       "Right" : true
+    },
+    {
+      "Type" : "Script",
+      "File" : "hop.py",
+      "Init" : "self.sp= self.sprites['duke.png']; self.vel= -10"
     },
     {
       "Type" : "Audio Stop"
