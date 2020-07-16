@@ -37,7 +37,7 @@ class StoryState(BaseState):
 		if "curr_line" in args.keys():
 			self.curr_line= args["curr_line"]
 		else:
-			self.curr_line= 112
+			self.curr_line= 0
 		self.max_line= len(self.json_script)
 		self.volume= int(get_config()["Default Volume"]["Value"])
 
