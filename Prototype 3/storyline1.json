@@ -112,7 +112,7 @@
   [
     {
       "Type" : "Audio Start",
-      "File" : "less noisy street.mp3"
+      "File" : "footsteps.mp3"
     },
     {
       "Type" : "Script",
@@ -205,11 +205,18 @@
     {
       "Type" : "Audio Start",
       "File" : "wormhole.mp3"
+    },
+    {
+      "Type" : "Background",
+      "File" : "timetravel.png"
     }
   ],
   [
     {
       "Type" : "Audio Stop"
+    },
+    {
+      "Type" : "Sprite Clear"
     },
     {
       "Type" : "Title",
@@ -255,6 +262,11 @@
   ],
   [
     {
+      "Type" : "Script",
+      "File" : "fadeout.py",
+      "Init" : "self.curr_alpha= 0; self.mask= pygame.Surface((800, 600)).convert(); self.bg_copy= self.background.copy(); self.fade_spd= 2"
+    },
+    {
       "Type" : "Enter Game",
       "File" : "shortmidi"
     }
@@ -276,7 +288,13 @@
     },
     {
       "Type" : "Audio Start",
-      "File" : "street.mp3"
+      "File" : "bar sound.mp3"
+    }
+  ],
+  [
+    {
+      "Type" : "Sprite",
+      "File" : "bach close mouth.png"
     },
     {
       "Type" : "Speech",
@@ -286,8 +304,8 @@
   ],
   [
     {
-      "Type" : "Background",
-      "File" : "bar with water.png"
+      "Type" : "Sprite",
+      "File" : "bartender.png"
     },
     {
       "Type" : "Speech",
@@ -299,13 +317,14 @@
     {
       "Type" : "Speech",
       "Speaker" : "Bartender",
-      "Text" : "This is Wieden, Vienna!"
+      "Text" : "This is Wieden, Vienna!",
+      "Right" : true
     }
   ],
   [
     {
       "Type" : "Background",
-      "File" : "shocked Bach.png"
+      "File" : "bach surprised.png"
     },
     {
       "Type" : "Speech",
@@ -330,7 +349,8 @@
     {
       "Type" : "Speech",
       "Speaker" : "Bartender",
-      "Text" : "If you're going to keep asking me weird questions, I suggest you better get going!"
+      "Text" : "If you're going to keep asking me weird questions, I suggest you better get going!",
+      "Right" : true
     },
     {
       "Type" : "Audio Stop"
@@ -342,8 +362,22 @@
   ],
   [
     {
+      "Type" : "Sprite Clear"
+    },
+    {
       "Type" : "Background",
       "File" : "Burgtheatre.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Sprite",
+      "File" : "bach close mouth.png"
+    },
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "How rude!"
     }
   ],
   [
@@ -356,7 +390,7 @@
   [
     {
       "Type" : "Enter Game",
-      "Track" : "Trumpet Concerto"
+      "File" : "shortmidi"
     }
   ],
   [
@@ -379,10 +413,14 @@
   [
     {
       "Type" : "Background",
-      "File" : "Theatre an der Wien.png"
+      "File" : "theatre an der wien.png"
     }
   ],
   [
+    {
+      "Type" : "Sprite",
+      "File" : "bach close mouth.png"
+    },
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
@@ -392,7 +430,7 @@
   [
     {
       "Type" : "Enter Game",
-      "Track" : "Fifth Symphony"
+      "File" : "shortmidi"
     }
   ],
   [
@@ -415,10 +453,14 @@
   [
     {
       "Type" : "Background",
-      "File" : "Paganini Poster.png"
+      "File" : "paganini poster.png"
     }
   ],
   [
+    {
+      "Type" : "Sprite",
+      "File" : "bach open mouth.png"
+    },
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
@@ -428,7 +470,7 @@
   [
     {
       "Type" : "Enter Game",
-      "Speaker" : "Violin Concerto, Adagio"
+      "File" : "shortmidi"
     }
   ],
   [
@@ -451,10 +493,14 @@
   [
     {
       "Type" : "Background",
-      "File" : "Schubert Sale.png"
+      "File" : "schubert sale.png"
     }
   ],
   [
+    {
+      "Type" : "Sprite",
+      "File" : "bach close mouth.png"
+    },
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
@@ -464,7 +510,7 @@
   [
     {
       "Type" : "Enter Game",
-      "Speaker" : "Schubert, Serenade"
+      "File" : "shortmidi"
     }
   ],
   [
@@ -494,10 +540,15 @@
     {
       "Type" : "Speech",
       "Speaker" : "Baker",
-      "Text" : "Croissants fraîchement cuits!"
+      "Text" : "Croissants fraîchement cuits!",
+      "Right" : true
     }
   ],
   [
+    {
+      "Type" : "Sprite",
+      "File" : "bach surprised.png"
+    },
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
@@ -507,7 +558,7 @@
   [
     {
       "Type" : "Enter Game",
-      "Speaker" : "Chopin Prelude"
+      "File" : "shortmidi"
     }
   ],
   [
@@ -535,6 +586,10 @@
   ],
   [
     {
+      "Type" : "Sprite",
+      "File" : "bach close mouth.png"
+    },
+    {
       "Type" : "Speech",
       "Speaker" : "Bach",
       "Text" : "Well, I am really loving this time travel trip, but I'm feeling kind of tired hearing all these serious concerts."
@@ -549,13 +604,14 @@
   ],
   [
     {
-      "Type" : "Background",
-      "File" : "women laughing.png"
+      "Type" : "Sprite",
+      "File" : "passerby.png"
     },
     {
       "Type" : "Speech",
-      "Speaker" : "Passerby",
-      "Text" : "I can't wait to watch it again tonight! It's hilarious!"
+      "Speaker" : "Lady",
+      "Text" : "I can't wait to watch it again tonight! It's hilarious!",
+      "Right" : true
     }
   ],
   [
@@ -568,8 +624,9 @@
   [
     {
       "Type" : "Speech",
-      "Speaker" : "Passerby",
-      "Text" : "Oh, it's Jacques Offenbach's new operetta, Orpheus in the Underworld! It's all the rage in town now!"
+      "Speaker" : "Lady",
+      "Text" : "Oh, it's Jacques Offenbach's new operetta, Orpheus in the Underworld! It's all the rage in town now!",
+      "Right" : true
     }
   ],
   [
@@ -582,14 +639,20 @@
   [
     {
       "Type" : "Speech",
-      "Speaker" : "Passerby",
-      "Text" : "Come with me!"
+      "Speaker" : "Lady",
+      "Text" : "Come with me!",
+      "Right" : true
+    },
+    {
+      "Type" : "Script",
+      "File" : "fadeout.py",
+      "Init" : "self.curr_alpha= 0; self.mask= pygame.Surface((800, 600)).convert(); self.bg_copy= self.background.copy(); self.fade_spd= 1"
     }
   ],
   [
     {
       "Type" : "Enter Game",
-      "Speaker" : "Galop Infernal"
+      "File" : "shortmidi"
     }
   ],
   [
@@ -612,10 +675,14 @@
   [
     {
       "Type" : "Background",
-      "File" : "Opera-Comique.png"
+      "File" : "opera comique.png"
     }
   ],
   [
+    {
+      "Type" : "Sprite",
+      "File" : "bach close mouth.png"
+    },
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
@@ -625,13 +692,13 @@
   [
     {
       "Type" : "Enter Game",
-      "Speaker" : "Habanera"
+      "File" : "shortmidi"
     }
   ],
   [
     {
-      "Type" : "Background",
-      "File" : "drunk bach.png"
+      "Type" : "Sprite",
+      "File" : "bach drunk.png"
     }
   ],
   [
@@ -642,7 +709,7 @@
     },
     {
       "Type" : "Audio Start",
-      "File" : "falldown on piano.mp3"
+      "File" : "falldown.mp3"
     }
   ],
   [
@@ -658,10 +725,14 @@
   [
     {
       "Type" : "Background",
-      "File" : "hangover state in snow.png"
+      "File" : "christiania theatre.png"
     }
   ],
   [
+    {
+      "Type" : "Sprite",
+      "File" : "bach open mouth.png"
+    },
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
@@ -677,13 +748,14 @@
   ],
   [
     {
-      "Type" : "Background",
-      "File" : "entrance to Christiania Theatre with ticket boy.png"
+      "Type" : "Sprite",
+      "File" : "ticketboy.png"
     },
     {
       "Type" : "Speech",
       "Speaker" : "Ticketboy",
-      "Text" : "Doors to Peer Gynt closes in 5 minutes!"
+      "Text" : "Doors to Peer Gynt closes in 5 minutes!",
+      "Right" : true
     }
   ],
   [
@@ -696,14 +768,10 @@
   [
     {
       "Type" : "Enter Game",
-      "Track" : "In the hall of the Mountain King"
+      "File" : "shortmidi"
     }
   ],
   [
-    {
-      "Type" : "Background",
-      "File" : "Bach being chased.png"
-    },
     {
       "Type" : "Speech",
       "Speaker" : "Ticketboy",
@@ -712,12 +780,20 @@
   ],
   [
     {
+      "Type" : "Sprite",
+      "File" : "bach chased.png"
+    },
+    {
       "Type" : "Speech",
       "Speaker" : "Bach",
-      "Text" : "Time to get away!"
+      "Text" : "Time to get away!",
+      "Right" : true
     }
   ],
   [
+    {
+      "Type" : "Sprite Clear"
+    },
     {
       "Type" : "Audio Start",
       "File" : "wormhole.mp3"
@@ -730,10 +806,14 @@
   [
     {
       "Type" : "Background",
-      "File" : "Société Nationale de Musique lawn.png"
+      "File" : "lawn.png"
     }
   ],
   [
+    {
+      "Type" : "Sprite",
+      "File" : "bach close mouth.png"
+    },
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
@@ -742,9 +822,14 @@
   ],
   [
     {
+      "Type" : "Sprite",
+      "File" : "servant.png"
+    },
+    {
       "Type" : "Speech",
       "Speaker" : "Servant",
-      "Text" : "Monsieur, are you here for the concert?"
+      "Text" : "Monsieur, are you here for the concert?",
+      "Right" : true
     }
   ],
   [
@@ -758,13 +843,14 @@
     {
       "Type" : "Speech",
       "Speaker" : "Servant",
-      "Text" : "Kindly follow me."
+      "Text" : "Kindly follow me.",
+      "Right" : true
     }
   ],
   [
     {
       "Type" : "Enter Game",
-      "Speaker" : "Pavane"
+      "File" : "shortmidi"
     }
   ],
   [
@@ -780,10 +866,14 @@
   [
     {
       "Type" : "Background",
-      "File" : "snowy in front of red concert hall.png"
+      "File" : "moscow.png"
     }
   ],
   [
+    {
+      "Type" : "Sprite",
+      "File" : "bach open mouth.png"
+    },
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
@@ -793,18 +883,23 @@
   [
     {
       "Type" : "Enter Game",
-      "Speaker" : "Vocalise"
+      "File" : "shortmidi"
     }
   ],
   [
     {
-      "Type" : "Audio",
-      "File" : "Wind Howling.mp3"
+      "Type" : "Audio Start",
+      "File" : "howling wind.mp3"
     },
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
       "Text" : "Great music! But TERRIBLE WEATHER!!!"
+    }
+  ],
+  [
+    {
+      "Type" : "Audio Stop"
     }
   ],
   [
@@ -820,10 +915,14 @@
   [
     {
       "Type" : "Background",
-      "File" : "broadway with cars.png"
+      "File" : "broadway.png"
     }
   ],
   [
+    {
+      "Type" : "Sprite",
+      "File" : "bach surprised.png"
+    },
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
@@ -839,13 +938,14 @@
   ],
   [
     {
-      "Type" : "Background",
-      "File" : "broadway with american.png"
+      "Type" : "Sprite",
+      "File" : "broadway guy.png"
     },
     {
       "Type" : "Speech",
-      "Speaker" : "Passerby",
-      "Text" : "Hey, cool piano dude!"
+      "Speaker" : "Dude",
+      "Text" : "Hey, cool piano dude!",
+      "Right" : true
     }
   ],
   [
@@ -858,8 +958,9 @@
   [
     {
       "Type" : "Speech",
-      "Speaker" : "Passerby",
-      "Text" : "It's Broadway, baby! The cultural capital of the world!"
+      "Speaker" : "Dude",
+      "Text" : "It's Broadway, baby! The cultural capital of the world!",
+      "Right" : true
     }
   ],
   [
@@ -872,7 +973,7 @@
   [
     {
       "Type" : "Enter Game",
-      "Speaker" : "West Side Story, Tonight"
+      "File" : "shortmidi"
     }
   ],
   [
@@ -895,25 +996,34 @@
   [
     {
       "Type" : "Background",
-      "File" : "CD shop.png"
+      "File" : "cd shop.png"
     },
     {
       "Type" : "Audio Start",
-      "File" : "giant steps.mp3"
+      "File" : "jazz.mp3"
     }
   ],
   [
     {
+      "Type" : "Sprite",
+      "File" : "bach open mouth.png"
+    },
+    {
       "Type" : "Speech",
       "Speaker" : "Bach",
-      "Text" : "Hey... dude. Can you tell me where is the band playing?"
+      "Text" : "Hey... excuse me. Can you tell me where is the band playing?"
     }
   ],
   [
     {
+      "Type" : "Sprite",
+      "File" : "cd girl.png"
+    },
+    {
       "Type" : "Speech",
-      "Speaker" : "Bach",
-      "Text" : "What band?"
+      "Speaker" : "Girl",
+      "Text" : "What band?",
+      "Right" : true
     }
   ],
   [
@@ -926,8 +1036,9 @@
   [
     {
       "Type" : "Speech",
-      "Speaker" : "Bach",
-      "Text" : "Oh... haha, that's a recording! The band is not actually here."
+      "Speaker" : "Girl",
+      "Text" : "Oh... haha, that's a recording! The band is not actually here.",
+      "Right" : true
     }
   ],
   [
@@ -939,13 +1050,10 @@
   ],
   [
     {
-      "Type" : "Background",
-      "File" : "explaining vinyl to bach.png"
-    },
-    {
       "Type" : "Speech",
-      "Speaker" : "Bach",
-      "Text" : "You can store music inside these discs these days, surely you must have heard of vinyl-"
+      "Speaker" : "Girl",
+      "Text" : "You can store music inside these discs these days, surely you must have heard of vinyl-",
+      "Right" : true
     }
   ],
   [
@@ -958,14 +1066,15 @@
   [
     {
       "Type" : "Speech",
-      "Speaker" : "Bach",
-      "Text" : "Yep! Just like magic!"
+      "Speaker" : "Girl",
+      "Text" : "Yep! Just like magic!",
+      "Right" : true
     }
   ],
   [
     {
       "Type" : "Enter Game",
-      "Speaker" : "Giant Steps"
+      "File" : "shortmidi"
     }
   ],
   [
@@ -988,62 +1097,68 @@
   [
     {
       "Type" : "Background",
-      "File" : "empty room.png"
-    }
-  ],
-  [
-    {
-      "Type" : "Background",
-      "File" : "bach returns duke shocked beside.png"
-    }
-  ],
-  [
-    {
-      "Type" : "Speech",
-      "Speaker" : "Duke",
-      "Text" : "Good God! Johann! Where did you come from?"
-    }
-  ],
-  [
-    {
-      "Type" : "Speech",
-      "Speaker" : "Bach",
-      "Text" : "Uh..."
-    }
-  ],
-  [
-    {
-      "Type" : "Speech",
-      "Speaker" : "Duke",
-      "Text" : "And what silly clothes are you wearing? There are guests out there, don't make a fool of yourself!"
-    }
-  ],
-  [
-    {
-      "Type" : "Speech",
-      "Speaker" : "Bach",
-      "Text" : "Uh..."
-    }
-  ],
-  [
-    {
-      "Type" : "Background",
-      "File" : "servants appear.png"
-    },
-    {
-      "Type" : "Speech",
-      "Speaker" : "Bach",
-      "Text" : "Servants, get Herr Bach here some clothes now!"
-    }
-  ],
-  [
-    {
-      "Type" : "Background",
-      "File" : "black screen with circle.png"
+      "File" : "piano room.png"
     },
     {
       "Type" : "Title",
-      "Text" : "fin"
+      "Text" : ""
+    }
+  ],
+  [
+    {
+      "Type" : "Sprite",
+      "File" : "bach close mouth.png"
+    },
+    {
+      "Type" : "Sprite",
+      "File" : "duke.png"
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Duke",
+      "Text" : "Good God! Johann! Where did you come from?",
+      "Right" : true
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Uh..."
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Duke",
+      "Text" : "And what silly clothes are you wearing? There are guests out there, don't make a fool of yourself!",
+      "Right" : true
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Bach",
+      "Text" : "Uh..."
+    }
+  ],
+  [
+    {
+      "Type" : "Speech",
+      "Speaker" : "Duke",
+      "Text" : "Servants, get Herr Bach here some clothes now!",
+      "Right" : true
+    }
+  ],
+  [
+    {
+      "Type" : "Sprite Clear"
+    },
+    {
+      "Type" : "Background",
+      "File" : "finished.png"
     }
   ]
 ]
