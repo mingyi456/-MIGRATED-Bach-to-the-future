@@ -1107,7 +1107,7 @@
   [
     {
       "Type" : "Sprite",
-      "File" : "bach close mouth.png"
+      "File" : "dirty bach.png"
     },
     {
       "Type" : "Sprite",
@@ -1133,7 +1133,7 @@
     {
       "Type" : "Speech",
       "Speaker" : "Duke",
-      "Text" : "And what silly clothes are you wearing? There are guests out there, don't make a fool of yourself!",
+      "Text" : "Your clothes are filthy! There are guests out there, don't make a fool of yourself!",
       "Right" : true
     }
   ],
