@@ -23,9 +23,9 @@ class StoryState(BaseState):
 		self.title2= TextLine("StoryState", self.font1_2, (400, 50)).align_ctr()
 		self.curr_text= ""
 		self.text_len= 0
-		self.curr_text_box= TextBox(self.curr_text, self.font2, (55, 455), (620, 245), font_colour= rgb.BLACK)
+		self.curr_text_box= TextBox(self.curr_text, self.font2, (55, 495), (620, 245), font_colour= rgb.BLACK)
 		self.text_frame= None
-		self.speaker_box= Sprite(path.join('.', "story_assets", "trapezium.png"), (45, 390))
+		self.speaker_box= Sprite(path.join('.', "story_assets", "trapezium.png"), (45, 445))
 		self.speaker_text_line= None
 		self.curr_frame= 0
 		self.scripts= []
@@ -82,7 +82,7 @@ class StoryState(BaseState):
 					self.curr_frame= self.text_len
 		
 		curr_text_pos= min(self.curr_frame, self.text_len)
-		self.curr_text_box= TextBox(self.curr_text[:curr_text_pos], self.font2, (55, 455), (620, 245), font_colour= rgb.BLACK)
+		self.curr_text_box= TextBox(self.curr_text[:curr_text_pos], self.font2, (55, 495), (620, 245), font_colour= rgb.BLACK)
 		self.curr_frame += 1
 		self.scriptsDone= []
 		for script_code in self.scripts:
@@ -108,14 +108,14 @@ class StoryState(BaseState):
 			
 			elif command["Type"] == "Speech":
 				self.curr_text= command["Text"]
-				self.text_frame= Sprite(path.join('.', "story_assets", "textbox.png"), (45, 445))
+				self.text_frame= Sprite(path.join('.', "story_assets", "textbox.png"), (45, 485))
 				
 				if "Speaker" in command.keys():
 					if "Right" in command.keys() and command["Right"]:
-						speaker_text_pos= (self.fsm.WIDTH - 125, 432)
+						speaker_text_pos= (self.fsm.WIDTH - 125, 480)
 						self.speaker_box.rect.right= 755
 					else:
-						speaker_text_pos= (125, 432)
+						speaker_text_pos= (125, 480)
 						self.speaker_box.rect[0]= 45
 					self.speaker_text_line= TextLine(command["Speaker"], self.font3, speaker_text_pos).align_ctr(speaker_text_pos)
 						
@@ -164,6 +164,12 @@ class StoryState(BaseState):
 			
 			elif command["Type"] == "Enter Game":
 				self.fsm.ch_state(PlayGameState(self.fsm), {"file_name" : f"{command['File']}.csv", "Story" : self.curr_line})
+			
+			elif command["Type"] == "Auto Advance":
+				pass
+			
+			else:
+				raise Exception(f"Unknown Command Type \"{command['Type']}\"")
 			
 		self.text_len= len(self.curr_text)
 	
