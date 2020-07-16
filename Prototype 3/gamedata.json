@@ -24,7 +24,7 @@
             ]
         },
         "Default Volume": {
-            "Value": "80",
+            "Value": "20",
             "Choices": [
                 "20",
                 "40",

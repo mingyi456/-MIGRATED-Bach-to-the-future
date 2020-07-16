@@ -241,7 +241,7 @@
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
-      "Text" : "I just had a brilliant idea... your highness?"
+      "Text" : "I just had a brilliant idea... your highness?\""
     }
   ],
   [
@@ -384,7 +384,7 @@
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
-      "Text" : "A theatre! Wonder what music is being performed today..."
+      "Text" : "A theatre! Wonder what music is being performed today...\""
     }
   ],
   [
@@ -517,7 +517,7 @@
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
-      "Text" : "Wow, young people these days really know how to express themselves!"
+      "Text" : "Wow, young people these days really know how to express themselves! 😭"
     }
   ],
   [
@@ -540,7 +540,7 @@
     {
       "Type" : "Speech",
       "Speaker" : "Baker",
-      "Text" : "Croissants fraichement cuits!",
+      "Text" : "Croissants fraîchement cuits!",
       "Right" : true
     }
   ],
@@ -1107,7 +1107,7 @@
   [
     {
       "Type" : "Sprite",
-      "File" : "dirty bach.png"
+      "File" : "bach close mouth.png"
     },
     {
       "Type" : "Sprite",
@@ -1133,7 +1133,7 @@
     {
       "Type" : "Speech",
       "Speaker" : "Duke",
-      "Text" : "Your clothes are filthy! There are guests out there, don't make a fool of yourself!",
+      "Text" : "And what silly clothes are you wearing? There are guests out there, don't make a fool of yourself!",
       "Right" : true
     }
   ],

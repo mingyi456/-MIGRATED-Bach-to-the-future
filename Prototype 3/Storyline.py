@@ -15,10 +15,12 @@ class StoryState(BaseState):
 		self.action_manager.add_keystroke("enter", "return", ret= "Advance")
 		self.action_manager.add_keystroke("Vol+", "up")
 		self.action_manager.add_keystroke("Vol-", "down")
-		self.font1= pygame.font.Font(path.join('.', "assets", "ARCADE_R.TTF"), 22)
+		self.font1= pygame.font.Font(path.join('.', "assets", "VisiaPro-Bold.otf"), 48)
+		self.font1_2= pygame.font.Font(path.join('.', "assets", "VisiaPro-BoldOutline.otf"), 48)
 		self.font2= pygame.font.Font(path.join('.', "assets", "Helvetica.ttf"), 22)
-		self.font3= pygame.font.Font(path.join('.', "assets", "Helvetica.ttf"), 28)
+		self.font3= pygame.font.Font(path.join('.', "assets", "Helvetica-Bold.ttf"), 28)
 		self.title= TextLine("StoryState", self.font1, (400, 50)).align_ctr()
+		self.title2= TextLine("StoryState", self.font1_2, (400, 50)).align_ctr()
 		self.curr_text= ""
 		self.text_len= 0
 		self.curr_text_box= TextBox(self.curr_text, self.font2, (55, 455), (620, 245), font_colour= rgb.BLACK)
@@ -101,7 +103,8 @@ class StoryState(BaseState):
 		for command in commands:
 			print(command)
 			if command["Type"] == "Title":
-				self.title= TextLine(command["Text"], self.font1, (400, 50)).align_ctr()
+				self.title= TextLine(command["Text"], self.font1, (400, 50), font_colour= rgb.WHITE).align_ctr()
+				self.title2= TextLine(command["Text"], self.font1_2, (400, 50), font_colour= rgb.BLACK).align_ctr()
 			
 			elif command["Type"] == "Speech":
 				self.curr_text= command["Text"]
@@ -160,7 +163,7 @@ class StoryState(BaseState):
 					self.sprites= {}
 			
 			elif command["Type"] == "Enter Game":
-				self.fsm.ch_state(PlayGameState(self.fsm), {"file_name" : f"{command['File']}.csv", "Story" : self.curr_line + 1})
+				self.fsm.ch_state(PlayGameState(self.fsm), {"file_name" : f"{command['File']}.csv", "Story" : self.curr_line})
 			
 		self.text_len= len(self.curr_text)
 	
@@ -168,6 +171,7 @@ class StoryState(BaseState):
 		self.fsm.screen.blit(self.background, (0,0))
 		self.action_manager.draw_buttons(self.fsm.screen)
 		self.title.draw(self.fsm.screen)
+		self.title2.draw(self.fsm.screen)
 		for sprite in self.sprites.values():
 			sprite.draw(self.fsm.screen)
 		if self.speaker_text_line is not None:
