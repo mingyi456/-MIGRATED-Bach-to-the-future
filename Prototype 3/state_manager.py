@@ -334,14 +334,17 @@ class PlayGameState(BaseState):
 		self.isPlaying = True
 		self.beatmap = None
 		self.orbs = []
+		self.orbblits = []
 		self.image = pygame.image.load(f"{self.fsm.ASSETS_DIR}longrectangle.png").convert()
 		
 		self.score = 0
 		self.score_font = pygame.font.Font(self.fsm.SYSFONT, 24)
-		self.score_line = TextLine(str(self.score), self.score_font, (750, 50))
+		self.score_line = TextLine(str(self.score), self.score_font, (550, 50))
 		
 		self.orb_spd= 450
 		self.countdown = self.fsm.FPS * 5
+		self.multiplier = 0
+		self.multiplier_line = TextLine(f'M:{self.multiplier}', self.score_font, (550, 100))
 	
 	def enter(self, args):
 		self.file = args["file_name"]
@@ -387,9 +390,12 @@ class PlayGameState(BaseState):
 			
 			end_time = float(beat[0])
 			duration = float(beat[1])
-			y = -(end_time) * self.orb_spd + 498 - self.orb_spd * 0.1
+			y = -(end_time) * self.orb_spd + 498 - self.orb_spd * 0.2  # ensure sound always before visual
 			orb = OrbModel(x, y, duration, lane, end_time)
+			dest = [orb.x, orb.y + orb.length * 0.2]
+			area = (0, 0, 30, orb.length * 0.8)
 			self.orbs.append(orb)
+			self.orbblits.append([self.image, dest, area])
 			reference_note = int(beat[2])
 		
 		wav_file = self.file.rsplit('.', 1)[0]
@@ -398,6 +404,28 @@ class PlayGameState(BaseState):
 		print(self.volume)
 		self.player.audio_set_volume(self.volume)
 		self.player.play()
+		
+	def checkDown(self, lane, orbsonscreen):
+		for orb in orbsonscreen:
+			if orb.lane == lane and 500 - orb.getTail() < 50:
+				self.multiplier += 1
+				self.multiplier_line = TextLine(f'M:{self.multiplier}', self.score_font, (550, 200))
+				self.score += self.multiplier
+				print("Score += 1")
+				return
+		self.multiplier = 0
+		self.multiplier_line = TextLine(f'M:{self.multiplier}', self.score_font, (550, 200))
+	
+	def checkUp(self, lane, orbsonscreen):
+		for orb in orbsonscreen:
+			if orb.lane == lane and 500 - orb.y < 50:
+				self.multiplier += 1
+				self.multiplier_line = TextLine(f'M:{self.multiplier}', self.score_font, (550, 200))
+				self.score += self.multiplier
+				print("Score += 1")
+				return
+		self.multiplier = 0
+		self.multiplier_line = TextLine(f'M:{self.multiplier}', self.score_font, (550, 200))
 	
 	def update(self, game_time, lag):
 		
@@ -427,24 +455,20 @@ class PlayGameState(BaseState):
 				print(f"Volume : {self.player.audio_get_volume()}")
 			
 			elif action == "f (down)":
-				pass
+				self.checkDown(0, orbsONSCREEN)
+				self.laneIcons[0][1] = True
 
 			elif action == "f (up)":
-				pass
+				self.checkUp(0, orbsONSCREEN)
+				self.laneIcons[0][1] = False
+				
 
 			elif action == "g (down)":
-				for orb in orbsONSCREEN:
-					if abs(orb.getTail() - 500) < 10 and orb.lane == 1:
-						self.score += 1
-						print("Score += 1")
+				self.checkDown(1, orbsONSCREEN)
 				self.laneIcons[1][1] = True
 			
 			elif action == "g (up)":
-				for orb in orbsONSCREEN:
-					if orb.lane == 1:
-						penalty = round(0.1*max(orb.y - 500, 0))
-						self.score -= penalty
-						print(f"Penalty to score : -{penalty}")				
+				self.checkUp(1, orbsONSCREEN)
 				self.laneIcons[1][1] = False
 			
 			elif action == "h (down)":
@@ -477,28 +501,21 @@ class PlayGameState(BaseState):
 						print(f"Penalty to score : -{penalty}")		
 				self.laneIcons[3][1] = False
 		
-		keys= pygame.key.get_pressed()
 		
-		if keys[pygame.K_f]:
-			for orb in orbsONSCREEN:
-				if orb.lane == 0 and orb.getTail() > 500 and orb.y < 500:
-					self.score += 1
-					print("Score += 1")
-					break
-			self.score -= 1
-			self.laneIcons[0][1] = True
-		
-		if keys[pygame.K_g]:
-			pass
-		
-		
-
 		
 		if self.isPlaying:  # pause handling
+			current_time = self.fsm.fps_clock.get_time()/1000
+			increase = self.orb_spd * (current_time)
+			print("------NEW FRAME------")
+			for source, dest, area in self.orbblits:
+				dest[1] += increase
+			
 			for i in self.orbs:
-				i.y += self.orb_spd * (self.fsm.fps_clock.get_time() / 1000)
+				i.y += increase
+				print(increase, current_time)
 				if i.y > self.fsm.HEIGHT:
 					self.orbs.remove(i)
+					# print('removing one orb')
 		
 		if len(self.orbs) == 0:
 			self.countdown -= 1
@@ -518,6 +535,7 @@ class PlayGameState(BaseState):
 	def draw(self):
 		super().draw()
 		self.score_line.draw(self.fsm.screen)
+		self.multiplier_line.draw(self.fsm.screen)
 		pygame.draw.line(self.fsm.screen, rgb.GREY, (0,500), (800,500), 5)
 		
 		for pos in self.positions:
@@ -525,8 +543,11 @@ class PlayGameState(BaseState):
 			pygame.draw.line(self.fsm.screen, rgb.GREEN, (x, 0), (x, self.fsm.HEIGHT), 5)
 		pygame.draw.line(self.fsm.screen, rgb.GREEN, (self.positions[-1] + 60, 0), (self.positions[-1] + 60, self.fsm.HEIGHT), 5)
 		
-		for i in self.orbs:
-			self.fsm.screen.blit(self.image, (i.x, round(i.y + i.length * 0.1)), (0, 0, 30, round(i.length * 0.9)))
+		# for i in self.orbs:
+		# 	self.fsm.screen.blit(self.image, (i.x, round(i.y + i.length * 0.2)), (0, 0, 30, round(i.length * 0.8)))
+		# 	# self.fsm.screen.blit(self.image, (i.x, round(i.y + i.length)), (0, 0, 30, round(i.length)))
+		self.fsm.screen.blits(self.orbblits)
+
 			
 		for args, boolean in self.laneIcons:
 			if boolean:
