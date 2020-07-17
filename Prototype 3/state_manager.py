@@ -327,7 +327,6 @@ class OrbModel:
 class PlayGameState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		pygame.key.set_repeat(1)
 		self.action_manager.add_button("Back", (self.fsm.WIDTH-100, 50), (50, 30), ret="Back", key="backspace")
 		self.action_manager.add_keystroke("Pause", 'p')
 		self.action_manager.add_keystroke("Vol+", "up")
@@ -416,10 +415,6 @@ class PlayGameState(BaseState):
 			elif action == "Pause":
 				self.isPlaying = not self.isPlaying
 				self.player.pause()
-				if pygame.key.get_repeat() == 0:
-					pygame.key.set_repeat(1)
-				else:
-					pygame.key.set_repeat(0)
 			
 			elif action == "Vol+":
 				self.volume += 1
@@ -432,20 +427,11 @@ class PlayGameState(BaseState):
 				print(f"Volume : {self.player.audio_get_volume()}")
 			
 			elif action == "f (down)":
-				for orb in orbsONSCREEN:
-					if abs(orb.getTail() - 500) < 10 and orb.lane == 0:
-						self.score += 1
-						print("Score += 1")
-				self.laneIcons[0][1] = True
-			
+				pass
+
 			elif action == "f (up)":
-				for orb in orbsONSCREEN:
-					if orb.lane == 0:
-						penalty = round(0.1*max(orb.y - 500, 0))
-						self.score -= penalty
-						print(f"Penalty to score : -{penalty}")		
-				self.laneIcons[0][1] = False
-			
+				pass
+
 			elif action == "g (down)":
 				for orb in orbsONSCREEN:
 					if abs(orb.getTail() - 500) < 10 and orb.lane == 1:
@@ -494,8 +480,13 @@ class PlayGameState(BaseState):
 		keys= pygame.key.get_pressed()
 		
 		if keys[pygame.K_f]:
-			# self.score += self.score_mul//self.fsm.FPS
-			pass
+			for orb in orbsONSCREEN:
+				if orb.lane == 0 and orb.getTail() > 500 and orb.y < 500:
+					self.score += 1
+					print("Score += 1")
+					break
+			self.score -= 1
+			self.laneIcons[0][1] = True
 		
 		if keys[pygame.K_g]:
 			pass
@@ -522,7 +513,7 @@ class PlayGameState(BaseState):
 	
 	def exit(self):
 		self.player.stop()
-		pygame.key.set_repeat(0)
+
 	
 	def draw(self):
 		super().draw()
