@@ -24,7 +24,7 @@ class State_Manager():
 		
 		self.SYSFONT= f"{self.ASSETS_DIR}ARCADE_R.TTF"
 		
-		pygame.display.set_caption("Prototype 2")
+		pygame.display.set_caption("Prototype 3")
 		self.icon= pygame.image.load(f"{self.ASSETS_DIR}quaver.png")
 		pygame.display.set_icon(self.icon)
 		self.fps_clock = pygame.time.Clock()
@@ -490,6 +490,17 @@ class PlayGameState(BaseState):
 						self.score -= penalty
 						print(f"Penalty to score : -{penalty}")		
 				self.laneIcons[3][1] = False
+		
+		keys= pygame.key.get_pressed()
+		
+		if keys[pygame.K_f]:
+			# self.score += self.score_mul//self.fsm.FPS
+			pass
+		
+		if keys[pygame.K_g]:
+			pass
+		
+		
 
 		
 		if self.isPlaying:  # pause handling

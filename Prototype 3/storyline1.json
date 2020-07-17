@@ -241,7 +241,7 @@
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
-      "Text" : "I just had a brilliant idea... your highness?\""
+      "Text" : "I just had a brilliant idea... your highness?"
     }
   ],
   [
@@ -384,7 +384,7 @@
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
-      "Text" : "A theatre! Wonder what music is being performed today...\""
+      "Text" : "A theatre! Wonder what music is being performed today..."
     }
   ],
   [
@@ -517,7 +517,7 @@
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
-      "Text" : "Wow, young people these days really know how to express themselves! 😭"
+      "Text" : "Wow, young people these days really know how to express themselves!"
     }
   ],
   [
@@ -540,7 +540,7 @@
     {
       "Type" : "Speech",
       "Speaker" : "Baker",
-      "Text" : "Croissants fraîchement cuits!",
+      "Text" : "Croissants fraichement cuits!",
       "Right" : true
     }
   ],
@@ -565,7 +565,7 @@
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
-      "Text" : "Frédéric Chopin, now that's a name that I will not forget! He really made that piano sing!"
+      "Text" : "Frederic Chopin, now that's a name that I will not forget! He really made that piano sing!"
     }
   ],
   [
@@ -686,7 +686,7 @@
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
-      "Text" : "\"...a naïve soldier who is seduced by the wiles of the fiery gypsy Carmen... another opera! Sign me up!"
+      "Text" : "...a naive soldier who is seduced by the wiles of the fiery gypsy Carmen... another opera! Sign me up!"
     }
   ],
   [
@@ -1107,7 +1107,7 @@
   [
     {
       "Type" : "Sprite",
-      "File" : "bach close mouth.png"
+      "File" : "dirty bach.png"
     },
     {
       "Type" : "Sprite",
@@ -1133,7 +1133,7 @@
     {
       "Type" : "Speech",
       "Speaker" : "Duke",
-      "Text" : "And what silly clothes are you wearing? There are guests out there, don't make a fool of yourself!",
+      "Text" : "Your clothes are filthy! There are guests out there, don't make a fool of yourself!",
       "Right" : true
     }
   ],
