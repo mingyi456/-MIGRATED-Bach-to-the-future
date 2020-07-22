@@ -1,5 +1,17 @@
-End Time,Duration,Pitch,"[Instrument(program=0, is_drum=False, name=""Classic Electric Piano"")]"
-5.0,5.0,72
-5.0,5.0,73
-5.0,5.0,74
-5.0,5.0,75
+End Time,Start Time,Duration,Pitch,Sustained,"[Instrument(program=73, is_drum=False, name=""Flute"")], Average Tempo=160, Unit Time=0.046875, Crotchet=0.375"
+2.5,0,2.5,74,True
+2.5,0,2.5,75,True
+2.5,0,2.5,76,True
+2.5,0,2.5,77,True
+5.5,3,2.5,74,True
+5.5,3,2.5,75,True
+5.5,3,2.5,76,True
+5.5,3,2.5,77,True
+8.5,6,2.5,74,True
+8.5,6,2.5,75,True
+8.5,6,2.5,76,True
+8.5,6,2.5,77,True
+11.5,9,2.5,74,True
+11.5,9,2.5,75,True
+11.5,9,2.5,76,True
+11.5,9,2.5,77,True
