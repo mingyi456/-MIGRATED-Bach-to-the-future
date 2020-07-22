@@ -350,7 +350,7 @@ class Orbs:
         result = []
         if self.sustained:
             result.append([self.sustains[self.lane], [self.x+12, self.tail_y + 30 + self.length * 0.1], (0, 0, 36, self.length * 0.9)])
-            result.append([self.heads[self.lane], [self.x, self.tail_y + self.length * 0.1]])
+            # result.append([self.heads[self.lane], [self.x, self.tail_y + self.length * 0.1]])
         result.append([self.heads[self.lane], [self.x, self.head_y]])
         return result
         
@@ -378,7 +378,8 @@ class PlayGameState(BaseState):
         self.action_manager.add_keystroke("Vol-", "down")
         self.lineOfGoal = 510
         self.orb_spd = 450
-        self.rangeOfGoal = (self.lineOfGoal - self.orb_spd/self.fsm.FPS*6, self.lineOfGoal + self.orb_spd/self.fsm.FPS*6)
+        self.errorMargin = 6
+        self.rangeOfGoal = (self.lineOfGoal - self.orb_spd/self.fsm.FPS * self.errorMargin, self.lineOfGoal + self.orb_spd/self.fsm.FPS * self.errorMargin)
         self.meter_bar = pygame.image.load(f"{self.fsm.ASSETS_DIR}meter_bar.png").convert_alpha()
         
         self.isPlaying = True
@@ -488,9 +489,7 @@ class PlayGameState(BaseState):
             if self.rangeOfGoal[0] < orb[1][1] < self.rangeOfGoal[1] and len(orb) == 2:
                 lane = self.positions.index(orb[1][0]-10)
                 if self.downUp[lane]:
-                    goalSnapshot[lane].append('down')
-                else:
-                    goalSnapshot[lane].append('up')
+                    goalSnapshot[lane].append(True)
             elif len(orb) == 3 and self.rangeOfGoal[0] < (orb[1][1] - 30 + orb[2][3]) < self.rangeOfGoal[1]:
                 lane = self.positions.index(orb[1][0] - 22)
                 if not self.sustainTracker[lane]:
@@ -501,7 +500,7 @@ class PlayGameState(BaseState):
                     # self.downUp[lane] = False  # this switch cannot be turned off
                     self.sustainTracker[lane] = False
         # print(self.sustainTracker)
-        # print(goalSnapshot)
+        print(goalSnapshot)
         
         actions = self.action_manager.chk_actions(pygame.event.get())
         for action in actions:
