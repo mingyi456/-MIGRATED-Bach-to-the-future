@@ -385,7 +385,7 @@ class PlayGameState(BaseState):
         self.orbs = []
         
         self.laneNo = 4
-        self.positions = [i * 80 for i in range(1, 7)]
+        self.positions = [480/self.laneNo + 80 * i for i in range(6)]
         self.grids = (pygame.image.load(f"{self.fsm.ASSETS_DIR}lane_topblack.png").convert_alpha(), \
                       pygame.image.load(f"{self.fsm.ASSETS_DIR}lane_bottomblack.png").convert_alpha())
         self.gridBlits = [(pygame.image.load(f"{self.fsm.ASSETS_DIR}meter.png").convert_alpha(), (0, 0))]
