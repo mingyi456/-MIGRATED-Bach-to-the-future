@@ -378,7 +378,8 @@ class PlayGameState(BaseState):
         self.action_manager.add_keystroke("Vol-", "down")
         self.lineOfGoal = 510
         self.orb_spd = 450
-        self.rangeOfGoal = (self.lineOfGoal - self.orb_spd/self.fsm.FPS*3, self.lineOfGoal + self.orb_spd/self.fsm.FPS*3)
+        self.rangeOfGoal = (self.lineOfGoal - self.orb_spd/self.fsm.FPS*6, self.lineOfGoal + self.orb_spd/self.fsm.FPS*6)
+        self.meter_bar = pygame.image.load(f"{self.fsm.ASSETS_DIR}meter_bar.png").convert_alpha()
         
         self.isPlaying = True
         self.orbs = []
@@ -387,7 +388,7 @@ class PlayGameState(BaseState):
         self.positions = [i * 80 for i in range(1, 7)]
         self.grids = (pygame.image.load(f"{self.fsm.ASSETS_DIR}lane_topblack.png").convert_alpha(), \
                       pygame.image.load(f"{self.fsm.ASSETS_DIR}lane_bottomblack.png").convert_alpha())
-        self.gridBlits = []
+        self.gridBlits = [(pygame.image.load(f"{self.fsm.ASSETS_DIR}meter.png").convert_alpha(), (0, 0))]
         for i in range(self.laneNo):
             self.gridBlits.append((self.grids[i%2], (self.positions[i], 0)))
         
@@ -419,8 +420,8 @@ class PlayGameState(BaseState):
             next(reader)
             self.beatmap = [row for row in reader]
         self.fullScore = len(self.beatmap)
+        self.percentage = 0
         
-        self.percentage_line = TextLine(f'M:{self.score/self.fullScore}', self.score_font, (550, 100))
         self.sustainTracker = [False for _ in range(self.laneNo)]
         self.downUp = [True for _ in range(self.laneNo)]
         ############################################################################
@@ -497,10 +498,10 @@ class PlayGameState(BaseState):
             elif len(orb) == 3 and self.rangeOfGoal[0] < (orb[1][1] - 30) < self.rangeOfGoal[1]:
                 lane = self.positions.index(orb[1][0] - 22)
                 if self.sustainTracker[lane]:
-                    self.downUp[lane] = False  # this switch cannot be turned off
+                    # self.downUp[lane] = False  # this switch cannot be turned off
                     self.sustainTracker[lane] = False
         # print(self.sustainTracker)
-        print(goalSnapshot)
+        # print(goalSnapshot)
         
         actions = self.action_manager.chk_actions(pygame.event.get())
         for action in actions:
@@ -559,6 +560,9 @@ class PlayGameState(BaseState):
                 self.score += 1
                 self.lane_responses[i][1][0] = True
             self.lane_input[i] = False
+            
+        self.score_line = TextLine(str(self.score), self.score_font, (550, 50))
+        self.percentage = self.score/self.fullScore
 
         # if self.isPlaying:  # pause handling
         #     current_time = self.fsm.fps_clock.get_time()/1000
@@ -576,31 +580,15 @@ class PlayGameState(BaseState):
                     self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": self.score, "Story": self.story_line})
                 else:
                     self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": self.score})
-        
-        self.score_line = TextLine(str(self.score), self.score_font, (550, 50))
-        self.percentage_line = TextLine(f'M:{self.score/self.fullScore}', self.score_font, (550, 100))
     
     def exit(self):
         self.player.stop()
-        self.lane_responses = [[[False, pygame.image.load(f"{self.fsm.ASSETS_DIR}lane1_press.png").convert_alpha()], \
-                                [False, pygame.image.load(f"{self.fsm.ASSETS_DIR}lane1_correct.png").convert_alpha()], \
-                                (self.positions[0], 490)], \
-                               [[False, pygame.image.load(f"{self.fsm.ASSETS_DIR}lane2_press.png").convert_alpha()], \
-                                [False, pygame.image.load(f"{self.fsm.ASSETS_DIR}lane2_correct.png").convert_alpha()], \
-                                (self.positions[1], 490)], \
-                               [[False, pygame.image.load(f"{self.fsm.ASSETS_DIR}lane3_press.png").convert_alpha()], \
-                                [False, pygame.image.load(f"{self.fsm.ASSETS_DIR}lane3_correct.png").convert_alpha()], \
-                                (self.positions[2], 490)], \
-                               [[False, pygame.image.load(f"{self.fsm.ASSETS_DIR}lane4_press.png").convert_alpha()], \
-                                [False, pygame.image.load(f"{self.fsm.ASSETS_DIR}lane4_correct.png").convert_alpha()], \
-                                (self.positions[3], 490)]]
 
     
     def draw(self):
         super().draw()
         self.fsm.screen.blits(self.gridBlits)
         self.score_line.draw(self.fsm.screen)
-        self.percentage_line.draw(self.fsm.screen)
         
         # for pos in self.positions:
         # 	x = pos - 35
@@ -618,6 +606,7 @@ class PlayGameState(BaseState):
                 self.fsm.screen.blit(press[1], position)
             if correct[0]:
                 self.fsm.screen.blit(correct[1], position)
+        self.fsm.screen.blit(self.meter_bar, (11, 499 - self.percentage * 398), (0, 0, 28, self.percentage * 398))
 
 class GameOverState(BaseState):
     def __init__(self, fsm):
