@@ -536,7 +536,7 @@ class PlayGameState(BaseState):
 			self.lane_input[i] = False
 			if self.lane_responses[i][1][0]:
 				self.lane_responses[i][1][0] = bool(tapSnapshot[i])  # remove fire art once note has passed.
-			if self.sustainSnapshot[i] and self.sustainValid[i]:
+			if self.sustainSnapshot[i] and self.sustainValid[i] and self.lane_responses[i][0][0]:
 				self.score += deltaTime * 50
 				self.lane_responses[i][1][0] = True
 			
