@@ -273,6 +273,10 @@
   ],
   [
     {
+      "Type" : "Grant Achievement",
+      "Name" : "Ressurection"
+    },
+    {
       "Type" : "Audio Start",
       "File" : "wormhole.mp3"
     },
