@@ -1,16 +1,14 @@
 from pretty_midi import PrettyMIDI
-import pretty_midi, csv, itertools
+import pretty_midi, csv, itertools, time
 from midi2audio import FluidSynth
 
-fs = FluidSynth('/Users/chence08/PycharmProjects/Bach-to-the-future/Prototype 3/TimGM6mb.sf2')
+fs = FluidSynth('soundfont.sf3')
 
-midi_path = '../Prototype 3/tracks/Pavane.midi'
+midi_path = 'master tracks/Pavane.midi'
 
-def midiFunnel(midi_path, quantize=0, onekey=False):
+def midiFunnel(midi_path, quantize=False, onekey=False):
 	directory, name = midi_path.rsplit('/', 1)
 	name = name.rsplit('.', 1)[0]
-	directory = directory.rsplit('/', 1)[0]
-	print(directory, name)
 	
 	mid = PrettyMIDI(midi_path)
 	mid.remove_invalid_notes()
@@ -19,31 +17,63 @@ def midiFunnel(midi_path, quantize=0, onekey=False):
 	unit_time = 'NOT QUANTIZED'
 	########################################################################
 	if quantize:
-		average_tempo = int(round(mid.estimate_tempo(), 3))
-		crotchet = 60 / average_tempo
-		unit_time = 60 / (average_tempo * quantize)
-		for instrument in mid.instruments:
-			for note in instrument.notes:
-				note.start = note.start // unit_time * unit_time
-				duration = note.get_duration() // unit_time * unit_time
-				note.end = note.start + duration
-	mid.write(midi_path)
-	mid = PrettyMIDI(midi_path)
+		print(mid.time_signature_changes)
+		print(average_tempo)
+		subdivision = int(input('Note to quantize to: '))
+	while quantize:
+		if subdivision > 1:
+			average_tempo = int(round(mid.estimate_tempo(), 3))
+			crotchet = 60 / average_tempo
+			unit_time = 60 / (average_tempo * subdivision)
+			for instrument in mid.instruments:
+				for note in instrument.notes:
+					note.start = note.start // unit_time * unit_time
+					duration = note.get_duration() // unit_time * unit_time
+					note.end = note.start + duration
+			
+			new_midi_path = 'tracks/' + name + '.mid'
+			mid.write(new_midi_path)
+			mid = PrettyMIDI(new_midi_path)
+			break
+		subdivision = int(input('Please enter number above 1.\n'
+		                        'Recommended 4, 8, 16, 32 for straight tempo \n'
+		                        '12 for triple meter: '))
 	#########################################################################
 	
+	songLength = time.strftime("%M:%S", time.gmtime(mid.get_end_time()))
+	
+	totalInstruments = len(mid.instruments)
+	initial_instruments = mid.instruments[0].name
+	for i in range(1, totalInstruments):
+		if i == totalInstruments - 1:
+			initial_instruments += ' and ' + mid.instruments[i].name
+		else:
+			initial_instruments += ', ' + mid.instruments[i].name
+
 	selected_tracks = ()
 	for number, instrument in enumerate(mid.instruments):
 		print(number, instrument)
 		selected_tracks += (number,)
 	
 	entry1 = input('Which instrument would you like? ')
-	if entry1:
-		selected_tracks = tuple(int(x) for x in entry1.split(','))
+	entry1 = set(int(x) for x in entry1.split(','))
+	while True:
+		if entry1.issubset(set(range(totalInstruments))):
+			selected_tracks = entry1
+			break
+		entry1 = input(f'Please enter number between 0 and {totalInstruments-1}: ')
+		entry1 = set(int(x) for x in entry1.split(','))
 	
 	for number, instrument in enumerate(mid.instruments.copy()):
 		if number not in selected_tracks:
 			mid.instruments.remove(instrument)
-	instrument_info = mid.instruments
+	remainingInstruments = len(mid.instruments)
+	selected_instruments = mid.instruments[0].name
+	for i in range(1, remainingInstruments):
+		if i == remainingInstruments - 1:
+			selected_instruments += ' and ' + mid.instruments[i].name
+		else:
+			selected_instruments += ', ' + mid.instruments[i].name
 	
 	notes = [x.notes for x in mid.instruments]
 	flatten = list(itertools.chain(*notes))
@@ -67,18 +97,30 @@ def midiFunnel(midi_path, quantize=0, onekey=False):
 		print(f'Onekey: {len(melody)}')
 	
 	csv_rows = [[x.end, x.start, x.get_duration(), x.pitch, x.get_duration()>crotchet] for x in melody]
-		
+	totalNotes = len(csv_rows)
+	sustainedNotes = 0
+	totalSustainDuration = 0
+	for row in csv_rows:
+		if row[4]:
+			sustainedNotes += 1
+			totalSustainDuration += row[2]
+
+	info_header = ['totalNotes', 'sustainedNotes', 'totalSustainDuration', \
+	        'songLength', 'selected_instruments', 'initial_instruments', 'average_tempo', 'unit_time', 'crotchet']
+	info = [totalNotes, sustainedNotes, totalSustainDuration, \
+	        songLength, selected_instruments, initial_instruments, average_tempo, unit_time, crotchet]
 	
-	csv_path = directory + '/beatmaps/' + name + '.csv'
+	csv_path = 'beatmaps/' + name + '.csv'
 	with open(csv_path, 'w', newline='') as file:
 		writer = csv.writer(file)
-		writer.writerow(['End Time', 'Start Time', 'Duration', 'Pitch', 'Sustained', \
-		                 f'{instrument_info}, Average Tempo={average_tempo}, Unit Time={unit_time}, Crotchet={crotchet}'])
+		writer.writerow(info_header)
+		writer.writerow(info)
+		writer.writerow(['End Time', 'Start Time', 'Duration', 'Pitch', 'Sustained'])
 		writer.writerows(csv_rows)
 	print('CSV COMPLETE!')
 	
-	# audio_path = directory + '/wav_files/' + name + '.wav'
+	# audio_path = 'wav_files/' + name + '.flac'
 	# print('STARTING WAV GENERATION, PLEASE WAIT...')
 	# fs.midi_to_audio(midi_path, audio_path)
 
-midiFunnel(midi_path, 8)
+midiFunnel(midi_path, True)

@@ -1,4 +1,6 @@
-End Time,Start Time,Duration,Pitch,Sustained,"[Instrument(program=73, is_drum=False, name=""Flute"")], Average Tempo=160, Unit Time=0.046875, Crotchet=0.375"
+totalNotes,sustainedNotes,totalSustainDuration,songLength,selected_instruments,initial_instruments,average_tempo,unit_time,sustain_cutoff
+254,58,85.96929088125002,02:15,Flute,"Flute, Oboe, Clarinet in Bb, Bassoon, Player 1, Player 2, Player 3 and Player 4",160,0.046875,0.375
+End Time,Start Time,Duration,Pitch,Sustained
 4.3125,3.0,1.3125,74,True
 4.453125,4.3125,0.140625,76,False
 5.8125,4.5,1.3125,77,True

@@ -315,13 +315,14 @@ class AchievementsState(BaseState):
 # SUSTAINS HAVE AREA, SO LENGTH == 3, HEADS ONLY LENGTH == 2
 
 class Orbs:
-	def __init__(self, x, end_time, start_time, duration, lane, sustained, speed, offset):
+	def __init__(self, x, end_time, start_time, duration, lane, sustained, speed, offset, sustainTrim):
 		self.x = x + 10
 		self.tail_y = -end_time * speed + offset  # ensure sound always before visual, 0.1 reaction time
 		self.head_y = -start_time * speed + offset
 		self.length = duration * speed
 		self.lane = lane
 		self.sustained = sustained
+		self.sustainTrim = sustainTrim
 		
 		# ASSETS
 		ASSETS_DIR = path.join(*raw_paths["Assets"])
@@ -337,24 +338,11 @@ class Orbs:
 	def blits(self):
 		result = []
 		if self.sustained:
-			result.append([self.sustains[self.lane], [self.x+12, self.tail_y + 30 + self.length * 0.2], (0, 0, 36, self.length * 0.8)])
+			result.append([self.sustains[self.lane], \
+			               [self.x+12, self.tail_y + 30 + self.length * (1-self.sustainTrim)], \
+			               (0, 0, 36, self.length * self.sustainTrim)])
 		result.append([self.heads[self.lane], [self.x, self.head_y]])
 		return result
-		
-		# for beat in self.beatmap:
-		#     diff = int(beat[2]) - reference_note
-		#     lane = (lane + diff) % self.laneNo
-		#     x = self.positions[lane]
-		#
-		#     end_time = float(beat[0])
-		#     duration = float(beat[1])
-		#     y = -(end_time) * self.orb_spd + 540 - self.orb_spd * 0.2  # ensure sound always before visual
-		#     orb = OrbModel(x, y, duration, lane, end_time)
-		#     dest = [orb.x, orb.y + orb.length * 0.2]
-		#     area = (0, 0, 30, orb.length * 0.8)
-		#     self.orbs.append(orb)
-		#     self.orbblits.append([self.image, dest, area])
-		#     reference_note = int(beat[2])
 
 class PlayGameState(BaseState):
 	def __init__(self, fsm):
@@ -367,6 +355,8 @@ class PlayGameState(BaseState):
 		self.orb_spd = 450
 		self.errorMargin = 6
 		self.rangeOfGoal = (self.lineOfGoal - self.orb_spd/self.fsm.FPS * self.errorMargin, self.lineOfGoal + self.orb_spd/self.fsm.FPS * self.errorMargin)
+		self.sustainTrim = 0.8  # 1 for no Trim
+		self.baseScore = 50
 		self.meter_bar = pygame.image.load(f"{self.fsm.ASSETS_DIR}meter_bar.png").convert_alpha()
 		
 		self.isPlaying = True
@@ -413,6 +403,8 @@ class PlayGameState(BaseState):
 		with open(file_path, 'r') as file:
 			reader = csv.reader(file)
 			next(reader)
+			info = next(reader)
+			next(reader)
 			self.beatmap = [row for row in reader]
 		
 		self.sustainSnapshot = [False for _ in range(self.laneNo)]
@@ -437,7 +429,6 @@ class PlayGameState(BaseState):
 
 		reference_note = int(self.beatmap[0][3])
 		lane = 0
-		sum_of_sustains = 0
 
 		for end_time, start_time, duration, pitch, sustained in self.beatmap:
 			end_time = float(end_time)
@@ -445,18 +436,22 @@ class PlayGameState(BaseState):
 			duration = float(duration)
 			pitch = int(pitch)
 			sustained = sustained == 'True'
-			if sustained:
-				sum_of_sustains += duration
 			
 			diff = pitch - reference_note
 			lane = (lane + diff) % self.laneNo
 			x = self.positions[lane]
 
-			orb = Orbs(x, end_time, start_time, duration, lane, sustained, self.orb_spd, self.lineOfGoal)
+			orb = Orbs(x, end_time, start_time, duration, lane, sustained, self.orb_spd, self.lineOfGoal, self.sustainTrim)
 			self.orbs.extend(orb.blits())
 			reference_note = pitch
 		
-		self.fullScore = len(self.beatmap) + sum_of_sustains * self.orb_spd * 0.8
+		# FULL SCORE CALCULATION
+		totalNotes = int(info[0])
+		sustainedNotes = int(info[1])
+		totalSustainDuration = float(info[2]) * self.sustainTrim
+		crotchet = float(info[8])
+		self.fullScore = (totalNotes * self.baseScore) \
+		                 + (totalSustainDuration / crotchet - sustainedNotes * crotchet) * self.baseScore/2
 		self.scorePercentage = 0
 		
 		wav_file = self.file.rsplit('.', 1)[0]
@@ -531,13 +526,13 @@ class PlayGameState(BaseState):
 		for i in range(self.laneNo):
 			if tapSnapshot[i] and self.lane_input[i]:
 				self.sustainValid[i] = True
-				self.score += 50
+				self.score += self.baseScore
 				self.lane_responses[i][1][0] = True
 			self.lane_input[i] = False
 			if self.lane_responses[i][1][0]:
 				self.lane_responses[i][1][0] = bool(tapSnapshot[i])  # remove fire art once note has passed.
 			if self.sustainSnapshot[i] and self.sustainValid[i] and self.lane_responses[i][0][0]:
-				self.score += deltaTime * 50
+				self.score += deltaTime * self.baseScore/2
 				self.lane_responses[i][1][0] = True
 			
 		self.score_line = TextLine(str(int(self.score)), self.score_font, (550, 50))
@@ -556,9 +551,9 @@ class PlayGameState(BaseState):
 			if self.countdown <= 0:
 				print("Track Completed!")
 				if self.story:
-					self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": self.score, "Story": self.story_line})
+					self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": int(self.score), "Story": self.story_line})
 				else:
-					self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": self.score})
+					self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": int(self.score)})
 	
 	def exit(self):
 		self.player.stop()
