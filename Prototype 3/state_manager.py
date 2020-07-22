@@ -401,6 +401,15 @@ class PlayGameState(BaseState):
                       (pygame.image.load(f"{self.fsm.ASSETS_DIR}lane6.png").convert_alpha(), (self.positions[5], 490))]
         self.laneBlits = self.lanes[:self.laneNo]
         
+        key_bindings= ['q', 'w', 'e', 'r']
+
+        self.key_binds= {}
+        for key in key_bindings:
+
+            self.key_binds[key]= eval(f"pygame.K_{key}")
+
+        print(list(self.key_binds.items()))
+        
         self.score = 0
         self.score_font = pygame.font.Font(self.fsm.SYSFONT, 24)
         self.score_line = TextLine(str(self.score), self.score_font, (550, 50))
@@ -553,6 +562,7 @@ class PlayGameState(BaseState):
                 self.lane_responses[3][0][0] = False
                 self.lane_responses[3][1][0] = False
                 self.lane_input[3] = False
+        
         
         for i in range(self.laneNo):
             if goalSnapshot[i] and self.lane_input[i]:
