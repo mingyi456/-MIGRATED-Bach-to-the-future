@@ -327,7 +327,11 @@
   ],
   [
     {
-      "Type" : "Background",
+      "Type" : "Sprite Clear",
+      "File" : "bach close mouth.png"
+    },
+    {
+      "Type" : "Sprite",
       "File" : "bach surprised.png"
     },
     {
@@ -338,7 +342,7 @@
     {
       "Type" : "Script",
       "File" : "hop.py",
-      "Init" : "self.sp= self.sprites['bach surprised.png']; self.vel= -100"
+      "Init" : "self.sp= self.sprites['bach surprised.png']; self.vel= -20"
     }
   ],
   [
@@ -790,13 +794,19 @@
   [
     {
       "Type" : "Sprite",
-      "File" : "bach chased.png"
+      "File" : "bach chased.png",
+      "Pos" : "(-400, 300)"
     },
     {
       "Type" : "Speech",
       "Speaker" : "Bach",
       "Text" : "Time to get away!",
       "Right" : true
+    },
+    {
+      "Type" : "Script",
+      "File" : "move.py",
+      "Init" : "self.sp= self.sprites['bach chased.png']"
     }
   ],
   [

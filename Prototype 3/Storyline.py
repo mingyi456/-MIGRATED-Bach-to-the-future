@@ -153,7 +153,11 @@ class StoryState(BaseState):
 				self.mask= pygame.image.load(path.join('.', "story_assets", command['File'])).convert()
 			
 			elif command["Type"] == "Sprite":
-				self.sprites[command['File']]= Sprite(path.join('.', "story_assets", command['File']), (400, 300))
+				
+				if "Pos" in command.keys():
+					self.sprites[command['File']]= Sprite(path.join('.', "story_assets", command['File']), eval(command["Pos"]))
+				else:
+					self.sprites[command['File']]= Sprite(path.join('.', "story_assets", command['File']), (400, 300))
 			
 			elif command["Type"] == "Sprite Clear":
 				if "File" in command.keys():
