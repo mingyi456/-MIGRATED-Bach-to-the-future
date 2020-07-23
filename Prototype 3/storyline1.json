@@ -268,7 +268,7 @@
     },
     {
       "Type" : "Enter Game",
-      "File" : "shortmidi"
+      "File" : "Pavane"
     }
   ],
   [
@@ -334,6 +334,11 @@
       "Type" : "Speech",
       "Speaker" : "Bach",
       "Text" : "Vienna?!"
+    },
+    {
+      "Type" : "Script",
+      "File" : "hop.py",
+      "Init" : "self.sp= self.sprites['bach surprised.png']; self.vel= -100"
     }
   ],
   [

@@ -138,13 +138,13 @@ class StoryState(BaseState):
 			
 			elif command["Type"] == "Script":
 				
-				with open(command["File"]) as script_file:
+				with open(path.join('.', "story_scripts",command["File"])) as script_file:
 					script_code= script_file.read()
 				self.scripts.append(script_code)
 				exec(command["Init"])
 				
 			elif command["Type"] == "Background":
-				with open("fadein.py") as script_file:
+				with open(path.join('.', "story_scripts", "fadein.py")) as script_file:
 					script_code= script_file.read()
 				self.scripts.append(script_code)
 				self.curr_alpha= 0
@@ -166,6 +166,9 @@ class StoryState(BaseState):
 				self.fsm.ch_state(PlayGameState(self.fsm), {"file_name" : f"{command['File']}.csv", "Story" : self.curr_line})
 			
 			elif command["Type"] == "Auto Advance":
+				pass
+			
+			elif command["Type"] == "Grant Achievement":
 				pass
 			
 			else:
