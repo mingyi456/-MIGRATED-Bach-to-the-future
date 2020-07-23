@@ -4,7 +4,7 @@ from midi2audio import FluidSynth
 
 fs = FluidSynth('soundfont.sf3')
 
-midi_path = 'master tracks/Pavane.midi'
+midi_path = 'master tracks/Vocalise.midi'
 
 def midiFunnel(midi_path, quantize=False, slowDown=False, onekey=False):
 	directory, name = midi_path.rsplit('/', 1)
@@ -30,7 +30,6 @@ def midiFunnel(midi_path, quantize=False, slowDown=False, onekey=False):
 					note.start = note.start // unit_time * unit_time
 					duration = note.get_duration() // unit_time * unit_time
 					note.end = note.start + duration
-					note.velocity += 10
 			
 			new_midi_path = 'tracks/' + name + '.mid'
 			mid.write(new_midi_path)
@@ -53,7 +52,7 @@ def midiFunnel(midi_path, quantize=False, slowDown=False, onekey=False):
 
 	selected_tracks = ()
 	for number, instrument in enumerate(mid.instruments):
-		print(number, instrument)
+		print(number, pretty_midi.program_to_instrument_name(instrument.program))
 		selected_tracks += (number,)
 	
 	entry1 = input('Which instrument would you like? ')
@@ -121,7 +120,7 @@ def midiFunnel(midi_path, quantize=False, slowDown=False, onekey=False):
 	print('CSV COMPLETE!')
 	
 	audio_path = 'wav_files/' + name + '.flac'
-	print('STARTING WAV GENERATION, PLEASE WAIT...')
+	print('STARTING FLAC GENERATION, PLEASE WAIT...')
 	fs.midi_to_audio(midi_path, audio_path)
 
-midiFunnel(midi_path, True)
+midiFunnel(midi_path, False)
