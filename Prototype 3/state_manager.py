@@ -11,7 +11,6 @@ from data_parser import get_config, ch_config, get_user_data, update_user_data, 
 class State_Manager:
 	def __init__(self, config= get_config()):
 		
-		global raw_paths
 		raw_paths= get_sys_config()
 		self.ASSETS_DIR= path.join(*raw_paths["Assets"])
 		self.WAV_DIR = path.join(*raw_paths["WAV Directory"])
@@ -325,6 +324,7 @@ class Orbs:
 		self.sustainTrim = sustainTrim
 		
 		# ASSETS
+		raw_paths= get_sys_config()
 		ASSETS_DIR = path.join(*raw_paths["Assets"])
 		self.heads = [pygame.image.load(f"{ASSETS_DIR}lane1_orb.png").convert_alpha(), \
 					  pygame.image.load(f"{ASSETS_DIR}lane2_orb.png").convert_alpha(), \
