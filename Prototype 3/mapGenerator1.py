@@ -6,7 +6,7 @@ fs = FluidSynth('soundfont.sf3')
 
 midi_path = 'master tracks/Pavane.midi'
 
-def midiFunnel(midi_path, quantize=False, onekey=False):
+def midiFunnel(midi_path, quantize=False, slowDown=False, onekey=False):
 	directory, name = midi_path.rsplit('/', 1)
 	name = name.rsplit('.', 1)[0]
 	
@@ -30,6 +30,7 @@ def midiFunnel(midi_path, quantize=False, onekey=False):
 					note.start = note.start // unit_time * unit_time
 					duration = note.get_duration() // unit_time * unit_time
 					note.end = note.start + duration
+					note.velocity += 10
 			
 			new_midi_path = 'tracks/' + name + '.mid'
 			mid.write(new_midi_path)
@@ -119,8 +120,8 @@ def midiFunnel(midi_path, quantize=False, onekey=False):
 		writer.writerows(csv_rows)
 	print('CSV COMPLETE!')
 	
-	# audio_path = 'wav_files/' + name + '.flac'
-	# print('STARTING WAV GENERATION, PLEASE WAIT...')
-	# fs.midi_to_audio(midi_path, audio_path)
+	audio_path = 'wav_files/' + name + '.flac'
+	print('STARTING WAV GENERATION, PLEASE WAIT...')
+	fs.midi_to_audio(midi_path, audio_path)
 
 midiFunnel(midi_path, True)
