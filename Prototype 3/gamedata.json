@@ -17,7 +17,7 @@
             ]
         },
         "Fullscreen": {
-            "Value": "True",
+            "Value": "False",
             "Choices": [
                 "True",
                 "False"

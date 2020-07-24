@@ -7,6 +7,7 @@ from UIManager import ActionManager, TextLine, Sprite
 import csv
 import vlc
 from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config, get_achievements, reset_config
+import platform
 
 class State_Manager:
 	def __init__(self, config= get_config()):
@@ -699,16 +700,23 @@ class SandBoxState(BaseState):
 		
 		self.action_manager.add_button("Back", (50, 50), (50, 30))
 		
-		self.file_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 30)
+
+		
+		self.file_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 14)
 		
 		self.sprites=[]
 		
-		from psutil import disk_partitions
 		
-		self.drives= [disk.device for disk in disk_partitions(all= True)]
 		
-		for i, drive in enumerate(self.drives):
-			self.action_manager.add_button(drive, (50, 100 + i*50), (50, 30), font= self.file_font)
+		if platform.system() == "Windows":
+			self.drive_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 30)
+		
+			from psutil import disk_partitions
+			
+			self.drives= [disk.device for disk in disk_partitions(all= True)]
+			
+			for i, drive in enumerate(self.drives):
+				self.action_manager.add_button(drive, (50, 100 + i*50), (50, 30), font= self.drive_font)
 		
 	
 	def enter(self, args):
@@ -718,20 +726,25 @@ class SandBoxState(BaseState):
 			self.curr_dir= args["curr_dir"]
 		print(self.curr_dir)
 		self.dir_entries= scandir(self.curr_dir)
-		self.dir_items= listdir(self.curr_dir)
 		
-		self.action_manager.add_button("..", (375, 50), (50, 30), canScroll= True, font= self.file_font)
+		self.action_manager.add_button("..", (375, 50), (20, 14), canScroll= True, font= self.file_font)
 
-# 		for i, item in enumerate(self.dir_items):
-# 			self.action_manager.add_button(item, (375, i*50+100), (50, 30), canScroll= True, font= self.file_font)
-		folders= [i.name for i in self.dir_entries if i.is_dir]
+		self.folders= [i.name for i in self.dir_entries if i.is_dir()]		
+		curr_height= 0
 		
-		for i, folder in enumerate(folders):
-			self.action_manager.add_button(folder, (375, i*50+100), (50, 30), canScroll= True, font= self.file_font)
-			self.sprites.append(Sprite(f"{self.fsm.ASSETS_DIR}folder.png", (355, i*50+100)))
+		for i, folder in enumerate(self.folders):
+			self.action_manager.add_button(folder, (375, i*20+70), (20, 14), canScroll= True, font= self.file_font)
+			self.sprites.append(Sprite(f"{self.fsm.ASSETS_DIR}folder.png", (355, i*20+70)))
 			self.action_manager.scroll_items.append(self.sprites[-1])
-
+			curr_height += 20
+		self.dir_entries= scandir(self.curr_dir)
+		self.files= [i.name for i in self.dir_entries if i.is_file()]
 		
+		for i, file in enumerate(self.files):
+			self.action_manager.add_button(file, (375, i*20+70+curr_height), (20, 14), canScroll= True, font= self.file_font)
+			self.sprites.append(Sprite(f"{self.fsm.ASSETS_DIR}file.png", (355, i*20+70+curr_height)))
+			self.action_manager.scroll_items.append(self.sprites[-1])	
+
 		self.action_manager.scroll_max = self.action_manager.scroll_buttons[-1].rect[1] - (self.fsm.HEIGHT//4)*3
 		
 
@@ -748,17 +761,17 @@ class SandBoxState(BaseState):
 			elif action == "..":
 				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : path.join(self.curr_dir, action)})
 				
-			elif action in self.dir_items:
-				
+			elif action in self.folders:
+				print("Correct!")
 				file_path= path.join(self.curr_dir, action)
-				
-				if path.isdir(file_path):
-					self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : file_path})
+				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : file_path})
+			
+			elif action in self.files:
+				print("Correct!")
+				file_path= path.join(self.curr_dir, action)
+				print(file_path)
 					
-				elif path.isfile(file_path):
-					print(file_path)
-					
-			elif action in self.drives:
+			elif platform.system() == "Windows" and action in self.drives:
 				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : action})
 
 
