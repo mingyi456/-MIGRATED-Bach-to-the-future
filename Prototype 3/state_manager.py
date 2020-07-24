@@ -7,7 +7,6 @@ from UIManager import ActionManager, TextLine
 import csv
 import vlc
 from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config, get_achievements, reset_config
-import time
 
 class State_Manager:
 	def __init__(self, config= get_config()):
@@ -697,7 +696,8 @@ class GameOverState(BaseState):
 class SandBoxState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.action_manager.add_button("Upload MIDI File", (375, 50), (50, 30))
+		self.action_manager.add_button("Upload MIDI File 1", (375, 50), (50, 30))
+		self.action_manager.add_button("Upload MIDI File 2", (375, 100), (50, 30))
 		
 	def update(self, game_time, lag):
 		actions= self.action_manager.chk_actions(pygame.event.get())
@@ -706,15 +706,28 @@ class SandBoxState(BaseState):
 			if action == "Exit":
 				self.fsm.ch_state(ExitState(self.fsm))
 				
-			elif action == "Upload MIDI File":
+			elif action == "Upload MIDI File 1":
 				import tkinter as tk
 				from tkinter import filedialog
 				tk.Tk().withdraw()
 				file_path = filedialog.askopenfilename()
 				print(file_path)
-	
+			
+			elif action == "Upload MIDI File 2":
+				import wx
+				app = wx.App(None)
+				style = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST
+				dialog = wx.FileDialog(None, 'Open')
+				if dialog.ShowModal() == wx.ID_OK:
+					path = dialog.GetPath()
+				else:
+					path = None
+				dialog.Destroy()
+				print(path)
+
 	def draw(self):
 		super().draw()
+
 
 
 class ExitState(BaseState):
