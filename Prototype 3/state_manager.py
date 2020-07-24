@@ -699,12 +699,15 @@ class SandBoxState(BaseState):
 		super().__init__(fsm)
 		
 		self.action_manager.add_button("Back", (50, 50), (50, 30))
+		
+		self.file_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 30)
+		
 		from psutil import disk_partitions
 		
 		self.drives= [disk.device for disk in disk_partitions(all= True)]
 		
 		for i, drive in enumerate(self.drives):
-			self.action_manager.add_button(drive, (50, 100 + i*50), (50, 30))
+			self.action_manager.add_button(drive, (50, 100 + i*50), (50, 30), font= self.file_font)
 		
 	
 	def enter(self, args):
@@ -714,9 +717,9 @@ class SandBoxState(BaseState):
 			self.curr_dir= args["curr_dir"]
 		print(self.curr_dir)
 		self.dir_items= listdir(self.curr_dir)
-		self.action_manager.add_button("..", (375, 50), (50, 30), canScroll= True)
+		self.action_manager.add_button("..", (375, 50), (50, 30), canScroll= True, font= self.file_font)
 		for i, item in enumerate(self.dir_items):
-			self.action_manager.add_button(item, (375, i*50+100), (50, 30), canScroll= True)
+			self.action_manager.add_button(item, (375, i*50+100), (50, 30), canScroll= True, font= self.file_font)
 		
 		self.action_manager.scroll_max = self.action_manager.scroll_buttons[-1].rect[1] - (self.fsm.HEIGHT//4)*3
 
