@@ -697,8 +697,15 @@ class GameOverState(BaseState):
 class SandBoxState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		#self.action_manager.add_button("Upload MIDI File 1", (375, 50), (50, 30))
-		#self.action_manager.add_button("Upload MIDI File 2", (375, 100), (50, 30))
+		
+		self.action_manager.add_button("Back", (50, 50), (50, 30))
+		from psutil import disk_partitions
+		
+		self.drives= [disk.device for disk in disk_partitions(all= True)]
+		
+		for i, drive in enumerate(self.drives):
+			self.action_manager.add_button(drive, (50, 100 + i*50), (50, 30))
+		
 	
 	def enter(self, args):
 		if "curr_dir" not in args.keys():
@@ -712,21 +719,32 @@ class SandBoxState(BaseState):
 			self.action_manager.add_button(item, (375, i*50+100), (50, 30), canScroll= True)
 		
 		self.action_manager.scroll_max = self.action_manager.scroll_buttons[-1].rect[1] - (self.fsm.HEIGHT//4)*3
+
 	def update(self, game_time, lag):
 		actions= self.action_manager.chk_actions(pygame.event.get( ))
 	
 		for action in actions:
 			if action == "Exit":
 				self.fsm.ch_state(ExitState(self.fsm))
-			if action == "..":
+			
+			elif action == "Back":
+				self.fsm.ch_state(MainMenuState(self.fsm))			
+			
+			elif action == "..":
 				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : path.join(self.curr_dir, action)})
 				
 			elif action in self.dir_items:
+				
 				file_path= path.join(self.curr_dir, action)
+				
 				if path.isdir(file_path):
 					self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : file_path})
+					
 				elif path.isfile(file_path):
 					print(file_path)
+					
+			elif action in self.drives:
+				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : action})
 
 
 	def draw(self):
