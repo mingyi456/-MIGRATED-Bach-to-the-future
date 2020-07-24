@@ -7,6 +7,7 @@ from UIManager import ActionManager, TextLine
 import csv
 import vlc
 from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config, get_achievements, reset_config
+import time
 
 class State_Manager:
 	def __init__(self, config= get_config()):
@@ -350,6 +351,12 @@ class Orbs:
 class PlayGameState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
+		self.load_prog= 0
+		self.fsm.screen.blit(self.background,(0, 0))
+		self.load_font= pygame.font.Font(self.fsm.SYSFONT, 48)
+		TextLine("Loading", self.load_font, (400, 300)).align_ctr().draw(self.fsm.screen)
+		pygame.display.update()
+		
 		self.action_manager.add_button("Back", (self.fsm.WIDTH-100, 50), (50, 30), ret="Back", key="backspace")
 		self.action_manager.add_keystroke("Pause", 'p')
 		self.action_manager.add_keystroke("Vol+", "up")
@@ -379,6 +386,7 @@ class PlayGameState(BaseState):
 					  (pygame.image.load(f"{self.fsm.ASSETS_DIR}lane4.png").convert_alpha(), (self.positions[3], 490)), \
 					  (pygame.image.load(f"{self.fsm.ASSETS_DIR}lane5.png").convert_alpha(), (self.positions[4], 490)), \
 					  (pygame.image.load(f"{self.fsm.ASSETS_DIR}lane6.png").convert_alpha(), (self.positions[5], 490))]
+
 		self.laneBlits = self.lanes[:self.laneNo]
 		
 		self.key_bindings= ['f', 'g', 'h', 'j', 'k', 'l'][:self.laneNo]
@@ -436,7 +444,7 @@ class PlayGameState(BaseState):
 
 		reference_note = int(self.beatmap[0][3])
 		lane = 0
-
+		
 		for end_time, start_time, duration, pitch, sustained in self.beatmap:
 			end_time = float(end_time)
 			start_time = float(start_time)
@@ -451,6 +459,8 @@ class PlayGameState(BaseState):
 			orb = Orbs(x, end_time, start_time, duration, lane, sustained, self.orb_spd, self.lineOfGoal, self.sustainTrim)
 			self.orbs.extend(orb.blits())
 			reference_note = pitch
+			self.load_update()
+
 		
 		# FULL SCORE CALCULATION
 		totalNotes = int(info[0])
@@ -575,6 +585,13 @@ class PlayGameState(BaseState):
 	def exit(self):
 		self.player.stop()
 
+	def load_update(self):
+		self.load_prog += 1
+		self.load_prog %= 40
+		self.fsm.screen.blit(self.background,(0, 0))
+		TextLine("Loading" + '.'*(self.load_prog//10), self.load_font, (400, 300)).align_ctr().draw(self.fsm.screen)
+		pygame.event.get()
+		pygame.display.update()
 	
 	def draw(self):
 		super().draw()
