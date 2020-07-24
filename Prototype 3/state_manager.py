@@ -390,6 +390,10 @@ class PlayGameState(BaseState):
 		self.score_line = TextLine(str(self.score), self.score_font, (550, 50))
 		
 		self.countdown = self.fsm.FPS * 5
+		self.start_timer= self.fsm.FPS * 3
+		self.hasStarted= False
+		self.start_timer_text= TextLine("", pygame.font.Font(self.fsm.SYSFONT, 48), (400, 300)).align_ctr()
+		
 	
 	def enter(self, args):
 		self.file = args["file_name"]
@@ -457,14 +461,24 @@ class PlayGameState(BaseState):
 		wav_file = self.file.rsplit('.', 1)[0]
 		self.player = self.fsm.wav_files[wav_file]
 		self.volume= int(get_config()["Default Volume"]["Value"])
-		print(self.volume)
 		self.player.audio_set_volume(self.volume)
-		self.player.play()
+		
 	
 	def update(self, game_time, lag):
 		
 		deltaTime = self.fsm.fps_clock.get_time()/1000
-		if self.isPlaying and self.player.is_playing():
+		
+		if self.start_timer < 0:
+			if not self.hasStarted:
+				self.hasStarted= True
+				self.player.play()
+				
+		else:
+			self.start_timer_text= TextLine(str(self.start_timer//self.fsm.FPS+1), pygame.font.Font(self.fsm.SYSFONT, 48), (400, 300)).align_ctr()
+			self.start_timer -= 1
+			
+
+		if self.isPlaying and self.player.is_playing() and self.hasStarted:
 			increaseY = self.orb_spd * deltaTime
 			for orb in self.orbs.copy():
 				orb[1][1] += increaseY
@@ -581,6 +595,9 @@ class PlayGameState(BaseState):
 			if correct[0]:
 				self.fsm.screen.blit(correct[1], position)
 		self.fsm.screen.blit(self.meter_bar, (11, 499 - self.scorePercentage * 398), (0, 0, 28, self.scorePercentage * 398))
+		
+		if not self.hasStarted:
+			self.start_timer_text.draw(self.fsm.screen)
 
 class GameOverState(BaseState):
 	def __init__(self, fsm):
