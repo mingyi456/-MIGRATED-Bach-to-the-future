@@ -1,10 +1,9 @@
 from sys import exit
 import rgb
-from os import listdir, path, environ
-from os import sep
+from os import listdir, path, environ, scandir, sep
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = ''
 import pygame
-from UIManager import ActionManager, TextLine
+from UIManager import ActionManager, TextLine, Sprite
 import csv
 import vlc
 from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config, get_achievements, reset_config
@@ -702,6 +701,8 @@ class SandBoxState(BaseState):
 		
 		self.file_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 30)
 		
+		self.sprites=[]
+		
 		from psutil import disk_partitions
 		
 		self.drives= [disk.device for disk in disk_partitions(all= True)]
@@ -716,15 +717,26 @@ class SandBoxState(BaseState):
 		else:
 			self.curr_dir= args["curr_dir"]
 		print(self.curr_dir)
+		self.dir_entries= scandir(self.curr_dir)
 		self.dir_items= listdir(self.curr_dir)
+		
 		self.action_manager.add_button("..", (375, 50), (50, 30), canScroll= True, font= self.file_font)
-		for i, item in enumerate(self.dir_items):
-			self.action_manager.add_button(item, (375, i*50+100), (50, 30), canScroll= True, font= self.file_font)
+
+# 		for i, item in enumerate(self.dir_items):
+# 			self.action_manager.add_button(item, (375, i*50+100), (50, 30), canScroll= True, font= self.file_font)
+		folders= [i.name for i in self.dir_entries if i.is_dir]
+		
+		for i, folder in enumerate(folders):
+			self.action_manager.add_button(folder, (375, i*50+100), (50, 30), canScroll= True, font= self.file_font)
+			self.sprites.append(Sprite(f"{self.fsm.ASSETS_DIR}folder.png", (355, i*50+100)))
+			self.action_manager.scroll_items.append(self.sprites[-1])
+
 		
 		self.action_manager.scroll_max = self.action_manager.scroll_buttons[-1].rect[1] - (self.fsm.HEIGHT//4)*3
+		
 
 	def update(self, game_time, lag):
-		actions= self.action_manager.chk_actions(pygame.event.get( ))
+		actions= self.action_manager.chk_actions(pygame.event.get())
 	
 		for action in actions:
 			if action == "Exit":
@@ -752,6 +764,8 @@ class SandBoxState(BaseState):
 
 	def draw(self):
 		super().draw()
+		for sprite in self.sprites:
+			sprite.draw_raw(self.fsm.screen)
 
 
 
