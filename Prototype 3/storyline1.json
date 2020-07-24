@@ -47,9 +47,8 @@
       "Type" : "Sprite Clear"
     },
     {
-      "Type" : "Script",
-      "File" : "fadeout.py",
-      "Init" : "self.curr_alpha= 0; self.mask= pygame.Surface((800, 600)).convert(); self.bg_copy= self.background.copy(); self.fade_spd= 1"
+      "Type" : "Background",
+      "File" : "blackscreen.png"
     },
     {
       "Type" : "Audio Stop"
@@ -115,9 +114,8 @@
       "File" : "footsteps.mp3"
     },
     {
-      "Type" : "Script",
-      "File" : "fadeout.py",
-      "Init" : "self.curr_alpha= 0; self.mask= pygame.Surface((800, 600)).convert(); self.bg_copy= self.background.copy(); self.fade_spd= 6"
+      "Type" : "Background",
+      "File" : "blackscreen.png"
     }
   ],
   [
@@ -184,9 +182,8 @@
   ],
   [
     {
-      "Type" : "Script",
-      "File" : "fadeout.py",
-      "Init" : "self.curr_alpha= 0; self.mask= pygame.Surface((800, 600)).convert(); self.bg_copy= self.background.copy(); self.fade_spd= 2"
+      "Type" : "Background",
+      "File" : "blackscreen.png"
     }
   ],
   [
@@ -262,9 +259,8 @@
   ],
   [
     {
-      "Type" : "Script",
-      "File" : "fadeout.py",
-      "Init" : "self.curr_alpha= 0; self.mask= pygame.Surface((800, 600)).convert(); self.bg_copy= self.background.copy(); self.fade_spd= 2"
+      "Type" : "Background",
+      "File" : "blackscreen.png"
     },
     {
       "Type" : "Enter Game",
@@ -657,9 +653,8 @@
       "Right" : true
     },
     {
-      "Type" : "Script",
-      "File" : "fadeout.py",
-      "Init" : "self.curr_alpha= 0; self.mask= pygame.Surface((800, 600)).convert(); self.bg_copy= self.background.copy(); self.fade_spd= 1"
+      "Type" : "Background",
+      "File" : "blackscreen.png"
     }
   ],
   [
