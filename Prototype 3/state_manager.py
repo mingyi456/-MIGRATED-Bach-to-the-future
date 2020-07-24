@@ -699,14 +699,9 @@ class SandBoxState(BaseState):
 		super().__init__(fsm)
 		
 		self.action_manager.add_button("Back", (50, 50), (50, 30))
-		
-
-		
 		self.file_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 14)
 		
 		self.sprites=[]
-		
-		
 		
 		if platform.system() == "Windows":
 			self.drive_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 30)
@@ -725,11 +720,11 @@ class SandBoxState(BaseState):
 		else:
 			self.curr_dir= args["curr_dir"]
 		print(self.curr_dir)
-		self.dir_entries= scandir(self.curr_dir)
+		dir_entries= list(scandir(self.curr_dir))
 		
 		self.action_manager.add_button("..", (375, 50), (20, 14), canScroll= True, font= self.file_font)
 
-		self.folders= [i.name for i in self.dir_entries if i.is_dir()]		
+		self.folders= [i.name for i in dir_entries if i.is_dir()]		
 		curr_height= 0
 		
 		for i, folder in enumerate(self.folders):
@@ -737,8 +732,8 @@ class SandBoxState(BaseState):
 			self.sprites.append(Sprite(f"{self.fsm.ASSETS_DIR}folder.png", (355, i*20+70)))
 			self.action_manager.scroll_items.append(self.sprites[-1])
 			curr_height += 20
-		self.dir_entries= scandir(self.curr_dir)
-		self.files= [i.name for i in self.dir_entries if i.is_file()]
+
+		self.files= [i.name for i in dir_entries if i.is_file()]
 		
 		for i, file in enumerate(self.files):
 			self.action_manager.add_button(file, (375, i*20+70+curr_height), (20, 14), canScroll= True, font= self.file_font)
@@ -762,17 +757,24 @@ class SandBoxState(BaseState):
 				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : path.join(self.curr_dir, action)})
 				
 			elif action in self.folders:
-				print("Correct!")
+
 				file_path= path.join(self.curr_dir, action)
-				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : file_path})
+				try:
+					scandir(file_path)
+					self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : file_path})
+				except:
+					print("Access denied!")
 			
 			elif action in self.files:
-				print("Correct!")
 				file_path= path.join(self.curr_dir, action)
 				print(file_path)
 					
 			elif platform.system() == "Windows" and action in self.drives:
-				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : action})
+				try:
+					scandir(action)
+					self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : action})
+				except:
+					print("Access denied!")
 
 
 	def draw(self):
