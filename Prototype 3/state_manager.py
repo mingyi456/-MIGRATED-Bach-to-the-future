@@ -94,6 +94,7 @@ class MainMenuState(BaseState):
 		self.action_manager.add_button("Options", (50, 100), (50, 30))
 		self.action_manager.add_button("Achievements", (50, 150), (50, 30))
 		self.action_manager.add_button("Storyline", (50, 200), (50, 30))
+		self.action_manager.add_button("Sandbox", (50, 250), (50, 30))
 		self.action_manager.add_button("About", (50, self.fsm.HEIGHT - 100), (50, 30))
 		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 50), (50, 30), ret="Exit", key="escape")
 		
@@ -124,6 +125,8 @@ class MainMenuState(BaseState):
 			elif action == "Storyline":
 				from Storyline import StoryState
 				self.fsm.ch_state(StoryState(self.fsm), {"file" : "storyline1.json"})
+			elif action == "Sandbox":
+				self.fsm.ch_state(SandBoxState(self.fsm))
 			
 	def draw(self):
 		super().draw()
@@ -673,6 +676,28 @@ class GameOverState(BaseState):
 		self.track_line.draw(self.fsm.screen)
 		if self.isHighScore:
 			self.high_score_text.draw(self.fsm.screen)
+			
+class SandBoxState(BaseState):
+	def __init__(self, fsm):
+		super().__init__(fsm)
+		self.action_manager.add_button("Upload MIDI File", (375, 50), (50, 30))
+		
+	def update(self, game_time, lag):
+		actions= self.action_manager.chk_actions(pygame.event.get())
+	
+		for action in actions:
+			if action == "Exit":
+				self.fsm.ch_state(ExitState(self.fsm))
+				
+			elif action == "Upload MIDI File":
+				import tkinter as tk
+				from tkinter import filedialog
+				tk.Tk().withdraw()
+				file_path = filedialog.askopenfilename()
+				print(file_path)
+	
+	def draw(self):
+		super().draw()
 
 
 class ExitState(BaseState):
