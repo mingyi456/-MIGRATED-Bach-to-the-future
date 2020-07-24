@@ -1,6 +1,7 @@
 from sys import exit
 import rgb
 from os import listdir, path, environ
+from os import sep
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = ''
 import pygame
 from UIManager import ActionManager, TextLine
@@ -696,34 +697,37 @@ class GameOverState(BaseState):
 class SandBoxState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.action_manager.add_button("Upload MIDI File 1", (375, 50), (50, 30))
-		self.action_manager.add_button("Upload MIDI File 2", (375, 100), (50, 30))
+		#self.action_manager.add_button("Upload MIDI File 1", (375, 50), (50, 30))
+		#self.action_manager.add_button("Upload MIDI File 2", (375, 100), (50, 30))
+	
+	def enter(self, args):
+		if "curr_dir" not in args.keys():
+			self.curr_dir= sep
+		else:
+			self.curr_dir= args["curr_dir"]
+		print(self.curr_dir)
+		self.dir_items= listdir(self.curr_dir)
+		self.action_manager.add_button("..", (375, 50), (50, 30), canScroll= True)
+		for i, item in enumerate(self.dir_items):
+			self.action_manager.add_button(item, (375, i*50+100), (50, 30), canScroll= True)
 		
+		self.action_manager.scroll_max = self.action_manager.scroll_buttons[-1].rect[1] - (self.fsm.HEIGHT//4)*3
 	def update(self, game_time, lag):
-		actions= self.action_manager.chk_actions(pygame.event.get())
+		actions= self.action_manager.chk_actions(pygame.event.get( ))
 	
 		for action in actions:
 			if action == "Exit":
 				self.fsm.ch_state(ExitState(self.fsm))
+			if action == "..":
+				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : path.join(self.curr_dir, action)})
 				
-			elif action == "Upload MIDI File 1":
-				import tkinter as tk
-				from tkinter import filedialog
-				tk.Tk().withdraw()
-				file_path = filedialog.askopenfilename()
-				print(file_path)
-			
-			elif action == "Upload MIDI File 2":
-				import wx
-				app = wx.App(None)
-				style = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST
-				dialog = wx.FileDialog(None, 'Open')
-				if dialog.ShowModal() == wx.ID_OK:
-					path = dialog.GetPath()
-				else:
-					path = None
-				dialog.Destroy()
-				print(path)
+			elif action in self.dir_items:
+				file_path= path.join(self.curr_dir, action)
+				if path.isdir(file_path):
+					self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : file_path})
+				elif path.isfile(file_path):
+					print(file_path)
+
 
 	def draw(self):
 		super().draw()
