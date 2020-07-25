@@ -333,11 +333,15 @@ class Orbs:
 		self.heads = [pygame.image.load(f"{ASSETS_DIR}lane1_orb.png").convert_alpha(), \
 					  pygame.image.load(f"{ASSETS_DIR}lane2_orb.png").convert_alpha(), \
 					  pygame.image.load(f"{ASSETS_DIR}lane3_orb.png").convert_alpha(), \
-					  pygame.image.load(f"{ASSETS_DIR}lane4_orb.png").convert_alpha()]
+					  pygame.image.load(f"{ASSETS_DIR}lane4_orb.png").convert_alpha(), \
+		              pygame.image.load(f"{ASSETS_DIR}lane5_orb.png").convert_alpha(), \
+		              pygame.image.load(f"{ASSETS_DIR}lane6_orb.png").convert_alpha()]
 		self.sustains = [pygame.image.load(f"{ASSETS_DIR}lane1_sustain.png").convert_alpha(), \
 						 pygame.image.load(f"{ASSETS_DIR}lane2_sustain.png").convert_alpha(), \
 						 pygame.image.load(f"{ASSETS_DIR}lane3_sustain.png").convert_alpha(), \
-						 pygame.image.load(f"{ASSETS_DIR}lane4_sustain.png").convert_alpha()]
+						 pygame.image.load(f"{ASSETS_DIR}lane4_sustain.png").convert_alpha(), \
+		                 pygame.image.load(f"{ASSETS_DIR}lane5_sustain.png").convert_alpha(), \
+		                 pygame.image.load(f"{ASSETS_DIR}lane6_sustain.png").convert_alpha()]
 		
 	def blits(self):
 		result = []
@@ -372,7 +376,7 @@ class PlayGameState(BaseState):
 		self.isPlaying = True
 		self.orbs = []
 		
-		self.laneNo = 4
+		self.laneNo = 6
 		self.positions = [480/self.laneNo + 80 * i for i in range(6)]
 		self.grids = (pygame.image.load(f"{self.fsm.ASSETS_DIR}lane_topblack.png").convert_alpha(), \
 					  pygame.image.load(f"{self.fsm.ASSETS_DIR}lane_bottomblack.png").convert_alpha())
@@ -437,13 +441,20 @@ class PlayGameState(BaseState):
 								(self.positions[2], 490)], \
 							   [[False, pygame.image.load(f"{self.fsm.ASSETS_DIR}lane4_press.png").convert_alpha()], \
 								[False, pygame.image.load(f"{self.fsm.ASSETS_DIR}lane4_correct.png").convert_alpha()], \
-								(self.positions[3], 490)]]
+								(self.positions[3], 490)], \
+							   [[False, pygame.image.load(f"{self.fsm.ASSETS_DIR}lane5_press.png").convert_alpha()], \
+							    [False, pygame.image.load(f"{self.fsm.ASSETS_DIR}lane5_correct.png").convert_alpha()], \
+							    (self.positions[4], 490)], \
+							   [[False, pygame.image.load(f"{self.fsm.ASSETS_DIR}lane6_press.png").convert_alpha()], \
+							    [False, pygame.image.load(f"{self.fsm.ASSETS_DIR}lane6_correct.png").convert_alpha()], \
+							    (self.positions[5], 490)]]
 		self.lane_input = [False for _ in range(self.laneNo)]
 		
 		############################################################################
 
 		reference_note = int(self.beatmap[0][3])
-		lane = 0
+		initial_lane = 0
+		first_note = True
 		
 		for end_time, start_time, duration, pitch, sustained in self.beatmap:
 			end_time = float(end_time)
@@ -453,12 +464,17 @@ class PlayGameState(BaseState):
 			sustained = sustained == 'True'
 			
 			diff = pitch - reference_note
-			lane = (lane + diff) % self.laneNo
+			lane = (initial_lane + diff) % self.laneNo
+			if lane == initial_lane and not first_note and diff:
+				lane = (lane + 1) % self.laneNo
 			x = self.positions[lane]
 
 			orb = Orbs(x, end_time, start_time, duration, lane, sustained, self.orb_spd, self.lineOfGoal, self.sustainTrim)
 			self.orbs.extend(orb.blits())
 			reference_note = pitch
+			initial_lane = lane
+			if first_note:
+				first_note = False
 			self.load_update()
 
 		
