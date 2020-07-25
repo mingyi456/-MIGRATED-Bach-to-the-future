@@ -759,7 +759,8 @@ class SandBoxState(BaseState):
 			self.action_manager.scroll_items.append(self.sprites[-1])
 			curr_height += 20
 
-		self.files= [i.name for i in dir_entries if i.is_file()]
+		self.files= [i.name for i in dir_entries if (i.is_file() and (i.name.rsplit('.', 1)[-1] == "mid" or i.name.rsplit('.', 1)[-1] == "midi"))]
+
 		
 		for i, file in enumerate(self.files):
 			self.action_manager.add_button(file, (375, i*20+70+curr_height), (20, 14), canScroll= True, font= self.file_font)
@@ -812,15 +813,29 @@ class SandBoxState(BaseState):
 			elif action in self.files:
 				file_path= path.join(self.curr_dir, action)
 				print(file_path)
-					
-
-
 
 
 	def draw(self):
 		super().draw()
 		for sprite in self.sprites:
 			sprite.draw_raw(self.fsm.screen)
+
+class SandBoxOptionsState(BaseState):
+	def __init__(self, fsm):
+		super.__init__(fsm)
+	
+	def enter(self, args):
+		self.midi_file= args["file"]
+		
+	def update(self, game_time, lag):
+		actions= self.action_manager.chk_actions(pygame.event.get())
+	
+		for action in actions:
+			if action == "Exit":
+				self.fsm.ch_state(ExitState(self.fsm))
+	
+	def draw(self):
+		super().draw()
 
 
 
