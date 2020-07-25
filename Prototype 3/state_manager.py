@@ -713,13 +713,13 @@ class GameOverState(BaseState):
 class SandBoxState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		
+		self.platform = platform.system()
 		self.action_manager.add_button("Back", (50, 50), (50, 30))
 		self.file_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 14)
 		
 		self.sprites=[]
 		
-		if platform.system() == "Windows":
+		if self.platform == "Windows":
 			self.drive_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 30)
 		
 			from psutil import disk_partitions
@@ -729,7 +729,7 @@ class SandBoxState(BaseState):
 			for i, drive in enumerate(self.drives):
 				self.action_manager.add_button(drive, (50, 100 + i*50), (50, 30), font= self.drive_font)
 		
-		elif platform.system() == "Darwin":
+		else:
 			self.drive_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 30)
 		
 			
@@ -784,7 +784,22 @@ class SandBoxState(BaseState):
 			
 			elif action == "..":
 				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : path.join(self.curr_dir, action)})
-				
+			
+			elif action in self.drives:
+				if self.platform == 'Windows':
+					try:
+						scandir(action)
+						self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : action})
+					except:
+						print("Access denied!")
+				else:
+					mac_action = path.join('/Volumes', action)
+					try:
+						scandir(mac_action)
+						self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : mac_action})
+					except:
+						print("Access denied!")
+			
 			elif action in self.folders:
 
 				file_path= path.join(self.curr_dir, action)
@@ -798,12 +813,7 @@ class SandBoxState(BaseState):
 				file_path= path.join(self.curr_dir, action)
 				print(file_path)
 					
-			elif action in self.drives:
-				try:
-					scandir(action)
-					self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : action})
-				except:
-					print("Access denied!")
+
 
 
 
