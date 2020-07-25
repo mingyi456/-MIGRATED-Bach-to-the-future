@@ -4,10 +4,17 @@ from midi2audio import FluidSynth
 
 fs = FluidSynth('soundfont.sf3')
 
-midi_path = 'master tracks/Fate Symphony.midi'
+midi_path = 'master tracks/Fate Symphony.midi'  # path is inputted
+
+def midiState(midi_path):
+	mid = PrettyMIDI(midi_path)
+	mid.remove_invalid_notes()
+	average_tempo = mid.estimate_tempo()
+	pass
+	
 
 
-def midiFunnel(midi_path, quantize=False, onekey=False, changeTempo=False, changeVolume=False):
+def midiFunnel(midi_path, quantize=True, onekey=True, changeTempo=True, changeVolume=True):
 	directory, name = midi_path.rsplit('/', 1)
 	name = name.rsplit('.', 1)[0]
 	new_midi_path = 'tracks/' + name + '.mid'
@@ -156,9 +163,10 @@ def midiFunnel(midi_path, quantize=False, onekey=False, changeTempo=False, chang
 		writer.writerows(csv_rows)
 	print('CSV COMPLETE!')
 	
-	# audio_path = 'wav_files/' + name + '.flac'
-	# print('STARTING FLAC GENERATION, PLEASE WAIT...')
-	# fs.midi_to_audio(new_midi_path, audio_path)
+	audio_path = 'wav_files/' + name + '.flac'
+	print('STARTING FLAC GENERATION, PLEASE WAIT...')
+	fs.midi_to_audio(new_midi_path, audio_path)
 
 
-midiFunnel(midi_path, onekey=True)
+midiFunnel(midi_path)
+

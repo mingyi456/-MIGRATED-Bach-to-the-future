@@ -375,8 +375,7 @@ class PlayGameState(BaseState):
 		
 		self.isPlaying = True
 		self.orbs = []
-		
-		self.laneNo = 6
+		self.laneNo = int(get_config()["Number of Lanes"]["Value"])
 		self.positions = [480/self.laneNo + 80 * i for i in range(6)]
 		self.grids = (pygame.image.load(f"{self.fsm.ASSETS_DIR}lane_topblack.png").convert_alpha(), \
 					  pygame.image.load(f"{self.fsm.ASSETS_DIR}lane_bottomblack.png").convert_alpha())
@@ -608,8 +607,9 @@ class PlayGameState(BaseState):
 		self.curr_prog += 1
 
 		self.fsm.screen.blit(self.background,(0, 0))
-		TextLine(f"{round(self.curr_prog/self.max_prog*100, 1)}%", self.load_font, (400, 250)).align_ctr().draw(self.fsm.screen)
-		TextLine("Loading" + '.'*((self.curr_prog % 40) // 10), self.load_font, (400, 350)).align_ctr().draw(self.fsm.screen)
+		TextLine(f"{round(self.curr_prog/self.max_prog*100, 1)}%", self.load_font, (400, 350)).align_ctr().draw(self.fsm.screen)
+		pygame.draw.rect(self.fsm.screen, rgb.WHITE, (160, 285, 450, 20), 1)
+		TextLine("Loading" + '.'*((self.curr_prog % 40) // 10), self.load_font, (400, 250)).align_ctr().draw(self.fsm.screen)
 		pygame.event.get()
 		pygame.display.update([(160, 220, 450, 150)])
 	
