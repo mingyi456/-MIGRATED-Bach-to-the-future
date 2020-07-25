@@ -609,7 +609,7 @@ class PlayGameState(BaseState):
 
 		self.fsm.screen.blit(self.background,(0, 0))
 		TextLine(f"{round(self.curr_prog/self.max_prog*100, 1)}%", self.load_font, (400, 250)).align_ctr().draw(self.fsm.screen)
-		TextLine("Loading" + '.'*((self.curr_prog%40)//10), self.load_font, (400, 350)).align_ctr().draw(self.fsm.screen)
+		TextLine("Loading" + '.'*((self.curr_prog % 40) // 10), self.load_font, (400, 350)).align_ctr().draw(self.fsm.screen)
 		pygame.event.get()
 		pygame.display.update([(160, 220, 450, 150)])
 	
