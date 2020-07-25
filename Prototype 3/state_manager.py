@@ -728,12 +728,12 @@ class SandBoxState(BaseState):
 			
 			for i, drive in enumerate(self.drives):
 				self.action_manager.add_button(drive, (50, 100 + i*50), (50, 30), font= self.drive_font)
-		else:
+		
+		elif platform.system() == "Darwin":
 			self.drive_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 30)
 		
-			from psutil import disk_partitions
 			
-			self.drives= [disk.device for disk in disk_partitions(all= True)]
+			self.drives= [disk for disk in listdir("/Volumes")]
 			
 			for i, drive in enumerate(self.drives):
 				self.action_manager.add_button(drive, (50, 100 + i*50), (50, 30), font= self.drive_font)			
