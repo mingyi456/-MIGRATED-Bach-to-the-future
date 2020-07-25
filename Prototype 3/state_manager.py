@@ -748,6 +748,7 @@ class SandBoxState(BaseState):
 		dir_entries= list(scandir(self.curr_dir))
 		
 		self.action_manager.add_button("..", (375, 50), (20, 14), canScroll= True, font= self.file_font)
+		self.sprites.append(Sprite(f"{self.fsm.ASSETS_DIR}upfolder.png", (355, 50)))
 
 		self.folders= [i.name for i in dir_entries if i.is_dir()]		
 		curr_height= 0
@@ -763,7 +764,10 @@ class SandBoxState(BaseState):
 		for i, file in enumerate(self.files):
 			self.action_manager.add_button(file, (375, i*20+70+curr_height), (20, 14), canScroll= True, font= self.file_font)
 			self.sprites.append(Sprite(f"{self.fsm.ASSETS_DIR}file.png", (355, i*20+70+curr_height)))
-			self.action_manager.scroll_items.append(self.sprites[-1])	
+			self.action_manager.scroll_items.append(self.sprites[-1])
+			
+		for sprite in self.sprites:
+			self.action_manager.scroll_items.append(sprite)
 
 		self.action_manager.scroll_max = self.action_manager.scroll_buttons[-1].rect[1] - (self.fsm.HEIGHT//4)*3
 		
