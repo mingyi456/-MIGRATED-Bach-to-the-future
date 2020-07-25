@@ -355,7 +355,7 @@ class Orbs:
 class PlayGameState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.load_prog= 0
+		self.curr_prog= 0
 		self.fsm.screen.blit(self.background,(0, 0))
 		self.load_font= pygame.font.Font(self.fsm.SYSFONT, 48)
 		TextLine("Loading", self.load_font, (400, 300)).align_ctr().draw(self.fsm.screen)
@@ -455,6 +455,8 @@ class PlayGameState(BaseState):
 		reference_note = int(self.beatmap[0][3])
 		initial_lane = 0
 		first_note = True
+		
+		self.max_prog= len(self.beatmap)
 		
 		for end_time, start_time, duration, pitch, sustained in self.beatmap:
 			end_time = float(end_time)
@@ -602,12 +604,14 @@ class PlayGameState(BaseState):
 		self.player.stop()
 
 	def load_update(self):
-		self.load_prog += 1
-		self.load_prog %= 40
+
+		self.curr_prog += 1
+
 		self.fsm.screen.blit(self.background,(0, 0))
-		TextLine("Loading" + '.'*(self.load_prog//10), self.load_font, (400, 300)).align_ctr().draw(self.fsm.screen)
+		TextLine(f"{round(self.curr_prog/self.max_prog*100, 1)}%", self.load_font, (400, 250)).align_ctr().draw(self.fsm.screen)
+		TextLine("Loading" + '.'*((self.curr_prog%40)//10), self.load_font, (400, 350)).align_ctr().draw(self.fsm.screen)
 		pygame.event.get()
-		pygame.display.update()
+		pygame.display.update([(160, 220, 450, 150)])
 	
 	def draw(self):
 		super().draw()
