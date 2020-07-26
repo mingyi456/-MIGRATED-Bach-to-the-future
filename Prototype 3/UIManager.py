@@ -121,25 +121,25 @@ class ActionManager:
 					print(f"Mouse Button 4 : Scroll up, scroll_pos : {self.scroll_pos}")
 
 					if self.scroll_pos > self.scroll_min:
-						self.scroll_pos -= 15
+						self.scroll_pos -= 30
 					
 						for button in self.scroll_buttons:
-							button.rect[1] += 15
+							button.rect[1] += 30
 						
 						for item in self.scroll_items:
-							item.rect[1] += 15
+							item.rect[1] += 30
 				
 				elif event.button == 5:
 					print(f"Mouse Button 5 : Scroll down, scroll_pos : {self.scroll_pos}")
 					
 					if self.scroll_pos < self.scroll_max:
-						self.scroll_pos += 15
+						self.scroll_pos += 30
 	
 						for button in self.scroll_buttons:
-							button.rect[1] -= 15
+							button.rect[1] -= 30
 							
 						for item in self.scroll_items:
-							item.rect[1] -= 15
+							item.rect[1] -= 30
 
 			# elif event.type == pygame.MOUSEBUTTONUP:
 				# for button in self.buttons:

@@ -175,6 +175,16 @@ class SelectTrackState(BaseState):
 		
 		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 30), ret="Exit", key="escape")
 		self.action_manager.add_button("Back (Backspace)", (50, 50), (50, 30), ret="Back", key="backspace")
+		
+	def songInfo(self, csv_path):
+		with open(csv_path, 'r') as file:
+			reader = csv.reader(file)
+			next(reader)
+			info = next(reader)
+		totalNotes = info[0]
+		songLength = info[3]
+		instrument = info[4]
+		return (totalNotes, songLength, instrument)  # add spacing afterwards
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
@@ -832,7 +842,7 @@ class SandBoxOptionsState(BaseState):
 		self.quantize_val= 8
 		self.tempo_val= 1
 		self.simplify_val= False
-		self.inst_val= 0
+		self.inst_val= set()
 	
 	def enter(self, args):
 		self.midi_file= args["file"]
@@ -909,7 +919,10 @@ class SandBoxOptionsState(BaseState):
 				self.simplify_val= True if action.rsplit(' ', 1)[1] == "ON" else False
 			
 			elif action.rsplit(' ', 1)[0] == "Instrument":
-				self.inst_val= int(action.rsplit(' ', 1)[1])
+				if action.rsplit(' ', 1)[1] == 'All':
+					self.inst_val.clear()
+				else:
+					self.inst_val.add(int(action.rsplit(' ', 1)[1]))
 			
 			elif action == "Confirm":
 				
