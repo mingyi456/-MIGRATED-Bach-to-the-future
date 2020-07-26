@@ -167,17 +167,28 @@ class SelectTrackState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
 		self.tracks = listdir(self.fsm.TRACKS_DIR)
+		des_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 14)
+		self.des_lines= []
+		
 		
 		for i, file in enumerate(self.tracks):
-			self.action_manager.add_button(file.rsplit('.',1)[0], (375, i * 50 + 50), (50, 30), canScroll=True, ret=file)
+			self.action_manager.add_button(file.rsplit('.',1)[0], (325, i * 80 + 50), (50, 30), canScroll=True, ret=file)
+			num_notes, song_dur, insts= self.songInfo(file.rsplit('.',1)[0])
+			print(file.rsplit('.',1)[0], num_notes, song_dur, insts)
+			self.des_lines.append(TextLine(f"Notes : {num_notes}, Duration : {song_dur}", des_font, (325, i * 80 + 80)))
+			self.des_lines.append(TextLine(insts, des_font, (325, i * 80 + 100)))
+		
+		for i in self.des_lines:
+			self.action_manager.scroll_items.add(i)
 		
 		self.action_manager.scroll_max = self.action_manager.scroll_buttons[-1].rect[1] - (self.fsm.HEIGHT//4)*3
 		
 		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 30), ret="Exit", key="escape")
 		self.action_manager.add_button("Back (Backspace)", (50, 50), (50, 30), ret="Back", key="backspace")
 		
-	def songInfo(self, csv_path):
-		with open(csv_path, 'r') as file:
+	def songInfo(self, csv_file):
+		rel_path= path.join("beatmaps", csv_file) + ".csv"
+		with open(rel_path, 'r') as file:
 			reader = csv.reader(file)
 			next(reader)
 			info = next(reader)
@@ -201,6 +212,8 @@ class SelectTrackState(BaseState):
 	
 	def draw(self):
 		super().draw()
+		for i in self.des_lines:
+			i.draw(self.fsm.screen)
 
 
 class SettingsState(BaseState):
@@ -368,8 +381,8 @@ class PlayGameState(BaseState):
 		self.curr_prog= 0
 		self.fsm.screen.blit(self.background,(0, 0))
 		self.load_font= pygame.font.Font(self.fsm.SYSFONT, 24)
-		rand_msg_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 16)
-		TextBox(get_rand_msg()*10, rand_msg_font, (50, 250), (300, 10)).draw(self.fsm.screen)
+		rand_msg_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 18)
+		TextBox(get_rand_msg(), rand_msg_font, (50, 230), (300, 10)).draw(self.fsm.screen)
 		pygame.display.update()
 		
 		self.action_manager.add_button("Back", (self.fsm.WIDTH-100, 50), (50, 30), ret="Back", key="backspace")
@@ -733,24 +746,24 @@ class SandBoxState(BaseState):
 		
 		self.sprites=[]
 		
+		self.drive_font = pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 30)
+		self.action_manager.add_button("Original Songs", (50, 100), (50, 30), font=self.drive_font)
 		if self.platform == "win32":
-			self.drive_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 30)
+			
 		
 			from psutil import disk_partitions
 			
 			self.drives= [disk.device for disk in disk_partitions(all= True)]
 			
 			for i, drive in enumerate(self.drives):
-				self.action_manager.add_button(drive, (50, 100 + i*50), (50, 30), font= self.drive_font)
+				self.action_manager.add_button(drive, (50, 150 + i*50), (50, 30), font= self.drive_font)
 		
-		else:
-			self.drive_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 30)
-		
+		else:		
 			
 			self.drives= [disk for disk in listdir("/Volumes")]
 			
 			for i, drive in enumerate(self.drives):
-				self.action_manager.add_button(drive, (50, 100 + i*50), (50, 30), font= self.drive_font)			
+				self.action_manager.add_button(drive, (50, 150 + i*50), (50, 30), font= self.drive_font)			
 		
 	
 	def enter(self, args):
@@ -797,6 +810,9 @@ class SandBoxState(BaseState):
 			
 			elif action == "..":
 				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : path.join(self.curr_dir, action)})
+				
+			elif action == "Original Songs":
+				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir": path.join('.', 'master tracks')})
 			
 			elif action in self.drives:
 				if self.platform == 'Windows':

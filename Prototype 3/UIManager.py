@@ -2,6 +2,7 @@ import rgb
 import pygame
 from data_parser import get_sys_config
 from os import path
+from vlc import MediaPlayer
 
 pygame.font.init()
 
@@ -56,7 +57,8 @@ class SpKeyStroke(KeyStroke):
 
 class ActionManager:
 	def __init__(self):
-
+		ASSETS_DIR = path.join(*get_sys_config()['Assets'])
+		self.press_sound = MediaPlayer(f"{ASSETS_DIR}BUTTONPRESS.mp3")
 		self.buttons= []
 		self.scroll_buttons= []
 		self.keystrokes= []
@@ -110,6 +112,7 @@ class ActionManager:
 					for button in self.buttons + self.scroll_buttons:
 	
 						if isWithin(curr_pos, button.rect):
+							self.press_sound.play()
 							button.colour= button.sel_colour
 	
 							print(f"Button \"{button.name}\" clicked, return value : \"{button.ret}\"")

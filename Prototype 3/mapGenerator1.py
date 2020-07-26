@@ -1,5 +1,5 @@
 from pretty_midi import PrettyMIDI
-import pretty_midi, csv, itertools, time
+import pretty_midi, csv, itertools, time, os
 from sys import platform as SYS_PLATFORM
 
 if SYS_PLATFORM == "win32":
@@ -133,6 +133,8 @@ def midiFunnel(midi_path, quantize, onekey, changeTempo, changeVolume, chosen_in
 	print('STARTING FLAC GENERATION, PLEASE WAIT...')
 	fs.midi_to_audio(new_midi_path, audio_path)
 	print('FINISHED FLAC GENERATION!')
+	
+	os.remove(new_midi_path)
 
 
 # midiFunnel(midi_path)
