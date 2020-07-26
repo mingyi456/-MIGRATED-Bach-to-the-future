@@ -1,4 +1,4 @@
-from sys import exit
+from sys import exit, platform as SYS_PLATFORM
 import rgb
 from os import listdir, path, environ, scandir, sep
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = ''
@@ -7,7 +7,6 @@ from UIManager import ActionManager, TextLine, Sprite
 import csv
 import vlc
 from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config, get_achievements, reset_config
-import platform
 
 class State_Manager:
 	def __init__(self, config= get_config()):
@@ -717,13 +716,13 @@ class GameOverState(BaseState):
 class SandBoxState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.platform = platform.system()
+		self.platform = SYS_PLATFORM
 		self.action_manager.add_button("Back", (50, 50), (50, 30))
 		self.file_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 14)
 		
 		self.sprites=[]
 		
-		if self.platform == "Windows":
+		if self.platform == "win32":
 			self.drive_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 30)
 		
 			from psutil import disk_partitions
