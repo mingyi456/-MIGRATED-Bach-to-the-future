@@ -41,6 +41,9 @@ class State_Manager:
 		self.lag = 0
 		self.g_t = 0
 		self.TRACKS_DIR = path.join(*raw_paths["CSV Directory"])
+		
+		self.bg_music = vlc.MediaPlayer(f"{self.ASSETS_DIR}Background.mp3")
+		self.bg_music.play()
 	
 	def update(self):
 		self.curr_state.update(self.g_t, self.lag)
@@ -48,6 +51,9 @@ class State_Manager:
 		pygame.display.update()
 		self.time, self.lag = self.chk_slp()
 		self.g_t += self.time
+		if self.bg_music.get_position() > 0.95:
+			self.bg_music.stop()
+			self.bg_music.play()
 	
 	def ch_state(self, new_state, args={}):
 		self.curr_state.exit()
@@ -102,6 +108,10 @@ class MainMenuState(BaseState):
 		self.font = pygame.font.Font(self.fsm.SYSFONT, 24)
 		
 		self.text_line = TextLine("~BACH TO THE FUTURE~", self.font, (300, 50))
+	
+	def enter(self, args):
+		if not self.fsm.bg_music.is_playing():
+			self.fsm.bg_music.play()
 		
 	def update(self, game_time, lag):
 		events = pygame.event.get()
@@ -250,6 +260,7 @@ class SettingsState(BaseState):
 			
 			elif action == "Restore defaults":
 				reset_config()
+				self.fsm.bg_music.stop()
 				self.fsm.__init__()
 				self.fsm.curr_state = MainMenuState(self.fsm)
 				self.fsm.ch_state(SettingsState(self.fsm))
@@ -293,6 +304,7 @@ class ChSettingState(BaseState):
 				print(f"Choice clicked : {eval(action)}")
 				ch_config(self.setting, action)
 				config2= get_config()
+				self.fsm.bg_music.stop()
 				self.fsm.__init__(config2)
 				self.fsm.curr_state= MainMenuState(self.fsm)
 				self.fsm.ch_state(SettingsState(self.fsm))
@@ -434,6 +446,8 @@ class PlayGameState(BaseState):
 		
 	
 	def enter(self, args):
+		self.fsm.bg_music.stop()
+		
 		self.file = args["file_name"]
 		print(f"File name = {self.file}")
 		if "Story" in args.keys():
@@ -617,11 +631,17 @@ class PlayGameState(BaseState):
 		if len(self.orbs) == 0:
 			self.countdown -= 1
 			if self.countdown <= 0:
+				gradebook = {0:'FAIL', 0.125:'C', 0.375:'B', 0.625:'A', 0.875:'S', 1:'PERFECT'}
+				percentages = list(gradebook.keys())
+				for i in range(len(percentages)-1):
+					if self.scorePercentage >= percentages[i] and self.scorePercentage < percentages[i+1]:
+						grade = gradebook[percentages[i]]
+						break
 				print("Track Completed!")
 				if self.story:
-					self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": int(self.score), "Story": self.story_line})
+					self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": int(self.score), "Story": self.story_line, "Grade":grade})
 				else:
-					self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": int(self.score)})
+					self.fsm.ch_state(GameOverState(self.fsm), {"file_name": self.file, "score": int(self.score), "Grade":grade})
 	
 	def exit(self):
 		self.player.stop()
@@ -670,13 +690,16 @@ class GameOverState(BaseState):
 		self.action_manager.add_keystroke("Exit", "escape")
 		self.high_scores= get_user_data()["Highscores"]
 		self.score_font = pygame.font.Font(self.fsm.SYSFONT, 24)
-		self.high_score_text= TextLine("High Score achieved!", self.score_font, (250, 300))
+		self.grade_font = pygame.font.Font(self.fsm.SYSFONT, 64)
+		self.high_score_text= TextLine("High Score achieved!", self.score_font, (400, 300)).align_ctr()
 	
 	def enter(self, args):
 		self.args = args
 		
 		self.score = args["score"]
 		self.track= args["file_name"].rsplit('.', 1)[0]
+		self.grade = args["Grade"]
+		self.grade_text = TextLine(self.grade, self.grade_font, (400, 350)).align_ctr()
 		
 		if "Story" in args.keys():
 			self.story= True
@@ -734,6 +757,7 @@ class GameOverState(BaseState):
 		super().draw()
 		self.score_line.draw(self.fsm.screen)
 		self.track_line.draw(self.fsm.screen)
+		self.grade_text.draw(self.fsm.screen)
 		if self.isHighScore:
 			self.high_score_text.draw(self.fsm.screen)
 			
@@ -958,6 +982,7 @@ class SandBoxOptionsState(BaseState):
 				pygame.display.update()
 				from mapGenerator1 import midiFunnel
 				midiFunnel(self.midi_file, self.quantize_val, self.simplify_val, self.tempo_val, self.vol_offset, self.inst_val)
+				self.fsm.bg_music.stop()
 				self.fsm.__init__(get_config())
 				self.fsm.curr_state = MainMenuState(self.fsm)
 				self.fsm.ch_state(SelectTrackState(self.fsm))
