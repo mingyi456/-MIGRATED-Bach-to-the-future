@@ -754,25 +754,23 @@ class SandBoxState(BaseState):
 		self.action_manager.add_button("..", (375, 50), (20, 14), canScroll= True, font= self.file_font)
 		self.sprites.append(Sprite(f"{self.fsm.ASSETS_DIR}upfolder.png", (355, 50)))
 
-		self.folders= [i.name for i in dir_entries if i.is_dir()]		
+		self.folders= sorted([i.name for i in dir_entries if i.is_dir()])
 		curr_height= 0
 		
 		for i, folder in enumerate(self.folders):
 			self.action_manager.add_button(folder, (375, i*20+70), (20, 14), canScroll= True, font= self.file_font)
 			self.sprites.append(Sprite(f"{self.fsm.ASSETS_DIR}folder.png", (355, i*20+70)))
-			self.action_manager.scroll_items.append(self.sprites[-1])
 			curr_height += 20
 
-		self.files= [i.name for i in dir_entries if (i.is_file() and (i.name.rsplit('.', 1)[-1] == "mid" or i.name.rsplit('.', 1)[-1] == "midi"))]
+		self.files= sorted([i.name for i in dir_entries if (i.is_file() and (i.name.rsplit('.', 1)[-1] == "mid" or i.name.rsplit('.', 1)[-1] == "midi"))])
 
 		
 		for i, file in enumerate(self.files):
 			self.action_manager.add_button(file, (375, i*20+70+curr_height), (20, 14), canScroll= True, font= self.file_font)
 			self.sprites.append(Sprite(f"{self.fsm.ASSETS_DIR}file.png", (355, i*20+70+curr_height)))
-			self.action_manager.scroll_items.append(self.sprites[-1])
 			
 		for sprite in self.sprites:
-			self.action_manager.scroll_items.append(sprite)
+			self.action_manager.scroll_items.add(sprite)
 
 		self.action_manager.scroll_max = self.action_manager.scroll_buttons[-1].rect[1] - (self.fsm.HEIGHT//4)*3
 		
@@ -876,9 +874,9 @@ class SandBoxOptionsState(BaseState):
 		
 		self.action_manager.scroll_max = self.action_manager.scroll_buttons[-1].rect[1] - (self.fsm.HEIGHT//4)*3		
 		
-		self.action_manager.scroll_items.append(self.vol_text)
+		self.action_manager.scroll_items.add(self.vol_text)
 		for line in self.txt_lines:
-			self.action_manager.scroll_items.append(line)
+			self.action_manager.scroll_items.add(line)
 			
 	def update(self, game_time, lag):
 		actions= self.action_manager.chk_actions(pygame.event.get())
@@ -893,13 +891,13 @@ class SandBoxOptionsState(BaseState):
 				self.vol_offset += int(action.rsplit(' ', 1)[1])
 				v_pos= self.vol_text.rect[1]
 				self.vol_text= TextLine(f"Current Volume offset : {self.vol_offset}", self.font, (400, v_pos)).align_top_ctr()
-				self.action_manager.scroll_items.append(self.vol_text)
+				self.action_manager.scroll_items.add(self.vol_text)
 			
 			elif action.rsplit(' ', 1)[0] == "Vol -":
 				self.vol_offset -= int(action.rsplit(' ', 1)[1])
 				v_pos= self.vol_text.rect[1]
 				self.vol_text= TextLine(f"Current Volume offset : {self.vol_offset}", self.font, (400, v_pos)).align_top_ctr()
-				self.action_manager.scroll_items.append(self.vol_text)
+				self.action_manager.scroll_items.add(self.vol_text)
 				
 			elif action.rsplit(' ', 1)[0] == "Quantize":
 				self.quantize_val= action.rsplit(' ', 1)[1]

@@ -61,7 +61,7 @@ class ActionManager:
 		self.scroll_buttons= []
 		self.keystrokes= []
 		self.sp_keystrokes= []
-		self.scroll_items= []
+		self.scroll_items= set()
 		self.scroll_pos= 0
 		self.scroll_min= 0
 		self.scroll_max= 600
