@@ -8,6 +8,7 @@ import csv
 import vlc
 from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config, get_achievements, reset_config
 
+
 class State_Manager:
 	def __init__(self, config= get_config()):
 		
@@ -816,6 +817,7 @@ class SandBoxState(BaseState):
 			elif action in self.files:
 				file_path= path.join(self.curr_dir, action)
 				print(file_path)
+				self.fsm.ch_state(SandBoxOptionsState(self.fsm), {"file" : file_path})
 
 
 	def draw(self):
@@ -825,20 +827,106 @@ class SandBoxState(BaseState):
 
 class SandBoxOptionsState(BaseState):
 	def __init__(self, fsm):
-		super.__init__(fsm)
+		super().__init__(fsm)
+		self.action_manager.add_button("Back", (700, 50), (50, 30))
+		self.font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 30)
+		self.vol_offset= 0
+		self.quantize_val= 8
+		self.tempo_val= 1
+		self.simplify_val= False
+		self.inst_val= 0
 	
 	def enter(self, args):
 		self.midi_file= args["file"]
+		from mapGenerator1 import midiInfo
+		self.instruments, self.vol_thold= midiInfo(self.midi_file)
+	
+		self.txt_lines= []	
+		self.txt_lines.append(TextLine("Quantize", self.font, (50, 100)))
+		self.txt_lines.append(TextLine("Tempo", self.font, (50, 200)))	
+		self.txt_lines.append(TextLine("Volume", self.font, (50, 300)))	
+		self.txt_lines.append(TextLine(f"Room to increase : {self.vol_thold}", self.font, (400, 300)).align_top_ctr())	
+		self.txt_lines.append(TextLine("Simplify", self.font, (50, 500), (20, 30)))
+		self.txt_lines.append(TextLine("Instruments", self.font, (50, 600), (20, 30)))
 		
+		self.vol_text= TextLine(f"Current Volume offset : {self.vol_offset}", self.font, (400, 350)).align_top_ctr()
+		
+		
+		for i, val in enumerate(["Off", '8', "16", "32", "12"]):
+			
+			self.action_manager.add_button(val, (i*80+250, 100), (20, 30), canScroll= True, isCenter= True, ret= f"Quantize {val}", font= self.font)
+		
+		for i, val in enumerate([0.5, 0.75, 1, 1.5, 2]):
+			
+			self.action_manager.add_button(f"{val}x", (i*80+250, 200), (20, 30), canScroll= True, isCenter= True, ret= f"Tempo {val}", font= self.font)
+		
+		for i, val in enumerate([1, 5, 10]):
+			self.action_manager.add_button(f"+{val}", (i*80+440, 400), (20, 30), canScroll= True, isCenter= True, ret= f"Vol + {val}", font= self.font)
+			self.action_manager.add_button(f"-{val}", (-i*80+360, 400), (20, 30), canScroll= True, isCenter= True, ret= f"Vol - {val}", font= self.font)
+		
+		self.action_manager.add_button("ON", (360, 500), (20, 30), canScroll= True, isCenter= True, ret= "Simplify ON", font= self.font)
+
+		self.action_manager.add_button("OFF", (440, 500), (20, 30), canScroll= True, isCenter= True, ret= "Simplify OFF", font= self.font)	
+		
+		for i, inst in enumerate(self.instruments):
+			self.action_manager.add_button(inst, (300, i*50+600), (20, 30), canScroll= True, ret= f"Instrument {i}", font= self.font)
+		
+		self.action_manager.add_button("Confirm", (300, self.action_manager.scroll_buttons[-1].rect[1] + 100), (20, 30), canScroll= True, isCenter= True, font= self.font)
+		
+		
+		self.action_manager.scroll_max = self.action_manager.scroll_buttons[-1].rect[1] - (self.fsm.HEIGHT//4)*3		
+		
+		self.action_manager.scroll_items.append(self.vol_text)
+		for line in self.txt_lines:
+			self.action_manager.scroll_items.append(line)
+			
 	def update(self, game_time, lag):
 		actions= self.action_manager.chk_actions(pygame.event.get())
 	
 		for action in actions:
 			if action == "Exit":
 				self.fsm.ch_state(ExitState(self.fsm))
+			elif action == "Back":
+				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir": path.split(self.midi_file)[0]})
+			
+			elif action.rsplit(' ', 1)[0] == "Vol +":
+				self.vol_offset += int(action.rsplit(' ', 1)[1])
+				v_pos= self.vol_text.rect[1]
+				self.vol_text= TextLine(f"Current Volume offset : {self.vol_offset}", self.font, (400, v_pos)).align_top_ctr()
+				self.action_manager.scroll_items.append(self.vol_text)
+			
+			elif action.rsplit(' ', 1)[0] == "Vol -":
+				self.vol_offset -= int(action.rsplit(' ', 1)[1])
+				v_pos= self.vol_text.rect[1]
+				self.vol_text= TextLine(f"Current Volume offset : {self.vol_offset}", self.font, (400, v_pos)).align_top_ctr()
+				self.action_manager.scroll_items.append(self.vol_text)
+				
+			elif action.rsplit(' ', 1)[0] == "Quantize":
+				self.quantize_val= action.rsplit(' ', 1)[1]
+			
+			elif action.rsplit(' ', 1)[0] == "Tempo":
+				self.tempo_val= float(action.rsplit(' ', 1)[1])
+			
+			elif action.rsplit(' ', 1)[0] == "Simplify":
+				self.simplify_val= True if action.rsplit(' ', 1)[1] == "ON" else False
+			
+			elif action.rsplit(' ', 1)[0] == "Instrument":
+				self.inst_val= int(action.rsplit(' ', 1)[1])
+			
+			elif action == "Confirm":
+				
+				print(f"Volume : {self.vol_offset}")
+				print(f"Quantize : {self.quantize_val}")
+				print(f"Tempo : {self.tempo_val}")
+				print(f"Simplify : {self.simplify_val}")
+				print(f"Instrument : {self.inst_val}")
+			
 	
 	def draw(self):
 		super().draw()
+		self.vol_text.draw(self.fsm.screen)
+		for i in self.txt_lines:
+			i.draw(self.fsm.screen)
 
 
 

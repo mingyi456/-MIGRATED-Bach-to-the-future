@@ -10,7 +10,7 @@ from midi2audio import FluidSynth
 from os import path
 fs = FluidSynth('soundfont.sf3')
 
-midi_path = '/Users/chence08/Downloads/Intermezzo.midi'
+#midi_path = '/Users/chence08/Downloads/Intermezzo.midi'
 
 def midiInfo(midi_path):
 	mid = PrettyMIDI(midi_path)
@@ -184,4 +184,4 @@ def midiFunnel(midi_path, quantize, onekey=True, changeTempo=True, changeVolume=
 
 
 # midiFunnel(midi_path)
-print(midiInfo(midi_path))
+# print(midiInfo(midi_path))

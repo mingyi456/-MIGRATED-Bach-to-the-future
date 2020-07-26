@@ -35,9 +35,9 @@ class Button:
 	
 	def align_ctr(self, pos= None):
 		if pos is None:
-			self.rect.center= self.rect.topleft
+			self.rect.centerx= self.rect.left
 		else:
-			self.rect.center= pos
+			self.rect.midtop= pos
 		return self
 
 
@@ -69,11 +69,21 @@ class ActionManager:
 	def add_button(self, name, pos, size, ret=None, key= None, colour= rgb.BLACK, \
 				font= pygame.font.Font(f"{ASSETS_DIR}Barcade-R4LM.otf", 22), \
 					font_colour= rgb.YELLOW, hl_colour= rgb.GREY, sel_colour= rgb.GREEN, \
-						canScroll= False):
+						canScroll= False, isCenter= False):
 		if canScroll:
-			self.scroll_buttons.append(Button(name, ret, pos, size, key, colour, font, font_colour, hl_colour, sel_colour))
+			
+			if isCenter:
+				self.scroll_buttons.append(Button(name, ret, pos, size, key, colour, font, font_colour, hl_colour, sel_colour).align_ctr())
+			else:
+				self.scroll_buttons.append(Button(name, ret, pos, size, key, colour, font, font_colour, hl_colour, sel_colour))
+				
 		else:
-			self.buttons.append(Button(name, ret, pos, size, key, colour, font, font_colour, hl_colour, sel_colour))
+			
+			if isCenter:
+				
+				self.buttons.append(Button(name, ret, pos, size, key, colour, font, font_colour, hl_colour, sel_colour).align_ctr())
+			else:
+				self.buttons.append(Button(name, ret, pos, size, key, colour, font, font_colour, hl_colour, sel_colour))
 		
 		if key != None:
 			self.keystrokes.append(KeyStroke(name, key, ret))
