@@ -3,7 +3,7 @@ import rgb
 from os import listdir, path, environ, scandir, sep
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = ''
 import pygame
-from UIManager import ActionManager, TextLine, Sprite
+from UIManager import ActionManager, TextLine, Sprite, TextBox
 import csv
 import vlc
 from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config, get_achievements, reset_config
@@ -367,10 +367,9 @@ class PlayGameState(BaseState):
 		super().__init__(fsm)
 		self.curr_prog= 0
 		self.fsm.screen.blit(self.background,(0, 0))
-		self.load_font= pygame.font.Font(self.fsm.SYSFONT, 48)
-		TextLine("Loading", self.load_font, (400, 300)).align_ctr().draw(self.fsm.screen)
-		rand_msg_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 12)
-		TextLine(get_rand_msg(), rand_msg_font, (400, 100)).align_ctr().draw(self.fsm.screen)
+		self.load_font= pygame.font.Font(self.fsm.SYSFONT, 24)
+		rand_msg_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 16)
+		TextBox(get_rand_msg()*10, rand_msg_font, (50, 250), (300, 10)).draw(self.fsm.screen)
 		pygame.display.update()
 		
 		self.action_manager.add_button("Back", (self.fsm.WIDTH-100, 50), (50, 30), ret="Back", key="backspace")
@@ -619,11 +618,10 @@ class PlayGameState(BaseState):
 		self.curr_prog += 1
 
 		self.fsm.screen.blit(self.background,(0, 0))
-		TextLine(f"{round(self.curr_prog/self.max_prog*100, 1)}%", self.load_font, (400, 350)).align_ctr().draw(self.fsm.screen)
-		pygame.draw.rect(self.fsm.screen, rgb.WHITE, (160, 285, 450, 20), 1)
-		TextLine("Loading" + '.'*((self.curr_prog % 40) // 10), self.load_font, (400, 250)).align_ctr().draw(self.fsm.screen)
+		pygame.draw.rect(self.fsm.screen, rgb.WHITE, (0, 580, round(800*self.curr_prog/self.max_prog), 20), 0)
+		TextLine("Loading" + '.'*((self.curr_prog % 40) // 10), self.load_font, (400, 550)).align_top_ctr().draw(self.fsm.screen)
 		pygame.event.get()
-		pygame.display.update([(160, 220, 450, 150)])
+		pygame.display.update([(0, 580, 800, 20), (160, 550, 450, 30)])
 	
 	def draw(self):
 		super().draw()

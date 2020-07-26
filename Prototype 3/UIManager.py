@@ -256,6 +256,7 @@ class TextBox:
 	
 			self.lines.append(line)
 			vert_offset += max_height
+		self.rect= pygame.Rect((pos), (size[0], vert_offset))
 
 	def align_ctr(self, pos= None):
 		if pos is None:
