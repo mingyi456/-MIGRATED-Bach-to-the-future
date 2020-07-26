@@ -1,10 +1,16 @@
 from pretty_midi import PrettyMIDI
 import pretty_midi, csv, itertools, time
-from midi2audio import FluidSynth
+from sys import platform as SYS_PLATFORM
 
+if SYS_PLATFORM == "win32":
+	from os import environ
+	environ["PATH"] += ".\\FluidSynth_Windows"
+
+from midi2audio import FluidSynth
+from os import path
 fs = FluidSynth('soundfont.sf3')
 
-midi_path = 'master tracks/Fate Symphony.midi'  # path is inputted
+midi_path = 'master tracks\\Pavane.midi'  # path is inputted
 
 def midiState(midi_path):
 	mid = PrettyMIDI(midi_path)
@@ -15,7 +21,7 @@ def midiState(midi_path):
 
 
 def midiFunnel(midi_path, quantize=True, onekey=True, changeTempo=True, changeVolume=True):
-	directory, name = midi_path.rsplit('/', 1)
+	directory, name = path.split(midi_path)
 	name = name.rsplit('.', 1)[0]
 	new_midi_path = 'tracks/' + name + '.mid'
 	
@@ -168,5 +174,5 @@ def midiFunnel(midi_path, quantize=True, onekey=True, changeTempo=True, changeVo
 	fs.midi_to_audio(new_midi_path, audio_path)
 
 
-midiFunnel(midi_path)
+midiFunnel(midi_path, False, False, False, False)
 

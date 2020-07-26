@@ -492,7 +492,6 @@ class PlayGameState(BaseState):
 		self.player = self.fsm.wav_files[wav_file]
 		self.volume= int(get_config()["Default Volume"]["Value"])
 		self.player.audio_set_volume(self.volume)
-		self.snapshotcounter = 0
 		
 	
 	def update(self, game_time, lag):
@@ -515,7 +514,6 @@ class PlayGameState(BaseState):
 				orb[1][1] += increaseY
 				if orb[1][1] > self.fsm.HEIGHT:
 					self.orbs.remove(orb)
-			self.snapshotcounter += 1
 		
 		# USE BOOLEAN FOR KEY UP AND DOWN, PUT SCORE UPDATE AT THE END OF UPDATE LOOP.
 		tapSnapshot = [False for _ in range(self.laneNo)]
@@ -536,9 +534,6 @@ class PlayGameState(BaseState):
 				self.sustainValid[lane] = False
 		# print(self.sustainSnapshot)
 		
-		if True in tapSnapshot:
-			print(self.snapshotcounter)
-			exit()
 		
 		actions = self.action_manager.chk_actions(pygame.event.get())
 		for action in actions:
