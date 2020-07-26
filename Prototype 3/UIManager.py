@@ -256,6 +256,14 @@ class TextBox:
 	
 			self.lines.append(line)
 			vert_offset += max_height
+
+	def align_ctr(self, pos= None):
+		if pos is None:
+			self.rect.center= self.rect.topleft
+		else:
+			self.rect.center= pos
+		
+		return self
 	
 	def draw(self, screen):
 		

@@ -7,7 +7,7 @@ from UIManager import ActionManager, TextLine, Sprite
 import csv
 import vlc
 from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config, get_achievements, reset_config
-
+from random import randint
 
 class State_Manager:
 	def __init__(self, config= get_config()):
@@ -369,6 +369,8 @@ class PlayGameState(BaseState):
 		self.fsm.screen.blit(self.background,(0, 0))
 		self.load_font= pygame.font.Font(self.fsm.SYSFONT, 48)
 		TextLine("Loading", self.load_font, (400, 300)).align_ctr().draw(self.fsm.screen)
+		rand_msg_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 12)
+		TextLine(get_rand_msg(), rand_msg_font, (400, 100)).align_ctr().draw(self.fsm.screen)
 		pygame.display.update()
 		
 		self.action_manager.add_button("Back", (self.fsm.WIDTH-100, 50), (50, 30), ret="Back", key="backspace")
@@ -837,9 +839,9 @@ class SandBoxOptionsState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
 		self.action_manager.add_button("Back", (700, 50), (50, 30))
-		self.font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 30)
+		self.font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 30)
 		self.vol_offset= 0
-		self.quantize_val= 8
+		self.quantize_val= 0
 		self.tempo_val= 1
 		self.simplify_val= False
 		self.inst_val= set()
@@ -859,6 +861,7 @@ class SandBoxOptionsState(BaseState):
 		
 		self.vol_text= TextLine(f"Current Volume offset : {self.vol_offset}", self.font, (400, 350)).align_top_ctr()
 		
+		self.insts_text = TextLine(f"Selected : {'All' if len(self.inst_val) == 0 else self.inst_val}", self.font, (400, 600)).align_top_ctr()
 		
 		for i, val in enumerate(["Off", '8', "16", "32", "12"]):
 			
@@ -874,10 +877,13 @@ class SandBoxOptionsState(BaseState):
 		
 		self.action_manager.add_button("ON", (360, 500), (20, 30), canScroll= True, isCenter= True, ret= "Simplify ON", font= self.font)
 
-		self.action_manager.add_button("OFF", (440, 500), (20, 30), canScroll= True, isCenter= True, ret= "Simplify OFF", font= self.font)	
+		self.action_manager.add_button("OFF", (440, 500), (20, 30), canScroll= True, isCenter= True, ret= "Simplify OFF", font= self.font)
+		
+		
+		self.action_manager.add_button("All", (300, 650), (20, 30), canScroll= True, ret= "Instrument All", font= self.font)
 		
 		for i, inst in enumerate(self.instruments):
-			self.action_manager.add_button(inst, (300, i*50+600), (20, 30), canScroll= True, ret= f"Instrument {i}", font= self.font)
+			self.action_manager.add_button(inst, (300, i*50+700), (20, 30), canScroll= True, ret= f"Instrument {i}", font= self.font)
 		
 		self.action_manager.add_button("Confirm", (300, self.action_manager.scroll_buttons[-1].rect[1] + 100), (20, 30), canScroll= True, isCenter= True, font= self.font)
 		
@@ -885,6 +891,7 @@ class SandBoxOptionsState(BaseState):
 		self.action_manager.scroll_max = self.action_manager.scroll_buttons[-1].rect[1] - (self.fsm.HEIGHT//4)*3		
 		
 		self.action_manager.scroll_items.add(self.vol_text)
+		self.action_manager.scroll_items.add(self.insts_text)
 		for line in self.txt_lines:
 			self.action_manager.scroll_items.add(line)
 			
@@ -910,7 +917,10 @@ class SandBoxOptionsState(BaseState):
 				self.action_manager.scroll_items.add(self.vol_text)
 				
 			elif action.rsplit(' ', 1)[0] == "Quantize":
-				self.quantize_val= action.rsplit(' ', 1)[1]
+				if action.rsplit(' ', 1)[1] == 'Off':
+					self.quantize_val = 0
+				else:
+					self.quantize_val= int(action.rsplit(' ', 1)[1])
 			
 			elif action.rsplit(' ', 1)[0] == "Tempo":
 				self.tempo_val= float(action.rsplit(' ', 1)[1])
@@ -923,19 +933,25 @@ class SandBoxOptionsState(BaseState):
 					self.inst_val.clear()
 				else:
 					self.inst_val.add(int(action.rsplit(' ', 1)[1]))
+				v_pos = self.insts_text.rect[1]
+				self.insts_text = TextLine(f"Selected : {'All' if len(self.inst_val) == 0 else self.inst_val}",
+				                           self.font, (400, v_pos)).align_top_ctr()
+				self.action_manager.scroll_items.add(self.insts_text)
 			
 			elif action == "Confirm":
-				
-				print(f"Volume : {self.vol_offset}")
-				print(f"Quantize : {self.quantize_val}")
-				print(f"Tempo : {self.tempo_val}")
-				print(f"Simplify : {self.simplify_val}")
-				print(f"Instrument : {self.inst_val}")
-			
+				self.fsm.screen.blit(self.background, (0, 0))
+				TextLine("WORKING MAGIC FOR YOU, PLEASE WAIT!", self.font, (50, 250)).draw(self.fsm.screen)
+				pygame.display.update()
+				from mapGenerator1 import midiFunnel
+				midiFunnel(self.midi_file, self.quantize_val, self.simplify_val, self.tempo_val, self.vol_offset, self.inst_val)
+				self.fsm.__init__(get_config())
+				self.fsm.curr_state = MainMenuState(self.fsm)
+				self.fsm.ch_state(SelectTrackState(self.fsm))
 	
 	def draw(self):
 		super().draw()
 		self.vol_text.draw(self.fsm.screen)
+		self.insts_text.draw(self.fsm.screen)
 		for i in self.txt_lines:
 			i.draw(self.fsm.screen)
 
@@ -949,6 +965,17 @@ class ExitState(BaseState):
 		print("Exiting program")
 		pygame.quit()
 		exit()
+
+def get_rand_msg(msg_file= "rand_msgs.txt"):
+	with open(msg_file, 'r') as file:
+		lines= file.read().splitlines()
+		
+	max_line= len(lines) - 1
+	return lines[randint(0, max_line)]
+	
+	
+	
+	
 
 
 if __name__ == "__main__":
