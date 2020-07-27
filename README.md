@@ -180,7 +180,7 @@ Due to [pygame](https://www.pygame.org/news) being a less popular open source li
 
 ### Phantom Orbs
 
-For reasons unknown, among songs of longer durations (which would normally imply a greater number of orbs), the visuals of the orbs would break down - orbs that aren't meant to appear would appear on top of other orbs. **Fortunately, this does not happen when pygame 2.0.0.dev10 is being used.** **The stable release is essential when one wishes to deploy the scripts as executables for various OSes. The following issues are only pertinent to users who are running the executable version.**
+For reasons unknown, among songs of longer durations (which would normally imply a greater number of orbs), the visuals of the orbs would break down - orbs that aren't meant to appear would appear on top of other orbs. **Fortunately, this does not happen when pygame 2.0.0.dev10 is being used.** **The stable release is essential when one wishes to deploy the scripts as executables for various OSes. This issue is only pertinent to users who are running the executable version.**
 
 ### Audio Issues with certain Windows devices
 
