@@ -794,7 +794,7 @@ class PlayGameState(BaseState):
 		self.streak_line = TextLine(str(self.streak), self.load_font, (680, 190)).align_ctr()
 		self.scorePercentage = self.score/self.fullScore
 		
-		if len(self.orbs) == 0:
+		if len(self.orbs) < self.laneNo and not self.player.is_playing():
 			self.countdown -= 1
 			if self.countdown <= 0:
 				gradebook = {0:'FAIL', 0.125:'C', 0.375:'B', 0.625:'A', 0.875:'S', 1:'PERFECT'}
