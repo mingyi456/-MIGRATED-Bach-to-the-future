@@ -537,7 +537,7 @@ class PlayGameState(BaseState):
 		
 		wav_file = self.file.rsplit('.', 1)[0]
 		self.player = self.fsm.wav_files[wav_file]
-		self.volume= int(get_config()["Default Volume"]["Value"])
+		self.volume= int(get_config()["Default Game Volume"]["Value"])
 		self.player.audio_set_volume(self.volume)
 		
 	

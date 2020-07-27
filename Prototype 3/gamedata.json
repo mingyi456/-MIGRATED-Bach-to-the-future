@@ -14,7 +14,7 @@
                 "False"
             ]
         },
-        "Default Volume": {
+        "Default Game Volume": {
             "Value": "100",
             "Choices": [
                 "20",
@@ -150,7 +150,7 @@
                     "False"
                 ]
             },
-            "Default Volume": {
+            "Default Game Volume": {
                 "Value": "100",
                 "Choices": [
                     "20",

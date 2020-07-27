@@ -42,7 +42,7 @@ class StoryState(BaseState):
 		else:
 			self.curr_line= 0
 		self.max_line= len(self.json_script)
-		self.volume= int(get_config()["Default Volume"]["Value"])
+		self.volume= int(get_config()["Default Game Volume"]["Value"])
 
 		self.players= {}
 		self.sprites= {}
