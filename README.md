@@ -85,7 +85,7 @@ Our team has set out to automate this process of beatmap generation using an alg
 4. Launch Command Prompt  in the directory of the downloaded file and paste the following lines. (Use the right click to paste text into the window)
 
 	1. ```batch
-		pip install pretty_midi python-vlc midi2audio psutil pygame
+		pip install pretty_midi python-vlc midi2audio psutil pygame==2.0.0.dev10
 		```
 	
 
