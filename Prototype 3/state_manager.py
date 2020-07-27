@@ -12,6 +12,8 @@ from random import randint
 class State_Manager:
 	def __init__(self, config= get_config()):
 		
+		self.USER= "Guest"
+		
 		raw_paths= get_sys_config()
 		self.ASSETS_DIR= path.join(*raw_paths["Assets"])
 		self.WAV_DIR = path.join(*raw_paths["WAV Directory"])
@@ -75,7 +77,7 @@ class BaseState:
 	def __init__(self, fsm):
 		self.fsm = fsm
 		self.action_manager = ActionManager()
-		self.background = pygame.image.load(f"{self.fsm.ASSETS_DIR}background.jpg").convert()
+		self.background = pygame.image.load(f"{self.fsm.ASSETS_DIR}background.png").convert()
 	
 	def enter(self, args):
 		pass
@@ -95,6 +97,7 @@ class BaseState:
 class MainMenuState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
+		self.background= pygame.image.load(f"{self.fsm.ASSETS_DIR}menu_background.png").convert()
 		self.action_manager.add_button("Campaign", (50, 50), (50, 30))
 		self.action_manager.add_button("Chapter Select", (50, 100), (50, 30))
 		self.action_manager.add_button("Arcade", (50, 150), (50, 30))
@@ -104,10 +107,14 @@ class MainMenuState(BaseState):
 		self.action_manager.add_button("About", (50, self.fsm.HEIGHT - 100), (50, 30))
 		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 50), (50, 30), ret="Exit", key="escape")
 		
+		self.font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 22)
+		self.user_text= TextLine(f"Welcome Back, {self.fsm.USER}!",self.font, (790, 10)).align_top_right()
 		
-		self.font = pygame.font.Font(self.fsm.SYSFONT, 24)
+		self.action_manager.add_button("Switch User", (670, 35), (20, 15), font= self.font, font_colour= rgb.WHITE)
 		
-		self.text_line = TextLine("~BACH TO THE FUTURE~", self.font, (300, 50))
+		
+		
+		
 	
 	def enter(self, args):
 		if not self.fsm.bg_music.is_playing():
@@ -139,12 +146,32 @@ class MainMenuState(BaseState):
 			elif action == "Sandbox":
 				self.fsm.ch_state(SandBoxState(self.fsm))
 			elif action == "Chapter Select":
-				pass
+				self.fsm.ch_state(ChapterSelectState(self.fsm))
+			
+			elif action == "Switch User":
+				self.fsm.ch_state(UsersState(self.fsm))
 			
 	def draw(self):
 		super().draw()
-		self.text_line.draw(self.fsm.screen)
+		self.user_text.draw(self.fsm.screen)
 
+class UsersState(BaseState):
+	def __init__(self, fsm):
+		super().__init__(fsm)
+		self.action_manager.add_button("Back", (50, 50), (20, 30))
+	
+	def update(self, game_time, lag):
+		actions= self.action_manager.chk_actions(pygame.event.get())
+		
+		for action in actions:
+			if action == "Exit":
+				self.fsm.ch_state(ExitState(self.fsm))
+			elif action == "Back":
+				self.fsm.ch_state(MainMenuState(self.fsm))
+			
+	
+	def draw(self):
+		super().draw()
 
 class AboutState(BaseState):
 	def __init__(self, fsm):
@@ -187,8 +214,8 @@ class SelectTrackState(BaseState):
 			self.action_manager.add_button(file.rsplit('.',1)[0], (325, i * 80 + 50), (50, 30), canScroll=True, ret=file)
 			num_notes, song_dur, insts= self.songInfo(file.rsplit('.',1)[0])
 			print(file.rsplit('.',1)[0], num_notes, song_dur, insts)
-			self.des_lines.append(TextLine(f"Notes : {num_notes}, Duration : {song_dur}", des_font, (325, i * 80 + 80)))
-			self.des_lines.append(TextLine(insts, des_font, (325, i * 80 + 100)))
+			self.des_lines.append(TextLine(f"Notes : {num_notes}, Duration : {song_dur}", des_font, (325, i * 80 + 82)))
+			self.des_lines.append(TextLine(insts, des_font, (325, i * 80 + 102)))
 		
 		for i in self.des_lines:
 			self.action_manager.scroll_items.add(i)
@@ -297,7 +324,7 @@ class ChSettingState(BaseState):
 			while y_pos >= 550:
 				x_pos += 100
 				y_pos -= 400
-			self.action_manager.add_button(str(i), (x_pos, y_pos), (50, 30))
+			self.action_manager.add_button(str(i), (x_pos, y_pos), (20, 30))
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
@@ -334,7 +361,7 @@ class AchievementsState(BaseState):
 		self.des_font = pygame.font.Font(self.fsm.SYSFONT, 14)
 
 		self.text_lines= []
-		hasAchieved= get_user_data()["Achievements"]
+		hasAchieved= get_user_data(self.fsm.USER)["Achievements"]
 		print(hasAchieved)
 		achievements= get_achievements()
 		for i, achievement in enumerate(achievements):
@@ -363,9 +390,42 @@ class AchievementsState(BaseState):
 class ChapterSelectState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
+		self.action_manager.add_button("Back", (50, 50), (20, 30))
+		
+		self.indexes= {1:21, 2:28, 3:42, 4:47, 5:52, 6:57, 7:63, 8:74, 9:80, 10:89, 11:96, 12:102, 13:112, 14:124}
+		self.thumbnails= { 1 : "placeholder.png", 2 : "placeholder.png", 3 : "placeholder.png", 4 : "placeholder.png", 5 : "placeholder.png", 6 : "placeholder.png", 7 : "placeholder.png", 8 : "placeholder.png", 9 : "placeholder.png", 10 : "placeholder.png", 11 : "placeholder.png", 12 : "placeholder.png", 13 : "placeholder.png", 14 : "placeholder.png"}
+		
+		self.sprites= []
+		
+		for ind in self.indexes.keys():
+			x_val= 300 if ind % 2 > 0 else 600
+			y_val= 250 + ( ind // 2 -1 ) *200 if ind % 2 == 0 else 250 + (ind //2) * 200
+			self.action_manager.add_button(f"Chapter {ind}", (x_val, y_val), (20, 30), canScroll= True, isCenter= True, ret= ind)
+			self.sprites.append(Sprite(path.join("story_thumbnails", self.thumbnails[ind]), (x_val, y_val - 155 )).align_top_ctr())
+			
+		for i in self.sprites:
+			self.action_manager.scroll_items.add(i)
+		
+		self.action_manager.scroll_max = self.action_manager.scroll_buttons[-1].rect[1] - (self.fsm.HEIGHT//4)*3
+	
+	def update(self, game_time, lag):
+		actions= self.action_manager.chk_actions(pygame.event.get())
+		for action in actions:
+			if action == "Exit":
+				self.fsm.ch_state(ExitState(self.fsm))
+			elif action == "Back":
+				self.fsm.ch_state(MainMenuState(self.fsm))
+			
+			elif action in self.indexes.keys():
+				from Storyline import StoryState
+				self.fsm.ch_state(StoryState(self.fsm), {"file" : "storyline1.json", "curr_line" : self.indexes[action]})
+			
+			
 		
 	def draw(self):
-		pass
+		super().draw()
+		for i in self.sprites:
+			i.draw_raw(self.fsm.screen)
 
 class Orbs:
 	def __init__(self, x, end_time, start_time, duration, lane, sustained, speed, offset, sustainTrim):
@@ -405,14 +465,15 @@ class Orbs:
 class PlayGameState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
+		self.background= pygame.image.load(f"{self.fsm.ASSETS_DIR}play_background.png").convert()
 		self.curr_prog= 0
 		self.fsm.screen.blit(self.background,(0, 0))
 		self.load_font= pygame.font.Font(self.fsm.SYSFONT, 24)
 		rand_msg_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 18)
-		TextBox(get_rand_msg(), rand_msg_font, (50, 230), (300, 10)).draw(self.fsm.screen)
+		TextBox(get_rand_msg(), rand_msg_font, (250, 230), (300, 10)).draw(self.fsm.screen)
 		pygame.display.update()
 		
-		self.action_manager.add_button("Back", (self.fsm.WIDTH-100, 50), (50, 30), ret="Back", key="backspace")
+		self.action_manager.add_keystroke("Back","esc")
 		self.action_manager.add_keystroke("Pause", 'p')
 		self.action_manager.add_keystroke("Vol+", "up")
 		self.action_manager.add_keystroke("Vol-", "down")
@@ -452,7 +513,7 @@ class PlayGameState(BaseState):
 		
 		self.score = 0
 		self.score_font = pygame.font.Font(self.fsm.SYSFONT, 24)
-		self.score_line = TextLine(str(self.score), self.score_font, (550, 50))
+		self.score_line = TextLine(str(self.score), self.score_font, (680, 100)).align_ctr()
 		
 		self.countdown = self.fsm.FPS * 5
 		self.start_timer= self.fsm.FPS * 3
@@ -632,7 +693,7 @@ class PlayGameState(BaseState):
 				self.score += deltaTime * self.baseScore/2
 				self.lane_responses[i][1][0] = True
 			
-		self.score_line = TextLine(str(int(self.score)), self.score_font, (550, 50))
+		self.score_line = TextLine(str(int(self.score)), self.score_font, (680, 100)).align_ctr()
 		self.scorePercentage = self.score/self.fullScore
 
 		# if self.isPlaying:  # pause handling
@@ -703,10 +764,10 @@ class GameOverState(BaseState):
 		self.action_manager.add_button("Retry", (200, 400), (50, 30), isCenter= True)
 
 		self.action_manager.add_keystroke("Exit", "escape")
-		self.high_scores= get_user_data()["Highscores"]
+		self.high_scores= get_user_data(self.fsm.USER)["Highscores"]
 		self.score_font = pygame.font.Font(self.fsm.SYSFONT, 24)
 		self.grade_font = pygame.font.Font(self.fsm.SYSFONT, 64)
-		self.high_score_text= TextLine("High Score achieved!", self.score_font).align_ctr()
+		self.high_score_text= TextLine("High Score achieved!", self.score_font, (400, 300)).align_ctr()
 	
 	def enter(self, args):
 		self.args = args
@@ -736,14 +797,14 @@ class GameOverState(BaseState):
 			if self.high_scores[self.track] < self.score:
 				print("High Score achieved!")
 				self.isHighScore= True
-				update_user_data(("Highscores", args["file_name"].rsplit('.', 1)[0]), args["score"])
+				update_user_data(("Highscores", args["file_name"].rsplit('.', 1)[0]), args["score"], self.fsm.USER)
 			else:
 				print("High Score not achieved")
 				self.isHighScore= False
 		else:
 			print("No previous high score found")
 			self.isHighScore= True
-			update_user_data(("Highscores", args["file_name"].rsplit('.', 1)[0]), args["score"])
+			update_user_data(("Highscores", args["file_name"].rsplit('.', 1)[0]), args["score"], self.fsm.USER)
 	
 	
 	def update(self, game_time, lag):

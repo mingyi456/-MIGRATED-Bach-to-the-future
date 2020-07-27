@@ -6,7 +6,7 @@ from UIManager import TextLine, TextBox, Sprite
 from state_manager import State_Manager, BaseState, ExitState, MainMenuState, PlayGameState
 import json
 import vlc
-from data_parser import get_config
+from data_parser import get_config, update_user_data
 
 class StoryState(BaseState):
 	def __init__(self, fsm):
@@ -126,6 +126,7 @@ class StoryState(BaseState):
 			elif command["Type"] == "Audio Start":
 
 				self.players[command["File"]]= vlc.MediaPlayer(path.join('.', "story_assets", command['File']))
+				self.players[command["File"]].audio_set_volume(self.volume)
 				self.players[command["File"]].play()
 			
 			elif command["Type"] == "Audio Stop":
@@ -174,7 +175,7 @@ class StoryState(BaseState):
 				pass
 			
 			elif command["Type"] == "Grant Achievement":
-				pass
+				update_user_data(("Achievements", command["Name"]), True, self.fsm.USER)
 			
 			else:
 				raise Exception(f"Unknown Command Type \"{command['Type']}\"")

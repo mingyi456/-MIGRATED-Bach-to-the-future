@@ -33,20 +33,23 @@ def reset_config(data_file= "gamedata.json"):
 	data["Settings"]= data["Factory Data"]["Settings"]
 	save_json(data)
 	
-def get_user_data(data_file= "gamedata.json"):
+def get_user_data(user= "Guest", data_file= "gamedata.json"):
 	with open(data_file) as file:
 		data = json.load(file)
 	
-	user_data= data["Users"]["Guest"]
+	user_data= data["Users"][user]
 	return user_data
 
-def update_user_data(key, new_val):
+def update_user_data(key, new_val, user= "Guest"):
 	try:
 		data= load_json()
-		data["Users"]["Guest"][key[0]][key[1]]= new_val
+		data["Users"][user][key[0]][key[1]]= new_val
 		save_json(data)
 	except:
-		pass		
+		pass
+
+def get_users(data_file= "gamedata.json"):
+	pass
 
 def get_achievements(achievement_file= "achievements.json"):
 	with open(achievement_file) as file:

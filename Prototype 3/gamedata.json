@@ -30,7 +30,7 @@
             ]
         },
         "Background Volume": {
-            "Value": "20",
+            "Value": "60",
             "Choices": [
                 "20",
                 "40",
@@ -246,35 +246,13 @@
         "Guest": {
             "Achievements": {
                 "Resurrection": true,
-                "Der Kapellmeister": true,
+                "Der Kapellmeister": false,
                 "Enlightened": false,
                 "Let Me Spill My Heart!": false,
                 "Modern Times": false
             },
             "Highscores": {
-                "Sarabande": 0,
-                "Spring, Allegro": 0,
-                "Toccata and Fugue": 0,
-                "Trumpet Concerto, Andante": 9148,
-                "Queen of The Night": 12325,
-                "Fate Symphony": 19908,
-                "The Swan": 0,
-                "Swan Lake": 0,
-                "La Campanella": 0,
-                "Blue Danube Waltz": 0,
-                "Intermezzo": 0,
-                "Pavane": 14356,
-                "Rhapsody in Blue": 0,
-                "Piano Concerto, Adagio Sostenuto": 0,
-                "shortmidi": 58,
-                "Bach Prelude No. 6": 15582,
-                "Violin Concerto, Adagio": 24723,
-                "Serenade": 5099,
-                "Prelude No. 7": 2483,
-                "Galop Infernal": 20438,
-                "Habanera": 10485,
-                "In the hall of the mountain king": 7041,
-                "Giant Steps": 10828
+                "Queen of The Night": 406
             }
         }
     },

@@ -216,6 +216,14 @@ class TextLine:
 			self.rect.midtop= pos
 		
 		return self
+
+	def align_top_right(self, pos= None):
+		if pos is None:
+			self.rect.topright= self.rect.topleft
+		else:
+			self.rect.topright= pos
+		
+		return self
 	
 	def draw(self, screen):
 		screen.blit(self.content, self.rect)
