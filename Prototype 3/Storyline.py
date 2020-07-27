@@ -33,6 +33,7 @@ class StoryState(BaseState):
 		self.forceDone= False
 	
 	def enter(self, args):
+		self.fsm.bg_music.stop()
 		self.background.fill(rgb.BLACK)
 		with open(args["file"]) as file:
 			self.json_script= json.load(file)
@@ -181,7 +182,7 @@ class StoryState(BaseState):
 		self.text_len= len(self.curr_text)
 	
 	def draw(self):
-		self.fsm.screen.blit(self.background, (0,0))
+		self.fsm.screen.blit(self.background, (0, 0))
 		self.action_manager.draw_buttons(self.fsm.screen)
 		self.title.draw(self.fsm.screen)
 		self.title2.draw(self.fsm.screen)

@@ -29,7 +29,7 @@ class State_Manager:
 		pygame.display.set_icon(self.icon)
 		self.fps_clock = pygame.time.Clock()
 		
-		self.SIZE = self.WIDTH, self.HEIGHT = eval(config["Resolution"]["Value"])
+		self.SIZE = self.WIDTH, self.HEIGHT = 800, 600
 		self.isFullScreen= eval(config["Fullscreen"]["Value"])
 		if self.isFullScreen:
 			self.screen = pygame.display.set_mode(self.SIZE, pygame.FULLSCREEN)
@@ -43,6 +43,7 @@ class State_Manager:
 		self.TRACKS_DIR = path.join(*raw_paths["CSV Directory"])
 		
 		self.bg_music = vlc.MediaPlayer(f"{self.ASSETS_DIR}Background.mp3")
+		self.bg_music.audio_set_volume(int(config["Background Volume"]["Value"]))
 		self.bg_music.play()
 	
 	def update(self):
@@ -286,8 +287,16 @@ class ChSettingState(BaseState):
 		self.val_text_line= TextLine(f"Current value : {self.val}", self.font, (250, 100))
 		
 		self.choices= args["value"]["Choices"]
+		
+		
 		for e, i in enumerate(args["value"]["Choices"]):
-			self.action_manager.add_button(str(i), (250, e*50+150), (50, 30))
+			x_pos= 250
+			y_pos= e*50+150
+			
+			while y_pos >= 550:
+				x_pos += 100
+				y_pos -= 400
+			self.action_manager.add_button(str(i), (x_pos, y_pos), (50, 30))
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
@@ -685,7 +694,7 @@ class PlayGameState(BaseState):
 class GameOverState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.action_manager.add_button("Retry", (200, 400), (50, 30))
+		self.action_manager.add_button("Retry", (200, 400), (50, 30), isCenter= True)
 
 		self.action_manager.add_keystroke("Exit", "escape")
 		self.high_scores= get_user_data()["Highscores"]
@@ -704,11 +713,11 @@ class GameOverState(BaseState):
 		if "Story" in args.keys():
 			self.story= True
 			self.story_line= args["Story"]
-			self.action_manager.add_button("Continue", (550, 400), (50, 30))
+			self.action_manager.add_button("Continue", (550, 400), (50, 30), isCenter= True)
 		
 		else:
-			self.action_manager.add_button("Back to Main Menu", (500, 400), (50, 30), ret="Main Menu")
-			self.action_manager.add_button("Back to Start", (300, 400), (50, 30), ret="Start")
+			self.action_manager.add_button("Back to Main Menu", (575, 400), (50, 30), ret="Main Menu", isCenter= True)
+			self.action_manager.add_button("Back to Start", (350, 400), (50, 30), ret="Start", isCenter= True)
 		
 		ctr= self.fsm.WIDTH // 2
 
