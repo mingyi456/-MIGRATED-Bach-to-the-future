@@ -27,7 +27,7 @@ class State_Manager:
 		
 		self.SYSFONT= f"{self.ASSETS_DIR}ARCADE_R.TTF"
 		
-		pygame.display.set_caption("Prototype 3")
+		pygame.display.set_caption("BACH TO THE FUTURE")
 		self.icon= pygame.image.load(f"{self.ASSETS_DIR}quaver.png")
 		pygame.display.set_icon(self.icon)
 		self.fps_clock = pygame.time.Clock()
@@ -421,7 +421,7 @@ class ChSettingState(BaseState):
 				self.fsm.ch_state(ExitState(self.fsm))
 				
 			elif action in self.choices or eval(action) in self.choices:
-				print(f"Choice clicked : {eval(action)}")
+				# print(f"Choice clicked : {eval(action)}")
 				ch_config(self.setting, action)
 				config2= get_config()
 				self.fsm.bg_music.stop()
@@ -476,15 +476,17 @@ class ChapterSelectState(BaseState):
 		self.action_manager.add_button("Back", (50, 50), (20, 30))
 		
 		self.indexes= {1:21, 2:28, 3:42, 4:47, 5:52, 6:57, 7:63, 8:74, 9:80, 10:89, 11:96, 12:102, 13:112, 14:124}
-		self.thumbnails= { 1 : "placeholder.png", 2 : "placeholder.png", 3 : "placeholder.png", 4 : "placeholder.png", 5 : "placeholder.png", 6 : "placeholder.png", 7 : "placeholder.png", 8 : "placeholder.png", 9 : "placeholder.png", 10 : "placeholder.png", 11 : "placeholder.png", 12 : "placeholder.png", 13 : "placeholder.png", 14 : "placeholder.png"}
+		self.thumbnails= ((1, 1791, '1.png'), (2, 1800, '2.png'), (3, 1808, '3.png'), (4, 1828, '4.png'), (5, 1832, '5.png'), \
+		                  (6, 1839, '6.png'), (7, 1858, '7.png'), (8, 1875, '8.png'), (9, 1876, '9.png'), (10, 1888, '10.png'),\
+		                  (11, 1916, '11.png'), (12, 1957, '12.png'), (13, 1960, '13.png'), (14, 1713, '14.png'))
 		
 		self.sprites= []
 		
-		for ind in self.indexes.keys():
-			x_val= 300 if ind % 2 > 0 else 600
-			y_val= 250 + ( ind // 2 -1 ) *200 if ind % 2 == 0 else 250 + (ind //2) * 200
-			self.action_manager.add_button(f"Chapter {ind}", (x_val, y_val), (20, 30), canScroll= True, isCenter= True, ret= ind)
-			self.sprites.append(Sprite(path.join("story_thumbnails", self.thumbnails[ind]), (x_val, y_val - 155 )).align_top_ctr())
+		for i, year, pic in self.thumbnails:
+			x_val= 300 if i % 2 > 0 else 600
+			y_val= 250 + ( i // 2 -1 ) *200 if i % 2 == 0 else 250 + (i //2) * 200
+			self.action_manager.add_button(f"Year {year}", (x_val, y_val), (20, 30), canScroll= True, isCenter= True, ret= i)
+			self.sprites.append(Sprite(path.join("story_thumbnails", pic), (x_val, y_val - 155 )).align_top_ctr())
 			
 		for i in self.sprites:
 			self.action_manager.scroll_items.add(i)
@@ -587,7 +589,12 @@ class PlayGameState(BaseState):
 
 		self.laneBlits = self.lanes[:self.laneNo]
 		
-		self.key_bindings= ['f', 'g', 'h', 'j', 'k', 'l'][:self.laneNo]
+		config= get_config()
+		
+		key_list= [config[f"Lane {i+1} key"]["Value"] for i in range(6)]
+		
+		
+		self.key_bindings= key_list[:self.laneNo]
 		self.key_binds = [eval(f"pygame.K_{x}") for x in self.key_bindings]
 		print(self.key_binds)  # [('f', int)]
 		

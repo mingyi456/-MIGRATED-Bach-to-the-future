@@ -441,6 +441,10 @@
     {
       "Type" : "Enter Game",
       "File" : "Fate Symphony"
+    },
+    {
+      "Type" : "Grant Achievement",
+      "Name" : "Enlightened"
     }
   ],
   [
@@ -866,6 +870,10 @@
     {
       "Type" : "Enter Game",
       "File" : "Pavane"
+    },
+    {
+      "Type" : "Grant Achievement",
+      "Name" : "Let Me Spill My Heart!"
     }
   ],
   [
@@ -1089,7 +1097,11 @@
   [
     {
       "Type" : "Enter Game",
-      "File" : "shortmidi"
+      "File" : "Giant Steps"
+    },
+    {
+      "Type" : "Grant Achievement",
+      "Name" : "Modern Times"
     }
   ],
   [
@@ -1174,6 +1186,10 @@
     {
       "Type" : "Background",
       "File" : "finished.png"
+    },
+    {
+      "Type" : "Grant Achievement",
+      "Name" : "Der Kappellmeister"
     }
   ]
 ]

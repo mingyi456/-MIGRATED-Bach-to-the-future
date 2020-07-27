@@ -45,7 +45,7 @@
             ]
         },
         "Number of Lanes": {
-            "Value": "4",
+            "Value": "6",
             "Choices": [
                 1,
                 2,
@@ -56,7 +56,7 @@
             ]
         },
         "Lane 1 key": {
-            "Value": "f",
+            "Value": "q",
             "Choices": [
                 "a",
                 "b",
@@ -87,7 +87,7 @@
             ]
         },
         "Lane 2 key": {
-            "Value": "f",
+            "Value": "w",
             "Choices": [
                 "a",
                 "b",
@@ -118,7 +118,7 @@
             ]
         },
         "Lane 3 key": {
-            "Value": "f",
+            "Value": "e",
             "Choices": [
                 "a",
                 "b",
@@ -149,7 +149,7 @@
             ]
         },
         "Lane 4 key": {
-            "Value": "f",
+            "Value": "r",
             "Choices": [
                 "a",
                 "b",
@@ -180,7 +180,7 @@
             ]
         },
         "Lane 5 key": {
-            "Value": "f",
+            "Value": "t",
             "Choices": [
                 "a",
                 "b",
@@ -211,7 +211,7 @@
             ]
         },
         "Lane 6 key": {
-            "Value": "f",
+            "Value": "y",
             "Choices": [
                 "a",
                 "b",

@@ -4,10 +4,6 @@
     "description" : "Successfully complete your first piece!"
   },
   {
-    "name" : "Der Kapellmeister",
-    "description" : "Finish the Baroque Era"
-  },
-  {
     "name" : "Enlightened",
     "description" : "Finish the Classical Era"
   },
@@ -18,5 +14,9 @@
   {
     "name" : "Modern Times",
     "description" : "Finish the 20th Century"
+  },
+  {
+    "name" : "Der Kapellmeister",
+    "description" : "Finish the Baroque Era"
   }
 ]
