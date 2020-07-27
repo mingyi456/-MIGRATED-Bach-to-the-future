@@ -80,7 +80,7 @@ Our team has set out to automate this process of beatmap generation using an alg
 
 2. Make sure you have a **modern Python** version installed. As of 27 July 2020, this is [version 3.8.5](https://www.python.org/downloads/mac-osx/). Follow the link to download the required installer and follow through with the installation process with the default settings. Ensure python.exe and pip.exe are both added to the system PATH 
 
-3. Make sure you have **[VLC player](https://get.videolan.org/vlc/3.0.11/macosx/vlc-3.0.11.dmg)** on your system.
+3. Make sure you have **[VLC player](https://www.videolan.org/index.html)** on your system.
 
 4. Launch Command Prompt  in the directory of the downloaded file and paste the following lines. (Use the right click to paste text into the window)
 
