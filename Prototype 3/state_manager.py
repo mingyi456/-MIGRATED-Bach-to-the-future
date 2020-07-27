@@ -257,12 +257,23 @@ class NewUserState(BaseState):
 class AboutState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.font = pygame.font.Font(self.fsm.SYSFONT, 24)
+		self.font = pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 18)
 		
 		self.text_lines= []
-		self.text_lines.append(TextLine("Bach to the Future", self.font, (200, 100)))
-		self.text_lines.append(TextLine("Icon made by Freepik from www.flaticon.com", pygame.font.Font(self.fsm.SYSFONT, 14), (150, 300)))
+		self.text_lines.append(TextLine("Bach to the Future", self.font, (400, 50)).align_ctr())
 		
+		self.text_lines.append(TextLine("Team Last Minute Wonders", self.font, (400, 100)).align_ctr())
+		self.text_lines.append(TextLine("Chen Mingyi and Chen YiJia", self.font, (400, 150)).align_ctr())
+		self.text_lines.append(TextLine("Orbital 2020", self.font, (400, 200)).align_ctr())
+		self.text_lines.append(TextLine("Special thanks to:", self.font, (400, 250)).align_ctr())
+		self.text_lines.append(TextLine("Lau Kuan Hoe", self.font, (400, 300)).align_ctr())
+		self.text_lines.append(TextLine("Phua Kai Jie", self.font, (400, 350)).align_ctr())
+		self.text_lines.append(TextLine("Hillson Hung", self.font, (400, 400)).align_ctr())
+		self.text_lines.append(TextLine("For their patient testing and helpful feedback", self.font, (400, 450)).align_ctr())
+		self.text_lines.append(TextLine("JoshuaPrzyborowski", self.font, (400, 500)).align_ctr())
+		self.text_lines.append(TextLine("For providing the Windows FluidSynth build", self.font, (400, 550)).align_ctr())
+
+		self.text_lines.append(TextLine("Icon made by Freepik from www.flaticon.com", self.font, (400, 600)).align_ctr())
 		self.action_manager.add_button("Back", (50, 50), (50, 30))
 		
 		self.action_manager.add_button("Exit", (50, self.fsm.HEIGHT- 100), (50, 30))
@@ -573,7 +584,8 @@ class PlayGameState(BaseState):
 		self.isPlaying = True
 		self.orbs = []
 		self.laneNo = int(get_config()["Number of Lanes"]["Value"])
-		self.positions = [480/self.laneNo + 80 * i for i in range(6)]
+		pascal = [[280, 0, 0, 0, 0, 0], [240, 320, 0, 0, 0, 0], [200, 280, 360, 0, 0, 0], [160, 240, 320, 400, 0, 0], [120, 200, 280, 360, 440, 0], [80, 160, 240, 320, 400, 480]]
+		self.positions = pascal[self.laneNo-1]
 		self.grids = (pygame.image.load(f"{self.fsm.ASSETS_DIR}lane_topblack.png").convert_alpha(), \
 					  pygame.image.load(f"{self.fsm.ASSETS_DIR}lane_bottomblack.png").convert_alpha())
 		self.gridBlits = [(pygame.image.load(f"{self.fsm.ASSETS_DIR}meter.png").convert_alpha(), (0, 0))]
