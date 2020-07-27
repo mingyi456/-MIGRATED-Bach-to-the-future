@@ -930,6 +930,7 @@ class SandBoxState(BaseState):
 		
 		self.drive_font = pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 30)
 		self.action_manager.add_button("Original Songs", (50, 100), (50, 30), font=self.drive_font)
+		self.action_manager.add_button("Expansion Pack", (50, 150), (50, 30), font= self.drive_font)
 		if self.platform == "win32":
 			
 		
@@ -938,14 +939,14 @@ class SandBoxState(BaseState):
 			self.drives= [disk.device for disk in disk_partitions(all= True)]
 			
 			for i, drive in enumerate(self.drives):
-				self.action_manager.add_button(drive, (50, 150 + i*50), (50, 30), font= self.drive_font)
+				self.action_manager.add_button(drive, (50, 200 + i*50), (50, 30), font= self.drive_font)
 		
 		else:		
 			
 			self.drives= [disk for disk in listdir("/Volumes")]
 			
 			for i, drive in enumerate(self.drives):
-				self.action_manager.add_button(drive, (50, 150 + i*50), (50, 30), font= self.drive_font)			
+				self.action_manager.add_button(drive, (50, 200 + i*50), (50, 30), font= self.drive_font)
 		
 	
 	def enter(self, args):
@@ -995,6 +996,9 @@ class SandBoxState(BaseState):
 				
 			elif action == "Original Songs":
 				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir": path.join('.', 'master tracks')})
+				
+			elif action == "Expansion Pack":
+				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir": path.join('.', "Expansion Pack")})
 			
 			elif action in self.drives:
 				if self.platform == 'Windows':
