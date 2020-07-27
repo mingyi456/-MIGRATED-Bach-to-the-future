@@ -86,7 +86,7 @@ Our team has set out to automate this process of beatmap generation using an alg
 	
 
 	2. ```batch
-		python main.py
+		pythonw main.py
 		```
 
 #### Compiled binary distribution
@@ -127,5 +127,5 @@ For reasons unknown, among songs of longer durations (which would normally imply
 
 ### Audio Issues with certain Windows devices
 
-On orbitee mingyi456's computer,
+On Orbitee Mingyi's computer, there were issues using python-vlc to play .wav and .flac files when an active Pygame window is open. Various attempts were made to fix this directly were unsuccessful we had to sidestep it by loading all available game tracks (the background and campaign audio uses mp3 which did not have this issue) before initialising the display. This worked perfectly (at the cost of unneeded RAM usage by preloading unnecessary audio assets) until the implementation of sandbox mode. Because we allow the user to upload his/her own MIDI file to play with, there is now no possible way to preload all possible tracks beforehand. This was solved by performing a re-initialisation of the game before after processing a MIDI file, similar to how the game automatically updates itself after changing an option. However, the audio error reappears in this case and all song tracks are muted, forcing him to manually close and reopen the game to play the newly generated MIDI file.
 
