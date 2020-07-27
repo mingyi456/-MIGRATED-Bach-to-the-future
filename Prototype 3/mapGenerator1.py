@@ -17,12 +17,15 @@ def midiInfo(midi_path):
 	instruments = []
 	unsaturated_volume = []
 	for number, instrument in enumerate(mid.instruments):
-		instruments.append(str(number) + ') ' + pretty_midi.program_to_instrument_name(instrument.program) + ', ' + instrument.name)
+		instruments.append(str(number+1) + ') ' + pretty_midi.program_to_instrument_name(instrument.program) + ', ' + instrument.name.strip())
 		volume_messages = [msg.value for msg in instrument.control_changes if msg.number == 7]
-		if min(volume_messages) > 0:
+		if volume_messages and min(volume_messages) > 0:
 			unsaturated_volume.append(min(volume_messages))
-	unsaturated_volume = min(unsaturated_volume)
-	return (instruments, unsaturated_volume)
+
+	if unsaturated_volume:
+		unsaturated_volume = min(unsaturated_volume)
+		return (instruments, unsaturated_volume)
+	return (instruments, 'NO VOL')
 	
 
 
@@ -77,12 +80,12 @@ def midiFunnel(midi_path, quantize, onekey, changeTempo, changeVolume, chosen_in
 			if number not in chosen_instruments:
 				mid.instruments.remove(instrument)
 	remainingInstruments = len(mid.instruments)
-	selected_instruments = mid.instruments[0].name
+	selected_instruments = pretty_midi.program_to_instrument_name(mid.instruments[0].program)
 	for i in range(1, remainingInstruments):
 		if i == remainingInstruments - 1:
-			selected_instruments += ' and ' + mid.instruments[i].name
+			selected_instruments += ' and ' + pretty_midi.program_to_instrument_name(mid.instruments[0].program)
 		else:
-			selected_instruments += ', ' + mid.instruments[i].name
+			selected_instruments += ', ' + pretty_midi.program_to_instrument_name(mid.instruments[0].program)
 
 	notes = [x.notes for x in mid.instruments]
 	flatten = list(itertools.chain(*notes))
@@ -135,7 +138,3 @@ def midiFunnel(midi_path, quantize, onekey, changeTempo, changeVolume, chosen_in
 	print('FINISHED FLAC GENERATION!')
 	
 	os.remove(new_midi_path)
-
-
-# midiFunnel(midi_path)
-# print(midiInfo(midi_path))

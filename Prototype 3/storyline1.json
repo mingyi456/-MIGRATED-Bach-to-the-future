@@ -219,6 +219,10 @@
     {
       "Type" : "Audio Start",
       "File" : "farm noises.mp3"
+    },
+    {
+      "Type" : "Background",
+      "File" : "blackscreen.png"
     }
   ],
   [

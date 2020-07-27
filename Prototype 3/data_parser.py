@@ -49,7 +49,17 @@ def update_user_data(key, new_val, user= "Guest"):
 		pass
 
 def get_users(data_file= "gamedata.json"):
-	pass
+	with open(data_file) as file:
+		data = json.load(file)
+	
+	users= data["Users"]
+	return list(users.keys())
+
+def new_user(name, data_file= "gamedata.json"):
+	data= load_json()
+	data["Users"][name]= data["Factory Data"]["New User"]
+	save_json(data)
+
 
 def get_achievements(achievement_file= "achievements.json"):
 	with open(achievement_file) as file:
@@ -64,7 +74,21 @@ def save_json(data, data_file= "gamedata.json"):
 	except:
 		print("Failed!")
 		return -1
+	
+def get_curr_user(data_file="gamedata.json"):
+	with open(data_file) as file:
+		data = json.load(file)
+	
+	curr_user = data["Current User"]
+	return curr_user
 
+def ch_user(user, data_file="gamedata.json"):
+	with open(data_file) as file:
+		data = json.load(file)
+	data["Current User"] = user
+	save_json(data)
 
+if __name__ == "__main__":
+	new_user("ABC")
 
 
