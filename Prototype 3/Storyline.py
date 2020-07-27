@@ -12,7 +12,7 @@ class StoryState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
 		self.action_manager.add_keystroke("space", "space", ret= "Advance")
-		self.action_manager.add_keystroke("enter", "return", ret= "Advance")
+		self.action_manager.add_keystroke("escape", "escape", ret= "Back")
 		self.action_manager.add_keystroke("Vol+", "up")
 		self.action_manager.add_keystroke("Vol-", "down")
 		self.font1= pygame.font.Font(path.join('.', "assets", "VisiaPro-Bold.otf"), 48)

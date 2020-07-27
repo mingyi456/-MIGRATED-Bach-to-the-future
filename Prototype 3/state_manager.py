@@ -52,9 +52,6 @@ class State_Manager:
 		pygame.display.update()
 		self.time, self.lag = self.chk_slp()
 		self.g_t += self.time
-		if self.bg_music.get_position() > 0.95:
-			self.bg_music.stop()
-			self.bg_music.play()
 	
 	def ch_state(self, new_state, args={}):
 		self.curr_state.exit()
@@ -98,13 +95,15 @@ class BaseState:
 class MainMenuState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.action_manager.add_button("Start (Space)", (50, 50), (50, 30), ret="Start", key="space")
-		self.action_manager.add_button("Options", (50, 100), (50, 30))
-		self.action_manager.add_button("Achievements", (50, 150), (50, 30))
-		self.action_manager.add_button("Storyline", (50, 200), (50, 30))
-		self.action_manager.add_button("Sandbox", (50, 250), (50, 30))
+		self.action_manager.add_button("Campaign", (50, 50), (50, 30))
+		self.action_manager.add_button("Chapter Select", (50, 100), (50, 30))
+		self.action_manager.add_button("Arcade", (50, 150), (50, 30))
+		self.action_manager.add_button("Sandbox", (50, 200), (50, 30))
+		self.action_manager.add_button("Achievements", (50, 250), (50, 30))
+		self.action_manager.add_button("Options", (50, 300), (50, 30))
 		self.action_manager.add_button("About", (50, self.fsm.HEIGHT - 100), (50, 30))
 		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 50), (50, 30), ret="Exit", key="escape")
+		
 		
 		self.font = pygame.font.Font(self.fsm.SYSFONT, 24)
 		
@@ -122,7 +121,7 @@ class MainMenuState(BaseState):
 			if action == "Exit":
 				self.fsm.ch_state(ExitState(self.fsm))
 			
-			elif action == "Start":
+			elif action == "Arcade":
 				self.fsm.ch_state(SelectTrackState(self.fsm))
 			
 			elif action == "Options":
@@ -134,11 +133,13 @@ class MainMenuState(BaseState):
 			elif action == "About":
 				self.fsm.ch_state(AboutState(self.fsm))
 			
-			elif action == "Storyline":
+			elif action == "Campaign":
 				from Storyline import StoryState
 				self.fsm.ch_state(StoryState(self.fsm), {"file" : "storyline1.json"})
 			elif action == "Sandbox":
 				self.fsm.ch_state(SandBoxState(self.fsm))
+			elif action == "Chapter Select":
+				pass
 			
 	def draw(self):
 		super().draw()
@@ -358,8 +359,13 @@ class AchievementsState(BaseState):
 
 		for line in self.text_lines:
 			line.draw(self.fsm.screen)
-	
-# SUSTAINS HAVE AREA, SO LENGTH == 3, HEADS ONLY LENGTH == 2
+			
+class ChapterSelectState(BaseState):
+	def __init__(self, fsm):
+		super().__init__(fsm)
+		
+	def draw(self):
+		pass
 
 class Orbs:
 	def __init__(self, x, end_time, start_time, duration, lane, sustained, speed, offset, sustainTrim):
@@ -700,7 +706,7 @@ class GameOverState(BaseState):
 		self.high_scores= get_user_data()["Highscores"]
 		self.score_font = pygame.font.Font(self.fsm.SYSFONT, 24)
 		self.grade_font = pygame.font.Font(self.fsm.SYSFONT, 64)
-		self.high_score_text= TextLine("High Score achieved!", self.score_font, (400, 300)).align_ctr()
+		self.high_score_text= TextLine("High Score achieved!", self.score_font).align_ctr()
 	
 	def enter(self, args):
 		self.args = args
