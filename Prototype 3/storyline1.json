@@ -22,7 +22,6 @@
     },
     {
       "Type" : "Speech",
-      "Speaker" : "Narrator",
       "Text" : "Meet Johann Sebastian Bach."
     },
     {
@@ -176,7 +175,6 @@
   [
     {
       "Type" : "Speech",
-      "Speaker" : "Narrator",
       "Text" : "As he played, he felt a surge of refreshing energy coursing through him, he was composing on the spot!"
     }
   ],
@@ -196,7 +194,6 @@
   [
     {
       "Type" : "Speech",
-      "Speaker" : "Narrator",
       "Text" : "Bach had his eyes closed the whole time, he was too deeply immersed in the sounds he was creating. Never realising that he was tunnelling through a wormhole... He was heading to the FUTURE!"
     },
     {
