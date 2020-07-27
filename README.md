@@ -9,11 +9,15 @@ A music rhythm game for computers!
 1. [Poster](#Poster)
 2. [Motivation](#Motivation)
 3. [Installation](#Installation)
-4. [Full Features](#Full Features)
-5. [pretty_midi switch](#pretty_midi switch)
-6. [Compatibility Issues](#Compatibility Issues)
+4. [Gameplay](#gameplay)
+5. [Full Features](#full-features)
+6. [Game Engine Breakdown](#game-engine-breakdown)
+7. [Compatibility Issues](#Compatibility-Issues)
+8. [Project Log](#project-log)
 
 ## Poster
+
+<img alt="Poster" src="./Milestone 2 poster Last Minute Wonders.png">
 
 #### Proposed Level of Achievement: Apollo 11
 
@@ -27,7 +31,7 @@ Our team has set out to automate this process of beatmap generation using an alg
 
 ### For MacOS
 
-1. Download the release file into your **Downloads** folder and unzip the file.
+1. Download the release file ***BTTF_SourceCode.zip*** into your **Downloads** folder and **unzip** the file.
 
 2. Make sure you have a **modern Python** version installed. As of 27 July 2020, this is [version 3.8.5](https://www.python.org/downloads/mac-osx/). Follow the link to download the required installer and follow through with the installation process with the default settings.
 
@@ -60,13 +64,13 @@ Our team has set out to automate this process of beatmap generation using an alg
       ```
 
    7. ```bash
-      cd ~/Downloads/
+      cd ~/Downloads/BTTF_SourceCode
       ```
       
    8. ```bash
       python3 main.py
       ```
-      
+5. Minimize the **Terminal** window and enjoy the game!
 
 ### For Windows
 
@@ -95,6 +99,12 @@ Our team has set out to automate this process of beatmap generation using an alg
 2. Ensure you have the latest [Microsoft Visual C++ redistributables](https://support.microsoft.com/en-sg/help/2977003/the-latest-supported-visual-c-downloads) installed.
 3. Open the folder in explorer and click on the main.exe file (it helps if you sort by file type to locate it)
 
+## Gameplay
+
+**For a quick taste of the game, go into ARCADE and choose any song. Use the keys `f`, `g`, `h` and `j` for the corresponding lanes.**
+
+[Gameplay Video](https://youtu.be/ERKxTDv0J4M)
+
 ## Full Features
 
 | S/N  | Feature                       | Description                                                  | Achieved |
@@ -113,9 +123,56 @@ Our team has set out to automate this process of beatmap generation using an alg
 | 12   | Options                       | An options menu allowing users to change FPS, toggle fullscreen mode, change default game volume (values above 100 are allowed) and background volume, and even number of lanes. The change applies immediately in the current game session without the need to restart.<br />*Unfortunately, we removed the option to change screen resolution as a design choice* | ✅        |
 | 13   | Key Bindings                  | Any key from a-z for different lanes in the game mode.  Between 1 to 6 lanes are allowed and when fewer than 6 lanes are chosen, only the first few key bindings are active. Binding the same key to multiple lanes is allowed (at your own loss of points when playing). | ✅        |
 
-## pretty_midi switch
+## Game Engine Breakdown
 
+### pretty_midi switch
 
+Before Milestone 3, we had not known about the existence of [pretty_midi](https://craffel.github.io/pretty-midi/). This is a more intuitive library that builds upon [mido](https://mido.readthedocs.io/en/latest/). We can use it to isolate the note events of any instrument to generate the beatmaps we desire, enabling the player the flexiblity to play the same game with the choice of multiple instruments. We can also use it to get information such as *instruments* and *volume changes*.
+
+```python
+from pretty_midi import PrettyMIDI
+mid = PrettyMIDI('Fate Symphony.midi')
+
+for instrument in mid.instruments:
+  print(f"Instrument: {instrument}")
+  volume_changes = [message.value for message in instrument.control_changes if message.number == 7]
+  print(f"Volume changes: {volume_changes}")
+```
+
+outputs:
+
+```python
+Instrument: Instrument(program=73, is_drum=False, name="Flute")
+Volume changes: [127]
+Instrument: Instrument(program=68, is_drum=False, name="Oboe")
+Volume changes: [95]
+Instrument: Instrument(program=71, is_drum=False, name="Bb Clarinet")
+Volume changes: [95]
+Instrument: Instrument(program=70, is_drum=False, name="Bassoon")
+Volume changes: [95]
+Instrument: Instrument(program=60, is_drum=False, name="Horn in Eb")
+Volume changes: [105]
+Instrument: Instrument(program=56, is_drum=False, name="C Trumpet")
+Volume changes: [105]
+Instrument: Instrument(program=47, is_drum=False, name="Timpani")
+Volume changes: [100]
+Instrument: Instrument(program=48, is_drum=False, name="Violin I")
+Volume changes: [100]
+Instrument: Instrument(program=48, is_drum=False, name="Violin II")
+Volume changes: [100]
+Instrument: Instrument(program=48, is_drum=False, name="Violas")
+Volume changes: [104]
+Instrument: Instrument(program=48, is_drum=False, name="Violoncellos")
+Volume changes: [100]
+Instrument: Instrument(program=48, is_drum=False, name="Contrabass")
+Volume changes: [90]
+```
+
+We are also able to manipulate individual note timings, modify volume.
+
+### [midi2audio](https://github.com/bzamecnik/midi2audio) and [Fluidsynth](https://github.com/FluidSynth/fluidsynth)
+
+Further library discoveries were made that allowed for the direct output of audio files directly from python. Previously, all the audio files you heard were manually exported from digital audio workstations. This is the last piece of the puzzle that enabled the **Sandbox Mode**. 
 
 ## Compatibility Issues
 
@@ -129,3 +186,4 @@ For reasons unknown, among songs of longer durations (which would normally imply
 
 On Orbitee Mingyi's computer, there were issues using python-vlc to play .wav and .flac files when an active Pygame window is open. Various attempts were made to fix this directly were unsuccessful we had to sidestep it by loading all available game tracks (the background and campaign audio uses mp3 which did not have this issue) before initialising the display. This worked perfectly (at the cost of unneeded RAM usage by preloading unnecessary audio assets) until the implementation of sandbox mode. Because we allow the user to upload his/her own MIDI file to play with, there is now no possible way to preload all possible tracks beforehand. This was solved by performing a re-initialisation of the game before after processing a MIDI file, similar to how the game automatically updates itself after changing an option. However, the audio error reappears in this case and all song tracks are muted, forcing him to manually close and reopen the game to play the newly generated MIDI file.
 
+## [Project Log](https://docs.google.com/spreadsheets/d/1cvhibKC6C2piTqb6wom9Ge8BIiDPPLDGw0afi3QZ9Ro/edit?usp=sharing)
