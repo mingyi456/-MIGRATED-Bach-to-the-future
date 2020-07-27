@@ -78,7 +78,7 @@ Our team has set out to automate this process of beatmap generation using an alg
 
 1. Download the release (source code) file and unzip the file.
 
-2. Make sure you have a **modern Python** version installed. As of 27 July 2020, this is [version 3.8.5](https://www.python.org/downloads/mac-osx/). Follow the link to download the required installer and follow through with the installation process with the default settings. Ensure python.exe and pip.exe are both added to the system PATH 
+2. Make sure you have a **modern Python** version installed. As of 27 July 2020, this is [version 3.8.5](https://www.python.org/downloads/windows/). Follow the link to download the required installer and follow through with the installation process with the default settings. Ensure python.exe and pip.exe are both added to the system PATH 
 
 3. Make sure you have **[VLC player](https://www.videolan.org/index.html)** on your system.
 
