@@ -3,7 +3,7 @@ environ['PYGAME_HIDE_SUPPORT_PROMPT'] = ''
 import pygame
 import rgb
 from UIManager import TextLine, TextBox, Sprite
-from state_manager import State_Manager, BaseState, ExitState, MainMenuState, PlayGameState
+from main import State_Manager, BaseState, ExitState, MainMenuState, PlayGameState
 import json
 import vlc
 from data_parser import get_config, update_user_data
