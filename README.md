@@ -10,6 +10,8 @@ A music rhythm game for computers!
 2. [Motivation](#Motivation)
 3. [Installation](#Installation)
 4. [Full Features](#Full Features)
+5. [pretty_midi switch](#pretty_midi switch)
+6. [Compatibility Issues](#Compatibility Issues)
 
 ## Poster
 
@@ -58,7 +60,7 @@ Our team has set out to automate this process of beatmap generation using an alg
       ```
 
    7. ```bash
-      cd ~/Downloads/BTTF
+      cd ~/Downloads/
       ```
       
    8. ```bash
@@ -90,22 +92,40 @@ Our team has set out to automate this process of beatmap generation using an alg
 #### Compiled binary distribution
 
 1. Download the release (binary file) and unzip the file.
-2. Ensure you have the latest Microsoft Visual C++ redistributables installed.
+2. Ensure you have the latest [Microsoft Visual C++ redistributables](https://support.microsoft.com/en-sg/help/2977003/the-latest-supported-visual-c-downloads) installed.
 3. Open the folder in explorer and click on the main.exe file (it helps if you sort by file type to locate it)
 
 ## Full Features
 
-- Menu selection for Campaign, Chapter Select, Arcade Mode, Sandbox mode, Achievements, and Options with scrollable and clickable components
-- A basic but functional and programmable VN engine for the campaign mode
-- A campaign mode with scrolling text, fading backgrounds, moving sprites, and an advance feature to fast forward animations
-- A scoring system that records streaks and represents the current score both as a number and as a meter bar
-- A pause system and volume control using the up and down arrow keys during a game
-- A high score and achievements recording system for each user
-- A text input (restricted to lowercase letters, numbers and whitespace) system for new users to key in their name. (The numpad cannot be used to input numbers currently)
-- A Users menu to switch between users
-- A highly customisable sandbox mode for users to upload their own midi files, with a directory explorer implemented natively in Pygame to preserve theming, avoid extra dependencies or even potential clashes between Pygame and GUI frameworks (e.g. on MacOS launching Tkinter's file dialog prompt with an active Pygame window causes a crash)
-- Various options in the sandbox configuration mode for users to select the level of note quantization, volume, tempo, or even instrument tracks using pretty-midi, midi2audio and FluidSynth as a backend
-- A included FluidSynth distribution for Windows users in the source code as it is difficult to install it.
-- A parser in the Arcade Mode that provides song information and current highscore of the user
-- A options menu allowing users to change FPS, toggle fullscreen mode, change default game volume (values above 100 are allowed) and background volume, and even number of lanes and keybindings (any key from a-z) for different lanes in the game mode. The change applies immediately in the current game session without the need to restart. Between 1 to 6 lanes are allowed and when fewer than 6 lanes are chosen, only the first few key bindings are active. Binding the same key to multiple lanes is allowed (at your own loss of points when playing). (Unfortunately, we removed the option to change screen resolution as a design choice)
+| S/N  | Feature                       | Description                                                  | Achieved |
+| ---- | ----------------------------- | ------------------------------------------------------------ | -------- |
+| 1    | Menu Selection                | Selection for Campaign, Chapter Select, Arcade Mode, Sandbox mode, Achievements, and Options with scrollable and clickable components. | ✅        |
+| 2    | **Visual Novel Engine**       | To handle various audiovisual assets; scriptable.            | ✅        |
+| 3    | Campaign Mode                 | Scrolling text, fading backgrounds, moving sprites, and an advance feature to fast forward animations. An immersive experience to guide the player through the history of music and leads them straight into the games. | ✅        |
+| 4    | Pause and volume control      | Using `P` to pause and the `up` and `down` arrow keys during a game. | ✅        |
+| 5    | Highscore and Achievments log | For every unique user.                                       | ✅        |
+| 6    | Text Input                    | For new users to key in their name.<br />(restricted to lowercase letters, numbers and whitespace)<br />(The numpad cannot be used to input numbers currently) | ✅        |
+| 7    | User Profiles                 | Create new user profiles and toggle between them swiftly.    | ✅        |
+| 8    | **Sandbox Mode**              | A highly customisable sandbox mode for users to upload their own midi files, with a directory explorer implemented natively in Pygame to preserve theming, avoid extra dependencies or even potential clashes between Pygame and GUI frameworks (e.g. on MacOS launching Tkinter's file dialog prompt with an active Pygame window causes a crash) | ✅        |
+| 9    | Sandbox Options               | Various options in the sandbox configuration mode for users to select the level of note quantization, volume, tempo, or even instrument tracks using *pretty-midi*, *midi2audio* and *FluidSynth* as a backend | ✅        |
+| 10   | (Windows) Fluidsynth          | A included FluidSynth distribution for Windows users in the source code as it is difficult to install it. | ✅        |
+| 11   | Arcade Mode                   | Robust system that lists all available songs (including sandbox) and provides song information and current highscore of the user. | ✅        |
+| 12   | Options                       | An options menu allowing users to change FPS, toggle fullscreen mode, change default game volume (values above 100 are allowed) and background volume, and even number of lanes. The change applies immediately in the current game session without the need to restart.<br />*Unfortunately, we removed the option to change screen resolution as a design choice* | ✅        |
+| 13   | Key Bindings                  | Any key from a-z for different lanes in the game mode.  Between 1 to 6 lanes are allowed and when fewer than 6 lanes are chosen, only the first few key bindings are active. Binding the same key to multiple lanes is allowed (at your own loss of points when playing). | ✅        |
+
+## pretty_midi switch
+
+
+
+## Compatibility Issues
+
+Due to [pygame](https://www.pygame.org/news) being a less popular open source library than other game engines such as Unity, the library has not been keeping up on time with Python upgrades and OS upgrades over time. The last stable release was on 25 April 2019 and this version has various compability problems that affects our development.
+
+### Phantom Orbs
+
+For reasons unknown, among songs of longer durations (which would normally imply a greater number of orbs), the visuals of the orbs would break down - orbs that aren't meant to appear would appear on top of other orbs. **Fortunately, this does not happen when pygame 2.0.0.dev10 is being used.** **The stable release is essential when one wishes to deploy the scripts as executables for various OSes. The following issues are only pertinent to users who are running the executable version.**
+
+### Audio Issues with certain Windows devices
+
+On orbitee mingyi456's computer,
 
