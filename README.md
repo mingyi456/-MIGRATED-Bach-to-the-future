@@ -176,7 +176,7 @@ Further library discoveries were made that allowed for the direct output of audi
 
 ## Compatibility Issues
 
-Due to [pygame](https://www.pygame.org/news) being a less popular open source library than other game engines such as Unity, the library has not been keeping up on time with Python upgrades and OS upgrades over time. The last stable release was on 25 April 2019 and this version has various compability problems that affects our development.
+Due to [pygame](https://www.pygame.org/news) being a less popular open source library than other game engines such as Unity, the library has not been keeping up with Python upgrades and OS upgrades over time. The last stable release was on 25 April 2019 and this version has various compability problems that affects our development.
 
 ### Phantom Orbs
 
