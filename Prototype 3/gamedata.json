@@ -30,7 +30,7 @@
             ]
         },
         "Background Volume": {
-            "Value": "100",
+            "Value": "60",
             "Choices": [
                 "20",
                 "40",
@@ -306,8 +306,6 @@
                 "Modern Times": false
             },
             "Highscores": {
-                "Queen of The Night": 406,
-                "Prelude No. 7": 2440
             }
         }
     },
@@ -617,23 +615,7 @@
                 "Let Me Spill My Heart!": false,
                 "Modern Times": false
             },
-            "Highscores": {
-                "Sarabande": 0,
-                "Spring, Allegro": 0,
-                "Toccata and Fugue": 0,
-                "Trumpet Concerto, Andante": 0,
-                "Queen of The Night": 0,
-                "Fate Symphony": 0,
-                "The Swan": 0,
-                "Swan Lake": 0,
-                "La Campanella": 0,
-                "Blue Danube Waltz": 0,
-                "Intermezzo": 0,
-                "Pavane": 0,
-                "Rhapsody in Blue": 0,
-                "Piano Concerto, Adagio Sostenuto": 0,
-                "Mary Had A Little Lamb": 0
-            }
+            "Highscores": {}
         }
     },
     "System": {

@@ -16,7 +16,7 @@ while True:
 			pygame.quit()
 			sys.exit()
 		if event.type == KEYDOWN:
-			print(pygame.key.name(event.key))
+			print(format(pygame.key.get_mods(), 'b'))
 
 # =============================================================================
 # 			print(event.scancode, event.key, time, pygame.key.name(event.key))

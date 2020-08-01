@@ -57,8 +57,14 @@ def get_users(data_file= "gamedata.json"):
 
 def new_user(name, data_file= "gamedata.json"):
 	data= load_json()
-	data["Users"][name]= data["Factory Data"]["New User"]
-	save_json(data)
+
+	if name not in get_users():
+		
+		data["Users"][name]= data["Factory Data"]["New User"]
+		save_json(data)
+	
+	else:
+		raise Exception("Name taken")
 
 
 def get_achievements(achievement_file= "achievements.json"):

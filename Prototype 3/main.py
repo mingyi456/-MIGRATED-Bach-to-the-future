@@ -111,10 +111,7 @@ class MainMenuState(BaseState):
 		self.font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 22)
 		self.user_text= TextLine(f"Welcome Back, {self.fsm.USER}!",self.font, (790, 10)).align_top_right()
 		
-		self.action_manager.add_button("Switch User", (670, 35), (20, 15), font= self.font, font_colour= rgb.WHITE)
-		
-		
-		
+		self.action_manager.add_button("Switch User", (670, 35), (20, 15), font= self.font, font_colour= rgb.WHITE)	
 		
 	
 	def enter(self, args):
@@ -164,8 +161,7 @@ class UsersState(BaseState):
 		vert_offset= 0
 		for i, user in enumerate(get_users()):
 			self.action_manager.add_button(user, (325, 50 + i*50), (100, 30), canScroll= True, ret= ("Switch User", user))
-			vert_offset += 50
-			
+			vert_offset += 50		
 		
 		self.action_manager.add_button("New User", (400, 100 + vert_offset), (100, 30), canScroll= True, isCenter= True)
 		
@@ -198,6 +194,7 @@ class NewUserState(BaseState):
 		self.action_manager.add_keystroke("backspace", "backspace")
 		self.action_manager.add_keystroke("space", "space")
 		self.action_manager.add_button("Confirm", (400, 350), (20, 30), key= "return", isCenter= True)
+		self.action_manager.add_keystroke("caps lock", "caps lock")
 		
 		
 		self.valid_chars= ASCII_LOWERCASE + DIGITS
@@ -212,8 +209,14 @@ class NewUserState(BaseState):
 		self.prompts= []
 		self.prompts.append(TextLine("What is your name?", self.font, (400, 100)).align_ctr())
 		
+		self.isCaps= False
+		
 	
 	def update(self, game_time, lag):
+		
+		mod_mask= pygame.key.get_mods()
+		self.isCaps= bool(mod_mask & pygame.KMOD_CAPS) ^ bool(mod_mask & pygame.KMOD_SHIFT)
+		
 		actions= self.action_manager.chk_actions(pygame.event.get())
 		
 		for action in actions:
@@ -231,14 +234,16 @@ class NewUserState(BaseState):
 				self.update_curr_str()
 				
 			elif action == "Confirm":
-				ch_user(self.curr_str)
-				print(self.curr_str)
-				new_user(self.curr_str)
-				self.fsm.USER= self.curr_str
-				self.fsm.ch_state(MainMenuState(self.fsm))
-
+				try:
+					new_user(self.curr_str)
+					ch_user(self.curr_str)
+					self.fsm.USER= self.curr_str
+					self.fsm.ch_state(MainMenuState(self.fsm))
+				except:
+					print("Name already taken!")
+			
 			elif action in self.valid_chars:
-				self.curr_str += action
+				self.curr_str += action.upper() if self.isCaps else action
 				self.update_curr_str()
 				
 
