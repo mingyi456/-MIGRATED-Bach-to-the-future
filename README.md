@@ -72,6 +72,8 @@ Our team has set out to automate this process of beatmap generation using an alg
       ```
 5. Minimize the **Terminal** window and enjoy the game!
 
+[Live installation video](https://youtu.be/Y02bGWqIAW8)
+
 ### For Windows
 
 #### Source code distribution
