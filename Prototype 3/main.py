@@ -840,12 +840,14 @@ class PlayGameState(BaseState):
 	def load_update(self):
 
 		self.curr_prog += 1
+		
+		if self.curr_prog%2 == 0:
 
-		self.fsm.screen.blit(self.background,(0, 0))
-		pygame.draw.rect(self.fsm.screen, rgb.GREEN, (0, 580, round(800*self.curr_prog/self.max_prog), 20), 0)
-		TextLine("Loading" + '.'*((self.curr_prog % 40) // 10), self.load_font, (400, 550), font_colour=rgb.GREEN).align_top_ctr().draw(self.fsm.screen)
-		pygame.event.get()
-		pygame.display.update([(0, 580, 800, 20), (160, 550, 450, 30)])
+			self.fsm.screen.blit(self.background,(0, 0))
+			pygame.draw.rect(self.fsm.screen, rgb.GREEN, (0, 580, round(800*self.curr_prog/self.max_prog), 20), 0)
+			TextLine("Loading" + '.'*((self.curr_prog % 40) // 10), self.load_font, (400, 550), font_colour=rgb.GREEN).align_top_ctr().draw(self.fsm.screen)
+			pygame.event.get()
+			pygame.display.update([(0, 580, 800, 20), (160, 550, 450, 30)])
 	
 	def draw(self):
 		super().draw()
@@ -1054,8 +1056,7 @@ class SandBoxState(BaseState):
 			elif action in self.files:
 				file_path= path.join(self.curr_dir, action)
 				self.fsm.ch_state(SandBoxOptionsState(self.fsm), {"file" : path.normpath(file_path)})
-				self.error_text= TextLine("FluidSynth not working", self.drive_font, (110, 200), font_colour= rgb.RED)
-
+				
 
 	def draw(self):
 		super().draw()
@@ -1074,11 +1075,14 @@ class SandBoxOptionsState(BaseState):
 		self.tempo_val= 1
 		self.simplify_val= False
 		self.inst_val= set()
+		self.instruments= []
+		self.vol_thold= 0
 	
 	def enter(self, args):
 		self.midi_file= args["file"]
 		try:
 			from mapGenerator1 import midiInfo
+			print("midiInfo imported!")
 			self.instruments, self.vol_thold= midiInfo(self.midi_file)
 		
 		except:
@@ -1211,10 +1215,10 @@ class ErrorState(BaseState):
 	
 	def enter(self, args):
 		if "err_msg" in args.keys():
-			self.err_msg= TextLine(args["err_msg"], self.font, (400, 200), font_col= rgb.RED).align_ctr()
+			self.err_msg= TextLine(args["err_msg"], self.font, (400, 200), font_colour= rgb.RED).align_ctr()
 		
 		else:
-			self.err_msg= TextLine("An unexpected error occured.", self.font, (400, 200), font_col= rgb.RED).align_ctr()
+			self.err_msg= TextLine("An unexpected error occured.", self.font, (400, 200), font_colour= rgb.RED).align_ctr()
 	
 	def update(self, game_time, lag):
 		actions= self.action_manager.chk_actions(pygame.event.get())
