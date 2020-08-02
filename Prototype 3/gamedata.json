@@ -30,7 +30,7 @@
             ]
         },
         "Background Volume": {
-            "Value": "60",
+            "Value": "40",
             "Choices": [
                 "20",
                 "40",
@@ -305,8 +305,7 @@
                 "Let Me Spill My Heart!": false,
                 "Modern Times": false
             },
-            "Highscores": {
-            }
+            "Highscores": {}
         }
     },
     "Factory Data": {

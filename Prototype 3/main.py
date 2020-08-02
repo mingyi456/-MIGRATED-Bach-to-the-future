@@ -211,6 +211,8 @@ class NewUserState(BaseState):
 		
 		self.isCaps= False
 		
+		self.error_text= None
+		
 	
 	def update(self, game_time, lag):
 		
@@ -226,10 +228,12 @@ class NewUserState(BaseState):
 				self.fsm.ch_state(MainMenuState(self.fsm))
 
 			elif action == "backspace":
+				self.error_text= None
 				self.curr_str= self.curr_str[:-1]
 				self.update_curr_str()
 			
 			elif action == "space":
+				self.error_text= None
 				self.curr_str += ' '
 				self.update_curr_str()
 				
@@ -240,9 +244,10 @@ class NewUserState(BaseState):
 					self.fsm.USER= self.curr_str
 					self.fsm.ch_state(MainMenuState(self.fsm))
 				except:
-					print("Name already taken!")
+					self.error_text= TextLine("Name already taken!", self.font, (400, 250), font_colour= rgb.RED).align_ctr()
 			
 			elif action in self.valid_chars:
+				self.error_text= None
 				self.curr_str += action.upper() if self.isCaps else action
 				self.update_curr_str()
 				
@@ -257,6 +262,9 @@ class NewUserState(BaseState):
 		self.curr_input.draw(self.fsm.screen)
 		for i in self.prompts:
 			i.draw(self.fsm.screen)
+		
+		if self.error_text is not None:
+			self.error_text.draw(self.fsm.screen)
 	
 
 class AboutState(BaseState):
@@ -944,6 +952,7 @@ class SandBoxState(BaseState):
 		self.file_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 14)
 		
 		self.sprites=[]
+		self.error_text= None
 		
 		self.drive_font = pygame.font.Font(f"{self.fsm.ASSETS_DIR}Vera.ttf", 30)
 		self.action_manager.add_button("Original Songs", (50, 100), (50, 30), font=self.drive_font)
@@ -1009,7 +1018,8 @@ class SandBoxState(BaseState):
 				self.fsm.ch_state(MainMenuState(self.fsm))			
 			
 			elif action == "..":
-				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : path.join(self.curr_dir, action)})
+				file_path= path.join(self.curr_dir, action)
+				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : path.normpath(file_path)})
 				
 			elif action == "Original Songs":
 				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir": path.join('.', 'master tracks')})
@@ -1023,34 +1033,36 @@ class SandBoxState(BaseState):
 						scandir(action)
 						self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : action})
 					except:
-						print("Access denied!")
+						self.error_text= TextLine("Access denied", self.drive_font, (110, 200), font_colour= rgb.RED)
 				else:
 					mac_action = path.join('/Volumes', action)
 					try:
 						scandir(mac_action)
 						self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : mac_action})
 					except:
-						print("Access denied!")
+						self.error_text= TextLine("Access denied", self.drive_font, (110, 200), font_colour= rgb.RED)
 			
 			elif action in self.folders:
 
 				file_path= path.join(self.curr_dir, action)
 				try:
 					scandir(file_path)
-					self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : file_path})
+					self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir" : path.normpath(file_path)})
 				except:
-					print("Access denied!")
+					self.error_text= TextLine("Access denied", self.drive_font, (110, 200), font_colour= rgb.RED)
 			
 			elif action in self.files:
 				file_path= path.join(self.curr_dir, action)
-				print(file_path)
-				self.fsm.ch_state(SandBoxOptionsState(self.fsm), {"file" : file_path})
+				self.fsm.ch_state(SandBoxOptionsState(self.fsm), {"file" : path.normpath(file_path)})
+				self.error_text= TextLine("FluidSynth not working", self.drive_font, (110, 200), font_colour= rgb.RED)
 
 
 	def draw(self):
 		super().draw()
 		for sprite in self.sprites:
 			sprite.draw_raw(self.fsm.screen)
+		if self.error_text is not None:
+			self.error_text.draw(self.fsm.screen)
 
 class SandBoxOptionsState(BaseState):
 	def __init__(self, fsm):
@@ -1065,9 +1077,14 @@ class SandBoxOptionsState(BaseState):
 	
 	def enter(self, args):
 		self.midi_file= args["file"]
-		from mapGenerator1 import midiInfo
-		self.instruments, self.vol_thold= midiInfo(self.midi_file)
-	
+		try:
+			from mapGenerator1 import midiInfo
+			self.instruments, self.vol_thold= midiInfo(self.midi_file)
+		
+		except:
+			print("FluidSynth not working!")
+			self.fsm.ch_state(ErrorState(self.fsm), {"err_msg" : "FluidSynth not working"})
+		
 		self.txt_lines= []	
 		self.txt_lines.append(TextLine("Quantize", self.font, (50, 100)))
 		self.txt_lines.append(TextLine("Tempo", self.font, (50, 200)))	
@@ -1185,15 +1202,40 @@ class ExitState(BaseState):
 		pygame.quit()
 		exit()
 
+class ErrorState(BaseState):
+	def __init__(self, fsm):
+		super().__init__(fsm)
+		self.font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 48)
+		
+		self.action_manager.add_button("Back to Main Menu", (400, 400), (20, 30), isCenter= True)
+	
+	def enter(self, args):
+		if "err_msg" in args.keys():
+			self.err_msg= TextLine(args["err_msg"], self.font, (400, 200), font_col= rgb.RED).align_ctr()
+		
+		else:
+			self.err_msg= TextLine("An unexpected error occured.", self.font, (400, 200), font_col= rgb.RED).align_ctr()
+	
+	def update(self, game_time, lag):
+		actions= self.action_manager.chk_actions(pygame.event.get())
+	
+		for action in actions:
+			if action == "Exit":
+				self.fsm.ch_state(ExitState(self.fsm))
+			elif action == "Back to Main Menu":
+				self.fsm.ch_state(MainMenuState(self.fsm))
+	
+	def draw(self):
+		super().draw()
+		self.err_msg.draw(self.fsm.screen)
+		
+	
 def get_rand_msg(msg_file= "rand_msgs.txt"):
 	with open(msg_file, 'r') as file:
 		lines= file.read().splitlines()
 		
 	max_line= len(lines) - 1
 	return lines[randint(0, max_line)]
-	
-	
-	
 	
 
 
