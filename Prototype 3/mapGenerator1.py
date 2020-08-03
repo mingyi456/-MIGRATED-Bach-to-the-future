@@ -2,15 +2,30 @@ from pretty_midi import PrettyMIDI
 import pretty_midi, csv, itertools, time, os
 from sys import platform as SYS_PLATFORM
 
-if SYS_PLATFORM == "win32":
-	from os import environ
-	environ["PATH"] += ".\\FluidSynth_Windows"
+import sys, subprocess
 
-from midi2audio import FluidSynth
+sys.path.append(".\\FluidSynth_Windows")
+
 from os import path
-fs = FluidSynth('soundfont.sf3')
 
-midi_path = '/Users/chence08/Downloads/Intermezzo.midi'
+DEFAULT_SOUND_FONT = 'soundfont.sf3'
+DEFAULT_SAMPLE_RATE = 44100
+
+class FluidSynth():
+	def __init__(self, sound_font=DEFAULT_SOUND_FONT, sample_rate=DEFAULT_SAMPLE_RATE):
+		self.sample_rate = sample_rate
+		self.sound_font = os.path.expanduser(sound_font)
+
+	def midi_to_audio(self, midi_file, audio_file):
+		if SYS_PLATFORM == "win32":
+			subprocess.call(['FluidSynth_Windows\\fluidsynth.exe', '-ni', self.sound_font, midi_file, '-F', audio_file, '-r', str(self.sample_rate)])
+		else:
+			subprocess.call(['fluidsynth', '-ni', self.sound_font, midi_file, '-F', audio_file, '-r', str(self.sample_rate)])
+
+	def play_midi(self, midi_file):
+		subprocess.call(['fluidsynth', '-i', self.sound_font, midi_file, '-r', str(self.sample_rate)])
+
+fs = FluidSynth('soundfont.sf3')
 
 def midiInfo(midi_path):
 	mid = PrettyMIDI(midi_path)
@@ -134,6 +149,9 @@ def midiFunnel(midi_path, quantize, onekey, changeTempo, changeVolume, chosen_in
 
 	audio_path = path.join('wav_files', name + '.flac')
 	print('STARTING FLAC GENERATION, PLEASE WAIT...')
+	if SYS_PLATFORM == "win32":
+		from os import environ
+		environ["PATH"] += ".\\FluidSynth_Windows"
 	fs.midi_to_audio(new_midi_path, audio_path)
 	print('FINISHED FLAC GENERATION!')
 	

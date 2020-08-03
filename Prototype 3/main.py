@@ -1080,14 +1080,20 @@ class SandBoxOptionsState(BaseState):
 	
 	def enter(self, args):
 		self.midi_file= args["file"]
-		try:
-			from mapGenerator1 import midiInfo
-			print("midiInfo imported!")
-			self.instruments, self.vol_thold= midiInfo(self.midi_file)
 		
-		except:
-			print("FluidSynth not working!")
-			self.fsm.ch_state(ErrorState(self.fsm), {"err_msg" : "FluidSynth not working"})
+		
+		from mapGenerator1 import midiInfo
+		self.instruments, self.vol_thold= midiInfo(self.midi_file)
+# =============================================================================
+# 		try:
+# 			from mapGenerator1 import midiInfo
+# 			print("midiInfo imported!")
+# 			self.instruments, self.vol_thold= midiInfo(self.midi_file)
+# 		
+# 		except:
+# 			print("FluidSynth not working!")
+# 			self.fsm.ch_state(ErrorState(self.fsm), {"err_msg" : "FluidSynth not working"})
+# =============================================================================
 		
 		self.txt_lines= []	
 		self.txt_lines.append(TextLine("Quantize", self.font, (50, 100)))
@@ -1180,6 +1186,7 @@ class SandBoxOptionsState(BaseState):
 				self.fsm.screen.blit(self.background, (0, 0))
 				TextLine("WORKING MAGIC FOR YOU, PLEASE WAIT!", self.font, (50, 250)).draw(self.fsm.screen)
 				pygame.display.update()
+				
 				from mapGenerator1 import midiFunnel
 				self.inst_val = [x-1 for x in self.inst_val]
 				midiFunnel(self.midi_file, self.quantize_val, self.simplify_val, self.tempo_val, self.vol_offset, self.inst_val)

@@ -30,7 +30,7 @@
             ]
         },
         "Background Volume": {
-            "Value": "40",
+            "Value": "60",
             "Choices": [
                 "20",
                 "40",
