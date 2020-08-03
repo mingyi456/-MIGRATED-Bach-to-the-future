@@ -68,7 +68,7 @@ Our team has set out to automate this process of beatmap generation using an alg
       ```
       
    8. ```bash
-      python3 main.py
+      nohup python3 main.py>/dev/null &
       ```
 5. Minimize the **Terminal** window and enjoy the game!
 
