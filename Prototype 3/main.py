@@ -14,6 +14,7 @@ class State_Manager:
 	def __init__(self, config= get_config()):
 		
 		self.USER= get_curr_user()
+		self.showHelp= False
 		
 		raw_paths= get_sys_config()
 		self.ASSETS_DIR= path.join(*raw_paths["Assets"])
@@ -79,21 +80,17 @@ class BaseState:
 		self.fsm = fsm
 		self.action_manager = ActionManager()
 		self.background = pygame.image.load(f"{self.fsm.ASSETS_DIR}background.png").convert()
-	
+
 	def enter(self, args):
 		pass
-	
 	def exit(self):
 		self.fsm.screen.blit(self.background, (0,0))
-	
 	def update(self, game_time, lag):
 		print("Updating base state")
-	
 	def draw(self):
 		self.fsm.screen.fill(rgb.BLACK)
 		self.fsm.screen.blit(self.background, (0,0))
 		self.action_manager.draw_buttons(self.fsm.screen)
-
 
 class MainMenuState(BaseState):
 	def __init__(self, fsm):
@@ -110,8 +107,21 @@ class MainMenuState(BaseState):
 		
 		self.font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 22)
 		self.user_text= TextLine(f"Welcome Back, {self.fsm.USER}!",self.font, (790, 10)).align_top_right()
-		
 		self.action_manager.add_button("Switch User", (670, 35), (20, 15), font= self.font, font_colour= rgb.WHITE)	
+		
+		self.action_manager.add_keystroke('info', 'i')
+		help_font= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 16)
+		self.help_text= []
+		self.help_text.append(TextLine("Press the 'I' key to toggle help messages!", help_font, (400, 10)).align_top_ctr())
+		self.help_text.append(TextLine("Click on any button to navigate through the game!", help_font, (400, 30)).align_top_ctr())
+		self.help_text.append(TextLine("Experience an exciting storyline!", help_font, (160, 83)).align_mid_left())
+		self.help_text.append(TextLine("Quickly navigate between story chapters!", help_font, (235, 133)).align_mid_left())
+		self.help_text.append(TextLine("Just play any song track!", help_font, (140, 183)).align_mid_left())
+		self.help_text.append(TextLine("Modify any track to your liking!", help_font, (155, 233)).align_mid_left())
+		self.help_text.append(TextLine("Check your achievements!", help_font, (215, 283)).align_mid_left())
+		self.help_text.append(TextLine("Change default volume and keybindings, etc.", help_font, (145, 333)).align_mid_left())
+		self.help_text.append(TextLine("View information about this game!", help_font, (125, 533)).align_mid_left())
+		self.help_text.append(TextLine("Quit this game... Why would you want to?", help_font, (165, 583)).align_mid_left())
 		
 	
 	def enter(self, args):
@@ -149,10 +159,17 @@ class MainMenuState(BaseState):
 			elif action == "Switch User":
 				self.fsm.ch_state(UsersState(self.fsm))
 			
+			elif action == 'info':
+				self.fsm.showHelp= not self.fsm.showHelp
+			
 	def draw(self):
 		super().draw()
 		self.user_text.draw(self.fsm.screen)
-
+		if self.fsm.showHelp:
+			for i in self.help_text:
+				i.draw(self.fsm.screen)
+				
+				
 class UsersState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
@@ -185,6 +202,7 @@ class UsersState(BaseState):
 				self.fsm.ch_state(MainMenuState(self.fsm))
 	def draw(self):
 		super().draw()
+
 
 class NewUserState(BaseState):
 	def __init__(self, fsm):

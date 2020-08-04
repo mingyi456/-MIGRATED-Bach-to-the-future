@@ -225,6 +225,13 @@ class TextLine:
 		
 		return self
 	
+	def align_mid_left(self, pos= None):
+		if pos is None:
+			self.rect.midleft= self.rect.topleft
+		else:
+			self.rect.midleft= pos
+		return self
+	
 	def draw(self, screen):
 		screen.blit(self.content, self.rect)
 
