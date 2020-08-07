@@ -15,12 +15,13 @@ class StoryState(BaseState):
 		self.action_manager.add_keystroke("escape", "escape", ret= "Back")
 		self.action_manager.add_keystroke("Vol+", "up")
 		self.action_manager.add_keystroke("Vol-", "down")
+		self.action_manager.add_keystroke('info', 'i')
 		self.font1= pygame.font.Font(path.join('.', "assets", "VisiaPro-Bold.otf"), 48)
 		self.font1_2= pygame.font.Font(path.join('.', "assets", "VisiaPro-BoldOutline.otf"), 48)
 		self.font2= pygame.font.Font(path.join('.', "assets", "Helvetica.ttf"), 22)
 		self.font3= pygame.font.Font(path.join('.', "assets", "Helvetica-Bold.ttf"), 28)
-		self.title= TextLine("StoryState", self.font1, (400, 50)).align_ctr()
-		self.title2= TextLine("StoryState", self.font1_2, (400, 50)).align_ctr()
+		self.title= TextLine("StoryState", self.font1, (400, 50), font_colour= rgb.WHITE).align_ctr()
+		self.title2= TextLine("StoryState", self.font1_2, (400, 50), font_colour= rgb.BLACK).align_ctr()
 		self.curr_text= ""
 		self.text_len= 0
 		self.curr_text_box= TextBox(self.curr_text, self.font2, (55, 495), (620, 245), font_colour= rgb.BLACK)
@@ -31,6 +32,11 @@ class StoryState(BaseState):
 		self.scripts= []
 		self.isDone= True
 		self.forceDone= False
+
+		help_font1= pygame.font.Font(path.join('.', "assets", "VisiaPro-Bold.otf"), 24)
+		help_font2= pygame.font.Font(path.join('.', "assets", "VisiaPro-BoldOutline.otf"), 24)
+		self.help_text1= TextLine("Press SPACE or ENTER to advance", help_font1, (400, 455), font_colour= rgb.WHITE).align_top_ctr()
+		self.help_text2= TextLine("Press SPACE or ENTER to advance", help_font2, (400, 455), font_colour= rgb.BLACK).align_top_ctr()
 	
 	def enter(self, args):
 		self.fsm.bg_music.stop()
@@ -68,6 +74,9 @@ class StoryState(BaseState):
 				print(f"Volume : {self.volume}")
 				for player in self.players.values():
 					player.audio_set_volume(self.volume)
+			
+			elif action == "info":
+				self.fsm.showHelp= not self.fsm.showHelp
 
 			elif action == "Advance":
 				if self.isDone:
@@ -195,6 +204,10 @@ class StoryState(BaseState):
 		if self.text_frame is not None:
 			self.text_frame.draw_raw(self.fsm.screen)
 		self.curr_text_box.draw(self.fsm.screen)
+		
+		if self.fsm.showHelp:
+			self.help_text1.draw(self.fsm.screen)
+			self.help_text2.draw(self.fsm.screen)
 	
 	def exit(self):
 		for player in self.players.values():
