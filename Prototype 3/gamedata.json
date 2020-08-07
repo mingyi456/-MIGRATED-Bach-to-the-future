@@ -30,7 +30,7 @@
             ]
         },
         "Background Volume": {
-            "Value": "60",
+            "Value": "20",
             "Choices": [
                 "20",
                 "40",
@@ -366,7 +366,7 @@
                 ]
             },
             "Lane 1 key": {
-                "Value": "f",
+                "Value": "a",
                 "Choices": [
                     "a",
                     "b",
@@ -406,7 +406,7 @@
                 ]
             },
             "Lane 2 key": {
-                "Value": "g",
+                "Value": "s",
                 "Choices": [
                     "a",
                     "b",
@@ -446,7 +446,7 @@
                 ]
             },
             "Lane 3 key": {
-                "Value": "h",
+                "Value": "d",
                 "Choices": [
                     "a",
                     "b",
