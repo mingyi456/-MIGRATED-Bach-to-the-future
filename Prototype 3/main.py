@@ -608,11 +608,16 @@ class Orbs:
 class PlayGameState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.background = pygame.image.load(f"{self.fsm.ASSETS_DIR}play_background.png").convert()
+		self.backgrounds = (pygame.image.load(f"{self.fsm.ASSETS_DIR}play_background.png").convert(), \
+		                    pygame.image.load(f"{self.fsm.ASSETS_DIR}play_background1.png").convert(), \
+		                    pygame.image.load(f"{self.fsm.ASSETS_DIR}play_background2.png").convert(), \
+		                    pygame.image.load(f"{self.fsm.ASSETS_DIR}play_background3.png").convert())
+		self.background = self.backgrounds[0]
 		self.curr_prog = 0
 		self.fsm.screen.blit(self.background, (0, 0))
 		self.load_font = pygame.font.Font(self.fsm.SYSFONT, 24)
 		rand_msg_font = pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 18)
+		congrats_font = pygame.font.Font(f"{self.fsm.ASSETS_DIR}terrific.otf", 42)
 		TextBox(get_rand_msg(), rand_msg_font, (100, 230), (300, 10), rgb.BLACK).draw(self.fsm.screen)
 		pygame.display.update()
 		
@@ -665,6 +670,13 @@ class PlayGameState(BaseState):
 		self.maxStreak = 0
 		self.score_line = TextLine(str(int(self.score)), self.load_font, (680, 110)).align_ctr()
 		self.streak_line = TextLine(str(self.streak), self.load_font, (680, 190)).align_ctr()
+		self.congrats_msgs = (TextLine('Contrapuntal!', congrats_font, (320, 110), font_colour=rgb.YELLOW).align_ctr(), \
+		                      TextLine('Polyphonic!', congrats_font, (320, 110), font_colour=rgb.YELLOW).align_ctr(), \
+		                      TextLine('Fugue-tastic!', congrats_font, (320, 110), font_colour=rgb.YELLOW).align_ctr())
+		self.congrats_sound = (vlc.MediaPlayer(f"{self.fsm.ASSETS_DIR}streak1.mp3"), \
+		                       vlc.MediaPlayer(f"{self.fsm.ASSETS_DIR}streak2.mp3"), \
+		                       vlc.MediaPlayer(f"{self.fsm.ASSETS_DIR}streak3.mp3"))
+		self.congrats_timer = -1
 		
 		self.isPlaying = True
 		self.countdown = self.fsm.FPS * 5
@@ -760,15 +772,17 @@ class PlayGameState(BaseState):
 	def update(self, game_time, lag):
 		deltaTime = self.fsm.fps_clock.get_time() / 1000
 		
-		# COUNTDOWN CLOCK
+		# TIMER EVENTS
 		if self.start_timer < 0 and not self.hasStarted:
 			self.player.play()
 			self.hasStarted = True
 			self.isPlaying = True
-		else:
+		elif self.start_timer >= 0:
 			self.start_timer_text = TextLine(str(self.start_timer // self.fsm.FPS + 1),
 			                                 pygame.font.Font(self.fsm.SYSFONT, 48), (400, 300)).align_ctr()
 			self.start_timer -= 1
+		if self.congrats_timer >= 0:
+			self.congrats_timer -= 1
 		
 		# GAME BEGINS WHEN AUDIO BEGINS
 		tapSnapshot = [False for _ in range(self.laneNo)]
@@ -813,12 +827,32 @@ class PlayGameState(BaseState):
 				self.lane_input[i] = False  # invalidate input immediately
 				if self.lane_responses[i][1][0]:
 					# if there is a fire animation:
-					self.lane_responses[i][1][0] = tapSnapshot[i] or self.sustainSnapshot[
-						i]  # remove fire art once note has passed.
+					self.lane_responses[i][1][0] = tapSnapshot[i] or self.sustainSnapshot[i]  # remove fire art once note has passed.
 				if self.sustainSnapshot[i] and self.sustainValid[i] and self.lane_responses[i][0][0]:
-					# if there is A SUSTAINED ORB AT THE GOAL LINE and a VALID INPUT and the fire animation
+					# if there is A SUSTAINED ORB AT THE GOAL LINE and a VALID INPUT and INPUT AT THAT LANE
 					self.score += deltaTime * self.baseScore / 2
 					self.lane_responses[i][1][0] = True  # fire animation
+			
+			# STREAK EFFECTS
+			if self.streak == 30:
+				self.congrats_sound[2].play()
+				self.congrats_timer = self.fsm.FPS * 2
+				self.background = self.backgrounds[3]
+				self.congrats = self.congrats_msgs[2]
+			elif self.streak == 20:
+				self.congrats_sound[1].play()
+				self.congrats_timer = self.fsm.FPS * 2
+				self.background = self.backgrounds[2]
+				self.congrats = self.congrats_msgs[1]
+			elif self.streak == 10:
+				self.congrats_sound[0].play()
+				self.congrats_timer = self.fsm.FPS * 2
+				self.background = self.backgrounds[1]
+				self.congrats = self.congrats_msgs[0]
+			elif self.streak == 0:
+				self.background = self.backgrounds[0]
+				for sound in self.congrats_sound:
+					sound.stop()
 		
 		# INPUT CHECK
 		actions = self.action_manager.chk_actions(pygame.event.get())
@@ -855,22 +889,24 @@ class PlayGameState(BaseState):
 		self.scorePercentage = self.score / self.fullScore
 		
 		# SCORE REVIEW IN GAME OVER STATE
-		if not self.player.is_playing() and not self.orbs:
+		if not self.orbs:
 			self.countdown -= 1
 			if self.countdown < 0:
 				gradebook = {0: 'FAIL', 0.125: 'C', 0.375: 'B', 0.625: 'A', 0.875: 'S', 1: 'PERFECT'}
 				percentages = list(gradebook.keys())
 				for i in range(len(percentages) - 1):
-					if self.scorePercentage >= percentages[i] and self.scorePercentage < percentages[i + 1]:
+					if percentages[i] <= self.scorePercentage < percentages[i+1]:
 						grade = gradebook[percentages[i]]
 						break
 				if self.story:
 					self.fsm.ch_state(GameOverState(self.fsm),
-					                  {"file_name": self.file, "score": int(self.score), "Story": self.story_line,
+					                  {"file_name": self.file, \
+					                   "score": int(self.score)*self.maxStreak, \
+					                   "Story": self.story_line, \
 					                   "Grade": grade})
 				else:
 					self.fsm.ch_state(GameOverState(self.fsm),
-					                  {"file_name": self.file, "score": int(self.score), "Grade": grade})
+					                  {"file_name": self.file, "score": int(self.score)*self.maxStreak, "Grade": grade})
 	
 	def exit(self):
 		self.player.stop()
@@ -902,6 +938,10 @@ class PlayGameState(BaseState):
 				self.fsm.screen.blit(correct[1], position)
 		self.fsm.screen.blit(self.meter_bar, (11, 499 - self.scorePercentage * 398),
 		                     (0, 0, 28, self.scorePercentage * 398))
+		pygame.draw.rect(self.fsm.screen, (248,146,17), (0, 590, round(800 * self.player.get_position()), 10), 0)
+		
+		if self.congrats_timer > 0:
+			self.congrats.draw(self.fsm.screen)
 		
 		if not self.hasStarted:
 			self.start_timer_text.draw(self.fsm.screen)
