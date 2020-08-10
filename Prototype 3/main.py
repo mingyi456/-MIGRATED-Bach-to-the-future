@@ -617,7 +617,7 @@ class PlayGameState(BaseState):
 		self.fsm.screen.blit(self.background, (0, 0))
 		self.load_font = pygame.font.Font(self.fsm.SYSFONT, 24)
 		rand_msg_font = pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 18)
-		congrats_font = pygame.font.Font(f"{self.fsm.ASSETS_DIR}terrific.otf", 42)
+		congrats_font = pygame.font.Font(f"{self.fsm.ASSETS_DIR}nighttraveler.otf", 42)
 		TextBox(get_rand_msg(), rand_msg_font, (100, 230), (300, 10), rgb.BLACK).draw(self.fsm.screen)
 		pygame.display.update()
 		
