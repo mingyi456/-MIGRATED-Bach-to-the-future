@@ -901,12 +901,15 @@ class PlayGameState(BaseState):
 				if self.story:
 					self.fsm.ch_state(GameOverState(self.fsm),
 					                  {"file_name": self.file, \
-					                   "score": int(self.score)*self.maxStreak, \
+					                   "score": int(self.score), \
+									   "final_score": int(self.score)*self.maxStreak, \
 					                   "Story": self.story_line, \
-					                   "Grade": grade})
+					                   "Grade": grade, \
+									   "max_streak": self.maxStreak})
 				else:
 					self.fsm.ch_state(GameOverState(self.fsm),
-					                  {"file_name": self.file, "score": int(self.score)*self.maxStreak, "Grade": grade})
+					                  {"file_name": self.file, "score": int(self.score), \
+						"final_score": int(self.score)*self.maxStreak, "Grade": grade, "max_streak": self.maxStreak})
 	
 	def exit(self):
 		self.player.stop()
@@ -950,8 +953,9 @@ class PlayGameState(BaseState):
 class GameOverState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.action_manager.add_button("Retry", (200, 400), (50, 30), isCenter=True)
 		
+		self.timer= 0
+		self.action_manager.add_button("Retry", (200, 400), (50, 30), isCenter=True)
 		self.action_manager.add_keystroke("Exit", "escape")
 		self.high_scores = get_user_data(self.fsm.USER)["Highscores"]
 		self.score_font = pygame.font.Font(self.fsm.SYSFONT, 24)
@@ -962,9 +966,12 @@ class GameOverState(BaseState):
 		self.args = args
 		
 		self.score = args["score"]
+		self.init_score= self.score
+		self.final_score= args["final_score"]
+		self.max_streak= args["max_streak"]
 		self.track = args["file_name"].rsplit('.', 1)[0]
 		self.grade = args["Grade"]
-		self.grade_text = TextLine(self.grade, self.grade_font, (400, 350)).align_ctr()
+		self.grade_text = TextLine(self.grade, self.grade_font, (600, 175)).align_ctr()
 		
 		if "Story" in args.keys():
 			self.story = True
@@ -975,11 +982,13 @@ class GameOverState(BaseState):
 			self.action_manager.add_button("Back to Main Menu", (575, 400), (50, 30), ret="Main Menu", isCenter=True)
 			self.action_manager.add_button("Back to Start", (350, 400), (50, 30), ret="Start", isCenter=True)
 		
-		ctr = self.fsm.WIDTH // 2
 		
-		self.score_line = TextLine(f"Score : {self.score}", self.score_font, (ctr, 150)).align_ctr()
 		
-		self.track_line = TextLine(self.track, self.score_font, (ctr, 50)).align_ctr()
+		self.score_line = TextLine(f" Score : {self.score}", self.score_font, (25, 150))
+		
+		self.streak_line= TextLine(f"Streak : {self.max_streak}", self.score_font, (25, 200))
+		
+		self.track_line = TextLine(self.track, self.score_font, (400, 50)).align_ctr()
 		
 		if self.track in self.high_scores.keys():
 			
@@ -999,6 +1008,10 @@ class GameOverState(BaseState):
 		events = pygame.event.get()
 		
 		actions = self.action_manager.chk_actions(events)
+		
+		if self.score < self.final_score:
+			self.score += round((self.final_score - self.init_score)/ (self.fsm.FPS*5))
+			self.score_line = TextLine(f" Score : {self.score}", self.score_font, (25, 150))
 		
 		for action in actions:
 			if action == "Retry":
@@ -1020,6 +1033,7 @@ class GameOverState(BaseState):
 	def draw(self):
 		super().draw()
 		self.score_line.draw(self.fsm.screen)
+		self.streak_line.draw(self.fsm.screen)
 		self.track_line.draw(self.fsm.screen)
 		self.grade_text.draw(self.fsm.screen)
 		if self.isHighScore:
