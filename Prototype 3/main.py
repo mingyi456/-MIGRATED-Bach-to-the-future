@@ -110,7 +110,7 @@ class MainMenuState(BaseState):
 		self.action_manager.add_button("Achievements", (50, 250), (50, 30))
 		self.action_manager.add_button("Options", (50, 300), (50, 30))
 		self.action_manager.add_button("About", (50, self.fsm.HEIGHT - 100), (50, 30))
-		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 50), (50, 30), ret="Exit", key="escape")
+		self.action_manager.add_button("Exit", (50, self.fsm.HEIGHT - 50), (50, 30), ret="Exit", key="escape")
 		
 		self.font = pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 22)
 		self.user_text = TextLine(f"Welcome Back, {self.fsm.USER}!", self.font, (790, 10)).align_top_right()
@@ -133,7 +133,7 @@ class MainMenuState(BaseState):
 			TextLine("Change default volume and keybindings, etc.", help_font, (145, 333)).align_mid_left())
 		self.help_text.append(TextLine("View information about this game!", help_font, (125, 533)).align_mid_left())
 		self.help_text.append(
-			TextLine("Quit this game... Why would you want to?", help_font, (165, 583)).align_mid_left())
+			TextLine("(ESC) Quit this game... Why would you want to?", help_font, (165, 583)).align_mid_left())
 	
 	def enter(self, args):
 		if not self.fsm.bg_music.is_playing():
@@ -1244,6 +1244,7 @@ class SandBoxOptionsState(BaseState):
 				self.fsm.ch_state(ExitState(self.fsm))
 			elif action == "Back":
 				self.fsm.ch_state(SandBoxState(self.fsm), {"curr_dir": path.split(self.midi_file)[0]})
+				
 			
 			elif action.rsplit(' ', 1)[0] == "Vol +":
 				self.vol_offset += int(action.rsplit(' ', 1)[1])
@@ -1266,7 +1267,8 @@ class SandBoxOptionsState(BaseState):
 					self.quantize_val = int(action.rsplit(' ', 1)[1])
 			
 			elif action.rsplit(' ', 1)[0] == "Tempo":
-				self.tempo_val = float(action.rsplit(' ', 1)[1])
+				tempo_map= {0.5: 2, 0.75: 1.5, 1: 1, 1.5: 0.75, 2: 0.5}
+				self.tempo_val = tempo_map[float(action.rsplit(' ', 1)[1])]
 			
 			elif action.rsplit(' ', 1)[0] == "Simplify":
 				self.simplify_val = True if action.rsplit(' ', 1)[1] == "ON" else False
