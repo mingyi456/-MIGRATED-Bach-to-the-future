@@ -353,15 +353,15 @@ class SelectTrackState(BaseState):
 			self.action_manager.add_button(file.rsplit('.', 1)[0], (325, i * 100 + 50), (50, 30), canScroll=True,
 			                               ret=file)
 			num_notes, song_dur, insts = self.songInfo(file.rsplit('.', 1)[0])
-			self.des_lines.append(TextLine(f"Notes: {num_notes}, Duration: {song_dur}", des_font, (325, i * 100 + 82)))
-			self.des_lines.append(TextLine(insts, des_font, (325, i * 100 + 97)))
+			self.des_lines.append(TextLine(f"Notes: {num_notes}, Duration: {song_dur}", des_font, (325, i * 100 + 83)))
+			self.des_lines.append(TextLine(insts, des_font, (325, i * 100 + 98)))
 			
 			if file.rsplit('.', 1)[0] in self.highscores.keys():
 				self.des_lines.append(
-					TextLine(f"Highscore: {self.highscores[file.rsplit('.', 1)[0]]}", des_font, (325, i * 100 + 112)))
+					TextLine(f"Highscore: {self.highscores[file.rsplit('.', 1)[0]]}", des_font, (325, i * 100 + 114)))
 			if file.rsplit('.', 1)[0] in self.best_grades.keys():
 				self.des_lines.append(
-					TextLine(f"Best Grade: {self.best_grades[file.rsplit('.', 1)[0]]}", des_font, (325, i * 100 + 127)))
+					TextLine(f"Best Grade: {self.best_grades[file.rsplit('.', 1)[0]]}", des_font, (325, i * 100 + 129)))
 		
 		for i in self.des_lines:
 			self.action_manager.scroll_items.add(i)
