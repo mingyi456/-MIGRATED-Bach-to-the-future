@@ -50,7 +50,9 @@ class State_Manager:
 		self.TRACKS_DIR = path.join(*raw_paths["CSV Directory"])
 		
 		self.bg_music = vlc.MediaPlayer(f"{self.ASSETS_DIR}Background.mp3")
-		self.bg_music.audio_set_volume(int(config["Background Volume"]["Value"]))
+		
+		self.bg_vol= int(config["Background Volume"]["Value"])
+		self.bg_music.audio_set_volume(self.bg_vol)
 		self.bg_music.play()
 	
 	def update(self):
@@ -136,9 +138,10 @@ class MainMenuState(BaseState):
 			TextLine("(ESC) Quit this game... Why would you want to?", help_font, (165, 583)).align_mid_left())
 	
 	def enter(self, args):
-		if not self.fsm.bg_music.is_playing():
+		if not self.fsm.bg_music.is_playing():		
+			self.fsm.bg_music.audio_set_volume(self.fsm.bg_vol)
 			self.fsm.bg_music.play()
-	
+			
 	def update(self, game_time, lag):
 		events = pygame.event.get()
 		actions = self.action_manager.chk_actions(events)
@@ -344,17 +347,21 @@ class SelectTrackState(BaseState):
 		des_font = pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 14)
 		self.des_lines = []
 		self.highscores = get_user_data(self.fsm.USER)["Highscores"]
-		
+		self.best_grades = get_user_data(self.fsm.USER)["Max Grade"]
+	
 		for i, file in enumerate(sorted(self.tracks)):
 			self.action_manager.add_button(file.rsplit('.', 1)[0], (325, i * 100 + 50), (50, 30), canScroll=True,
 			                               ret=file)
 			num_notes, song_dur, insts = self.songInfo(file.rsplit('.', 1)[0])
 			self.des_lines.append(TextLine(f"Notes: {num_notes}, Duration: {song_dur}", des_font, (325, i * 100 + 82)))
-			self.des_lines.append(TextLine(insts, des_font, (325, i * 100 + 102)))
+			self.des_lines.append(TextLine(insts, des_font, (325, i * 100 + 97)))
 			
 			if file.rsplit('.', 1)[0] in self.highscores.keys():
 				self.des_lines.append(
-					TextLine(f"Highscore: {self.highscores[file.rsplit('.', 1)[0]]}", des_font, (325, i * 100 + 122)))
+					TextLine(f"Highscore: {self.highscores[file.rsplit('.', 1)[0]]}", des_font, (325, i * 100 + 112)))
+			if file.rsplit('.', 1)[0] in self.best_grades.keys():
+				self.des_lines.append(
+					TextLine(f"Best Grade: {self.best_grades[file.rsplit('.', 1)[0]]}", des_font, (325, i * 100 + 127)))
 		
 		for i in self.des_lines:
 			self.action_manager.scroll_items.add(i)
@@ -959,6 +966,9 @@ class GameOverState(BaseState):
 		self.action_manager.add_button("Retry", (200, 400), (50, 30), isCenter=True)
 		self.action_manager.add_keystroke("Exit", "escape")
 		self.high_scores = get_user_data(self.fsm.USER)["Highscores"]
+
+		self.best_grades= get_user_data(self.fsm.USER)["Max Grade"]
+
 		self.score_font = pygame.font.Font(self.fsm.SYSFONT, 24)
 		self.grade_font = pygame.font.Font(self.fsm.SYSFONT, 64)
 		self.high_score_text = TextLine("High Score achieved!", self.score_font, (400, 300)).align_ctr()
@@ -1003,7 +1013,17 @@ class GameOverState(BaseState):
 		else:
 			print("No previous high score found")
 			self.isHighScore = True
-			update_user_data(("Highscores", args["file_name"].rsplit('.', 1)[0]), args["score"], self.fsm.USER)
+			update_user_data(("Highscores", args["file_name"].rsplit('.', 1)[0]), args["score"], self.fsm.USER)	
+		
+		grade_map= {e:i for i, e in enumerate(["FAIL", 'C', 'B', 'A', 'S', "PERFECT"])}
+		
+		if self.track in self.best_grades.keys():
+			if grade_map[self.best_grades[self.track]] < grade_map[self.grade]:
+				print("High Grade achieved!")
+				update_user_data(("Max Grade", args["file_name"].rsplit('.', 1)[0]), self.grade, self.fsm.USER)
+		else:
+			print("No previous grade found")
+			update_user_data(("Max Grade", args["file_name"].rsplit('.', 1)[0]), self.grade, self.fsm.USER)
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
