@@ -1174,6 +1174,7 @@ class SandBoxOptionsState(BaseState):
 		super().__init__(fsm)
 		self.action_manager.add_button("Back", (700, 50), (50, 30))
 		self.font = pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 30)
+		self.font2= pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 24)
 		self.vol_offset = 0
 		self.quantize_val = 0
 		self.tempo_val = 1
@@ -1220,9 +1221,9 @@ class SandBoxOptionsState(BaseState):
 			                               ret=f"Tempo {val}", font=self.font)
 		
 		for i, val in enumerate([1, 5, 10]):
-			self.action_manager.add_button(f"+{val}", (i * 80 + 440, 400), (20, 30), canScroll=True, isCenter=True,
+			self.action_manager.add_button(f"+{val}", (i * 70 + 435, 400), (20, 30), canScroll=True, isCenter=True,
 			                               ret=f"Vol + {val}", font=self.font)
-			self.action_manager.add_button(f"-{val}", (-i * 80 + 360, 400), (20, 30), canScroll=True, isCenter=True,
+			self.action_manager.add_button(f"-{val}", (-i * 70 + 365, 400), (20, 30), canScroll=True, isCenter=True,
 			                               ret=f"Vol - {val}", font=self.font)
 		
 		self.action_manager.add_button("ON", (360, 500), (20, 30), canScroll=True, isCenter=True, ret="Simplify ON",
@@ -1231,12 +1232,12 @@ class SandBoxOptionsState(BaseState):
 		self.action_manager.add_button("OFF", (440, 500), (20, 30), canScroll=True, isCenter=True, ret="Simplify OFF",
 		                               font=self.font)
 		
-		self.action_manager.add_button("All", (300, 650), (20, 30), canScroll=True, ret="Instrument All",
-		                               font=self.font)
+		self.action_manager.add_button("All", (220, 650), (20, 25), canScroll=True, ret="Instrument All",
+		                               font=self.font2)
 		
 		for i, inst in enumerate(self.instruments):
-			self.action_manager.add_button(inst, (300, i * 50 + 700), (20, 30), canScroll=True,
-			                               ret=f"Instrument {i + 1}", font=self.font)
+			self.action_manager.add_button(inst, (220, i * 50 + 700), (20, 25), canScroll=True,
+			                               ret=f"Instrument {i + 1}", font=self.font2)
 		
 		self.action_manager.add_button("Confirm", (300, self.action_manager.scroll_buttons[-1].rect[1] + 100), (20, 30),
 		                               canScroll=True, isCenter=True, font=self.font)
