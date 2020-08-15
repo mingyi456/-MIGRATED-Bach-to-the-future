@@ -955,6 +955,7 @@ class GameOverState(BaseState):
 		super().__init__(fsm)
 		
 		self.timer= 0
+		self.isDone= False
 		self.action_manager.add_button("Retry", (200, 400), (50, 30), isCenter=True)
 		self.action_manager.add_keystroke("Exit", "escape")
 		self.high_scores = get_user_data(self.fsm.USER)["Highscores"]
@@ -1008,11 +1009,7 @@ class GameOverState(BaseState):
 		events = pygame.event.get()
 		
 		actions = self.action_manager.chk_actions(events)
-		
-		if self.score < self.final_score:
-			self.score += round((self.final_score - self.init_score)/ (self.fsm.FPS*5))
-			self.score_line = TextLine(f" Score : {self.score}", self.score_font, (25, 150))
-		
+			
 		for action in actions:
 			if action == "Retry":
 				self.fsm.ch_state(PlayGameState(self.fsm), self.args)
@@ -1029,15 +1026,30 @@ class GameOverState(BaseState):
 			elif action == "Continue":
 				from Storyline import StoryState
 				self.fsm.ch_state(StoryState(self.fsm), {"file": "storyline1.json", "curr_line": self.story_line})
+		self.timer += 1
+		
+		if not self.isDone and self.timer > (self.fsm.FPS * 2):
+
+			if self.score < self.final_score:
+				self.score += round((self.final_score - self.init_score)/ (self.fsm.FPS*5))
+				self.score_line = TextLine(f" Score : {self.score}", self.score_font, (25, 150))
+			else:
+				self.isDone= True
+				self.score_line = TextLine(f" Score : {self.final_score}", self.score_font, (25, 150))
+				
 	
 	def draw(self):
 		super().draw()
 		self.score_line.draw(self.fsm.screen)
-		self.streak_line.draw(self.fsm.screen)
+		if self.timer > (self.fsm.FPS * 1):
+			self.streak_line.draw(self.fsm.screen)
+		else:
+			TextLine("Streak : ", self.score_font, (25, 200)).draw(self.fsm.screen)
 		self.track_line.draw(self.fsm.screen)
-		self.grade_text.draw(self.fsm.screen)
-		if self.isHighScore:
-			self.high_score_text.draw(self.fsm.screen)
+		if self.isDone:
+			self.grade_text.draw(self.fsm.screen)
+			if self.isHighScore:
+				self.high_score_text.draw(self.fsm.screen)
 
 
 class SandBoxState(BaseState):

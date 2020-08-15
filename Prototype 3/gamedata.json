@@ -15,7 +15,7 @@
             ]
         },
         "Default Game Volume": {
-            "Value": "60",
+            "Value": "100",
             "Choices": [
                 "20",
                 "40",
@@ -307,7 +307,10 @@
             },
             "Highscores": {
                 "Prelude No. 7": 137950,
-                "Bach Prelude No. 6": 233272
+                "Bach Prelude No. 6": 233272,
+                "In the hall of the mountain king": 8384,
+                "Habanera": 11178,
+                "Pavane": 12510
             }
         }
     },
