@@ -201,7 +201,7 @@ We interface the system's installation of VLC player through the python-vlc modu
 
 #### `%1 is not a valid win32 application` (Windows) VLC player is installed in a directory with spaces
 
-This is due to the limitations of python-vlc's parsing of the PATH environmental variable in Windows. To verify if this is the case, type `echo %PATH%` inside a command prompt window and check the output. It is probably difficult to read this, but the separator for PATH entries in Windows is the `;` character. Look for the entry with `VideoLAN\VLC`and check if there are spaces within it. **If this is the case, the only way is to install VLC player in another directory which does not have spaces in it.**
+This is due to the limitations of python-vlc's parsing of the PATH environmental variable in Windows. To verify if this is the case, type `echo %PATH:;=&echo.%` inside a command prompt window and check the output. Look for the entry with `VideoLAN\VLC`and check if there are spaces within it. **If this is the case, the only way is to install VLC player in another directory which does not have spaces in it.**
 
 ### Audio Issues with certain Windows devices
 

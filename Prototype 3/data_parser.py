@@ -66,6 +66,14 @@ def new_user(name, data_file= "gamedata.json"):
 	else:
 		raise Exception("Name taken")
 
+def del_user(name, data_file= "gamedata.json"):
+	data= load_json()
+	
+	del data["Users"][name]
+	
+	save_json(data)
+
+
 
 def get_achievements(achievement_file= "achievements.json"):
 	with open(achievement_file) as file:

@@ -8,7 +8,7 @@ from UIManager import ActionManager, TextLine, Sprite, TextBox
 import csv
 import vlc
 from data_parser import get_config, ch_config, get_user_data, update_user_data, get_sys_config, get_achievements, \
-	reset_config, get_users, new_user, get_curr_user, ch_user
+	reset_config, get_users, new_user, get_curr_user, ch_user, del_user
 from random import randint
 from string import ascii_lowercase as ASCII_LOWERCASE, digits as DIGITS
 
@@ -191,13 +191,17 @@ class UsersState(BaseState):
 		
 		vert_offset = 0
 		for i, user in enumerate(get_users()):
-			self.action_manager.add_button(user, (325, 50 + i * 50), (100, 30), canScroll=True,
-			                               ret=("Switch User", user))
+			self.action_manager.add_button(user, (350, 50 + i * 50), (100, 30), canScroll=True, ret=("Switch User", user))
+			
+			if i != 0:
+				self.action_manager.add_button("Delete", (250, 50 + i * 50), (50, 30), canScroll=True, ret=("Delete User", user, 50 + i * 50))
+				
 			vert_offset += 50
 		
 		self.action_manager.add_button("New User", (400, 100 + vert_offset), (100, 30), canScroll=True, isCenter=True)
 		
 		self.action_manager.scroll_max = self.action_manager.scroll_buttons[-1].rect[1] - (self.fsm.HEIGHT // 4) * 3
+		self.del_target= None
 	
 	def update(self, game_time, lag):
 		actions = self.action_manager.chk_actions(pygame.event.get())
@@ -211,11 +215,26 @@ class UsersState(BaseState):
 			elif action == "New User":
 				self.fsm.ch_state(NewUserState(self.fsm))
 			
+			elif action == "Confirm delete":
+				print(f"Deleting USER {action[1]}")
+				
+				if self.del_target == self.fsm.USER:
+					print("Switching to Guest")
+					ch_user("Guest")
+					self.fsm.USER = "Guest"
+				
+				del_user(self.del_target)	
+				self.fsm.ch_state(MainMenuState(self.fsm))		
+	
 			elif action[0] == "Switch User":
 				ch_user(action[1])
 				self.fsm.USER = action[1]
 				self.fsm.ch_state(MainMenuState(self.fsm))
-	
+			
+			elif action[0] == "Delete User":
+				self.del_target= action[1]
+				self.action_manager.add_button("Confirm", (140, action[2]-self.action_manager.scroll_pos), (20, 30), canScroll= True, ret= "Confirm delete")
+
 	def draw(self):
 		super().draw()
 
