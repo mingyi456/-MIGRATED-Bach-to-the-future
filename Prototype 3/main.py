@@ -319,26 +319,34 @@ class NewUserState(BaseState):
 class AboutState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
-		self.font = pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", 18)
 		
-		self.text_lines = []
-		self.text_lines.append(TextLine("Bach to the Future", self.font, (400, 50)).align_ctr())
+		self.text_lines= []
 		
-		self.text_lines.append(TextLine("Team Last Minute Wonders", self.font, (400, 100)).align_ctr())
-		self.text_lines.append(TextLine("Chen Mingyi and Chen YiJia", self.font, (400, 150)).align_ctr())
-		self.text_lines.append(TextLine("Orbital 2020", self.font, (400, 200)).align_ctr())
-		self.text_lines.append(TextLine("Special thanks to:", self.font, (400, 250)).align_ctr())
-		self.text_lines.append(TextLine("Lau Kuan Hoe", self.font, (400, 300)).align_ctr())
-		self.text_lines.append(TextLine("Phua Kai Jie", self.font, (400, 350)).align_ctr())
-		self.text_lines.append(TextLine("Hillson Hung", self.font, (400, 400)).align_ctr())
-		self.text_lines.append(
-			TextLine("For their patient testing and helpful feedback", self.font, (400, 450)).align_ctr())
-		self.text_lines.append(TextLine("JoshuaPrzyborowski", self.font, (400, 500)).align_ctr())
-		self.text_lines.append(
-			TextLine("For providing the Windows FluidSynth build", self.font, (400, 550)).align_ctr())
+		lines= [("Bach to the Future", 28), \
+		  ("Orbital 2020", 28), \
+		  ("Team Last Minute Wonders", 28), \
+		  ("Members:", 28), \
+		  ("Chen Mingyi", 18), \
+		  ("Chen YiJia", 18), \
+		  ("Advisor:", 28), \
+		  ("Nicholas Lee", 18), \
+		  ("Special Thanks to:", 28), \
+		  ("Nicholas", 18), \
+		  ("Lau Kuan Hoe", 18), \
+		  ("Phua Kai Jie", 18), \
+		  ("Hillson Hung", 18), \
+		  ("For their patient testing and helpful feedback", 24), \
+		  ("JoshuaPrzyborowski", 18), \
+		  ("For providing the Windows FluidSynth build", 24), \
+		  ("Icon made by Freepik from www.flaticon.com", 14)
+			  ]
 		
-		self.text_lines.append(
-			TextLine("Icon made by Freepik from www.flaticon.com", self.font, (400, 600)).align_ctr())
+		y_pos= 50
+		for str_val, size in lines:
+			self.text_lines.append(TextLine(str_val, self.make_font(size), (400, y_pos)).align_ctr())
+			y_pos += self.text_lines[-1].content.get_height() * 1 + 10
+
+
 		self.action_manager.add_button("Back", (50, 50), (50, 30))
 		
 		self.action_manager.add_button("Exit", (50, self.fsm.HEIGHT - 100), (50, 30))
@@ -358,6 +366,8 @@ class AboutState(BaseState):
 		for line in self.text_lines:
 			line.draw(self.fsm.screen)
 
+	def make_font(self, size):
+		return pygame.font.Font(f"{self.fsm.ASSETS_DIR}Helvetica.ttf", size)
 
 class SelectTrackState(BaseState):
 	def __init__(self, fsm):
