@@ -397,8 +397,7 @@ class SelectTrackState(BaseState):
 		
 		self.action_manager.scroll_max = self.action_manager.scroll_buttons[-1].rect[1] - (self.fsm.HEIGHT // 4) * 3
 		
-		self.action_manager.add_button("Exit (Esc)", (50, self.fsm.HEIGHT - 100), (50, 30), ret="Exit", key="escape")
-		self.action_manager.add_button("Back (Backspace)", (50, 50), (50, 30), ret="Back", key="backspace")
+		self.action_manager.add_button("Back", (50, 50), (50, 30), ret="Back", key="backspace")
 	
 	def songInfo(self, csv_file):
 		rel_path = path.join("beatmaps", csv_file) + ".csv"
@@ -446,8 +445,8 @@ class SettingsState(BaseState):
 		
 		for i, setting in enumerate(self.settings):
 			val = self.settings[setting]["Value"]
-			self.text_lines.append(TextLine(f"{setting} : {val}", self.font, (300, i * 50 + 30, 10, 10)))
-			self.action_manager.add_button("Change", (200, i * 50 + 25), (30, 30), ret=setting)
+			self.text_lines.append(TextLine(f"{setting} : {val}", self.font, (300, i * 40 + 30, 10, 10)))
+			self.action_manager.add_button("Change", (200, i * 40 + 25), (30, 30), ret=setting)
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
@@ -644,6 +643,7 @@ class Orbs:
 class PlayGameState(BaseState):
 	def __init__(self, fsm):
 		super().__init__(fsm)
+		config = get_config()
 		self.backgrounds = (pygame.image.load(f"{self.fsm.ASSETS_DIR}play_background.png").convert(), \
 		                    pygame.image.load(f"{self.fsm.ASSETS_DIR}play_background1.png").convert(), \
 		                    pygame.image.load(f"{self.fsm.ASSETS_DIR}play_background2.png").convert(), \
@@ -658,12 +658,12 @@ class PlayGameState(BaseState):
 		pygame.display.update()
 		
 		self.action_manager.add_keystroke("Back", "escape")
-		self.action_manager.add_keystroke("Pause", 'p')
+		self.action_manager.add_keystroke("Pause", "p")
 		self.action_manager.add_keystroke("Vol+", "up")
 		self.action_manager.add_keystroke("Vol-", "down")
 		self.lineOfGoal = 500
 		self.orb_spd = 450
-		self.errorMargin = 6
+		self.errorMargin = int(config["Accuracy Allowance"]["Value"])
 		self.rangeOfGoal = (self.lineOfGoal - self.orb_spd / self.fsm.FPS * self.errorMargin,
 		                    self.lineOfGoal + self.orb_spd / self.fsm.FPS * self.errorMargin)
 		self.sustainTrim = 0.8  # 1 for no Trim
@@ -671,7 +671,7 @@ class PlayGameState(BaseState):
 		self.meter_bar = pygame.image.load(f"{self.fsm.ASSETS_DIR}meter_bar.png").convert_alpha()
 		
 		self.orbs = []
-		self.laneNo = int(get_config()["Number of Lanes"]["Value"])
+		self.laneNo = int(config["Number of Lanes"]["Value"])
 		pascal = [[280, 0, 0, 0, 0, 0], [240, 320, 0, 0, 0, 0], [200, 280, 360, 0, 0, 0], [160, 240, 320, 400, 0, 0],
 		          [120, 200, 280, 360, 440, 0], [80, 160, 240, 320, 400, 480]]
 		self.positions = pascal[self.laneNo - 1]
@@ -687,17 +687,13 @@ class PlayGameState(BaseState):
 		              (pygame.image.load(f"{self.fsm.ASSETS_DIR}lane4.png").convert_alpha(), (self.positions[3], 490)), \
 		              (pygame.image.load(f"{self.fsm.ASSETS_DIR}lane5.png").convert_alpha(), (self.positions[4], 490)), \
 		              (pygame.image.load(f"{self.fsm.ASSETS_DIR}lane6.png").convert_alpha(), (self.positions[5], 490))]
-		
 		self.laneBlits = self.lanes[:self.laneNo]
 		
-		config = get_config()
 		
 		key_list = [config[f"Lane {i + 1} key"]["Value"] for i in range(6)]
 		
 		self.key_bindings = key_list[:self.laneNo]
 		self.key_binds = [eval(f"pygame.K_{x}") for x in self.key_bindings]
-		print(self.key_binds)  # [('f', int)]
-		
 		for key in self.key_bindings:
 			self.action_manager.add_sp_keystroke(key, key)
 		
@@ -766,6 +762,7 @@ class PlayGameState(BaseState):
 		reference_note = int(self.beatmap[0][3])
 		initial_lane = 0
 		first_note = True
+		lane_history = {lane:0 for lane in range(self.laneNo)}
 		
 		self.max_prog = len(self.beatmap)
 		
@@ -778,8 +775,14 @@ class PlayGameState(BaseState):
 			
 			diff = pitch - reference_note
 			lane = (initial_lane + diff) % self.laneNo
-			if lane == initial_lane and not first_note and diff:
-				lane = (lane + 1) % self.laneNo
+			check_overlap = diff and not first_note and sustained
+			while check_overlap and not all(start_time < time for time in lane_history.values()):
+				if diff > 0:
+					lane = (lane + 1) % self.laneNo
+				else:
+					lane = (lane - 1) % self.laneNo
+				if start_time > lane_history[lane]:
+					break
 			x = self.positions[lane]
 			
 			orb = Orbs(x, end_time, start_time, duration, lane, sustained, self.orb_spd, self.lineOfGoal,
@@ -787,6 +790,7 @@ class PlayGameState(BaseState):
 			self.orbs.extend(orb.blits())
 			reference_note = pitch
 			initial_lane = lane
+			lane_history[lane] = end_time
 			if first_note:
 				first_note = False
 			self.load_update()
@@ -938,14 +942,17 @@ class PlayGameState(BaseState):
 					self.fsm.ch_state(GameOverState(self.fsm),
 					                  {"file_name": self.file, \
 					                   "score": int(self.score), \
-									   "final_score": int(self.score)*self.maxStreak, \
+					                   "accuracy_allowance": self.errorMargin, \
 					                   "Story": self.story_line, \
 					                   "Grade": grade, \
 									   "max_streak": self.maxStreak})
 				else:
 					self.fsm.ch_state(GameOverState(self.fsm),
-					                  {"file_name": self.file, "score": int(self.score), \
-						"final_score": int(self.score)*self.maxStreak, "Grade": grade, "max_streak": self.maxStreak})
+					                  {"file_name": self.file, \
+					                   "score": int(self.score), \
+					                   "accuracy_allowance": self.errorMargin, \
+					                   "Grade": grade, \
+					                   "max_streak": self.maxStreak})
 	
 	def exit(self):
 		self.player.stop()
@@ -991,24 +998,31 @@ class GameOverState(BaseState):
 		super().__init__(fsm)
 		
 		self.timer= 0
+		self.timer1 = self.fsm.FPS * 2
+		self.timer2 = self.fsm.FPS * 6
+		self.timer3 = self.fsm.FPS * 8
 		self.isDone= False
 		self.action_manager.add_button("Retry", (200, 400), (50, 30), isCenter=True)
 		self.action_manager.add_keystroke("Exit", "escape")
 		self.high_scores = get_user_data(self.fsm.USER)["Highscores"]
-
 		self.best_grades= get_user_data(self.fsm.USER)["Max Grade"]
 
 		self.score_font = pygame.font.Font(self.fsm.SYSFONT, 24)
 		self.grade_font = pygame.font.Font(self.fsm.SYSFONT, 64)
-		self.high_score_text = TextLine("High Score achieved!", self.score_font, (400, 300)).align_ctr()
+		self.high_score_text = TextLine("New Highscore!", self.score_font, (400, 350)).align_ctr()
+		
+		self.impact_sound = vlc.MediaPlayer(f"{self.fsm.ASSETS_DIR}impact.flac")
+		self.grade_sound = vlc.MediaPlayer(f"{self.fsm.ASSETS_DIR}grade.flac")
 	
 	def enter(self, args):
 		self.args = args
 		
 		self.score = args["score"]
 		self.init_score= self.score
-		self.final_score= args["final_score"]
 		self.max_streak= args["max_streak"]
+		self.accuracy = args["accuracy_allowance"]
+		self.streak_score = self.init_score * self.max_streak
+		self.final_score= round(self.streak_score * (1 + (6-self.accuracy)/12))
 		self.track = args["file_name"].rsplit('.', 1)[0]
 		self.grade = args["Grade"]
 		self.grade_text = TextLine(self.grade, self.grade_font, (600, 175)).align_ctr()
@@ -1024,9 +1038,9 @@ class GameOverState(BaseState):
 		
 		
 		
-		self.score_line = TextLine(f" Score : {self.score}", self.score_font, (25, 150))
-		
-		self.streak_line= TextLine(f"Streak : {self.max_streak}", self.score_font, (25, 200))
+		self.score_line = TextLine(f"  Score : {self.score}", self.score_font, (25, 150))
+		self.streak_line= TextLine(f" Streak : {self.max_streak}", self.score_font, (25, 200))
+		self.allowance_line = TextLine(f"Allowance : {self.accuracy}", self.score_font, (25, 250))
 		
 		self.track_line = TextLine(self.track, self.score_font, (400, 50)).align_ctr()
 		
@@ -1075,25 +1089,35 @@ class GameOverState(BaseState):
 			elif action == "Continue":
 				from Storyline import StoryState
 				self.fsm.ch_state(StoryState(self.fsm), {"file": "storyline1.json", "curr_line": self.story_line})
-		self.timer += 1
-		
-		if not self.isDone and self.timer > (self.fsm.FPS * 2):
 
-			if self.score < self.final_score:
-				self.score += round((self.final_score - self.init_score)/ (self.fsm.FPS*5))
-				self.score_line = TextLine(f" Score : {self.score}", self.score_font, (25, 150))
+		if self.timer <= self.timer3:
+			self.timer += 1
+
+		if self.timer2 > self.timer > self.timer1 and self.score < self.streak_score:
+			self.score += max(round((self.streak_score - self.init_score)/ (self.fsm.FPS*3.5)), 1)
+			self.score_line = TextLine(f" Score : {self.score}", self.score_font, (25, 150))
+		elif self.timer == self.timer2:
+			self.impact_sound.stop()
+			self.score_line = TextLine(f" Score : {self.streak_score}", self.score_font, (25, 150))
+		elif self.timer3 > self.timer > self.timer2 and self.streak_score != self.final_score:
+			if self.streak_score < self.final_score:
+				self.score += max(round((self.final_score - self.streak_score) / (self.fsm.FPS * 1.5)), 1)
 			else:
-				self.isDone= True
-				self.score_line = TextLine(f" Score : {self.final_score}", self.score_font, (25, 150))
-				
+				self.score += min(round((self.final_score - self.streak_score) / (self.fsm.FPS * 1.5)), -1)
+			self.score_line = TextLine(f" Score : {self.score}", self.score_font, (25, 150))
+		elif self.timer > self.timer3:
+			self.grade_sound.play()
+			self.isDone = True
+			self.score_line = TextLine(f" Score : {self.final_score}", self.score_font, (25, 150))
 	
 	def draw(self):
 		super().draw()
 		self.score_line.draw(self.fsm.screen)
-		if self.timer > (self.fsm.FPS * 1):
+		if self.timer > self.timer1:
+			self.impact_sound.play()
 			self.streak_line.draw(self.fsm.screen)
-		else:
-			TextLine("Streak : ", self.score_font, (25, 200)).draw(self.fsm.screen)
+		if self.timer > self.timer2:
+			self.allowance_line.draw(self.fsm.screen)
 		self.track_line.draw(self.fsm.screen)
 		if self.isDone:
 			self.grade_text.draw(self.fsm.screen)
