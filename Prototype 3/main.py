@@ -663,7 +663,7 @@ class PlayGameState(BaseState):
 		self.action_manager.add_keystroke("Vol-", "down")
 		self.lineOfGoal = 500
 		self.orb_spd = 450
-		self.errorMargin = int(config["Accuracy Allowance"]["Value"])
+		self.errorMargin = int(config["Accuracy Margin (Advanced)"]["Value"])
 		self.rangeOfGoal = (self.lineOfGoal - self.orb_spd / self.fsm.FPS * self.errorMargin,
 		                    self.lineOfGoal + self.orb_spd / self.fsm.FPS * self.errorMargin)
 		self.sustainTrim = 0.8  # 1 for no Trim
