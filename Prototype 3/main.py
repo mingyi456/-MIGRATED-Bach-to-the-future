@@ -445,8 +445,8 @@ class SettingsState(BaseState):
 		
 		for i, setting in enumerate(self.settings):
 			val = self.settings[setting]["Value"]
-			self.text_lines.append(TextLine(f"{setting} : {val}", self.font, (300, i * 40 + 30, 10, 10)))
-			self.action_manager.add_button("Change", (200, i * 40 + 25), (30, 30), ret=setting)
+			self.text_lines.append(TextLine(f"{setting} : {val}", self.font, (300, i * 45 + 30, 10, 10)))
+			self.action_manager.add_button("Change", (200, i * 45 + 25), (30, 30), ret=setting)
 	
 	def update(self, game_time, lag):
 		events = pygame.event.get()
