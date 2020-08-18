@@ -11,6 +11,7 @@ from data_parser import get_config, ch_config, get_user_data, update_user_data, 
 	reset_config, get_users, new_user, get_curr_user, ch_user, del_user
 from random import randint
 from string import ascii_lowercase as ASCII_LOWERCASE, digits as DIGITS
+import webbrowser as wb
 
 
 class State_Manager:
@@ -350,6 +351,8 @@ class AboutState(BaseState):
 		self.action_manager.add_button("Back", (50, 50), (50, 30))
 		
 		self.action_manager.add_button("Exit", (50, self.fsm.HEIGHT - 100), (50, 30))
+		
+		self.action_manager.add_button("Website", (50, 100), (50, 30))
 	
 	def update(self, game_time, lag):
 		
@@ -360,6 +363,9 @@ class AboutState(BaseState):
 				self.fsm.ch_state(ExitState(self.fsm))
 			elif action == "Back":
 				self.fsm.ch_state(MainMenuState(self.fsm))
+			
+			elif action == "Website":
+				wb.open_new_tab("https://last-minute-wonders.github.io/Bach-to-the-Future/")
 	
 	def draw(self):
 		super().draw()
