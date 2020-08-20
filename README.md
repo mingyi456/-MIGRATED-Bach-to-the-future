@@ -2,6 +2,8 @@
 
 #orbital2020 #LastMinuteWonders #MILESTONE3
 
+##### Note: This repo has been migrated to https://github.com/Last-Minute-Wonders/Bach-to-the-Future
+
 # Bach to the Future
 
 A music rhythm game for computers!
